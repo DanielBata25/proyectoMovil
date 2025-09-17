@@ -1,0 +1,23 @@
+<ion-header class="nb-header" [translucent]="false">
+  <ion-toolbar class="nb-onebar">
+    <div class="nb-row">
+      <!-- IZQUIERDA: logo -->
+      <div class="nb-left">
+        <img class="nb-logo" src="assets/logo/logo.png" alt="Logo" />
+      </div>
+
+      <!-- ESPACIADOR CENTRAL (no título, no input) -->
+      <div class="nb-center"></div>
+
+      <!-- DERECHA: buscar + notificaciones -->
+      <div class="nb-right">
+        <ion-button fill="clear" aria-label="Buscar">
+          <ion-icon name="search"></ion-icon>
+        </ion-button>
+        <ion-button fill="clear" routerLink="/notifications" aria-label="Notificaciones">
+          <ion-icon name="notifications"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+  </ion-toolbar>
+</ion-header>

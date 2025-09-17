@@ -1,0 +1,183 @@
+<!-- Header nativo: evita overlays raros y respeta el área segura -->
+<!-- <ion-header translucent="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/products"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Detalle</ion-title>
+  </ion-toolbar>
+</ion-header> -->
+
+<!-- El ion-content SIEMPRE debe renderizar; controla el interior con *ngIf -->
+<ion-content class="detail-content" [fullscreen]="true">
+  <ng-container *ngIf="product; else skeleton">
+    <!-- Carrusel de imágenes (Swiper Web Component) -->
+    <ng-container *ngIf="(product.images?.length || 0) > 0; else noImg">
+      <swiper-container
+        class="gallery-swiper"
+        init="true"
+        effect="slide"
+        slides-per-view="1"
+        [attr.loop]="(product.images?.length || 0) > 1 ? 'true' : null"
+        [attr.autoplay]="(product.images?.length || 0) > 1 ? 'true' : null"
+        [attr.autoplay-delay]="(product.images?.length || 0) > 1 ? '3500' : null"
+        [attr.pagination]="(product.images?.length || 0) > 1 ? 'true' : null">
+        <swiper-slide *ngFor="let img of product.images">
+          <img [src]="img.imageUrl" (error)="onImgError($event)" alt="Foto del producto" />
+        </swiper-slide>
+      </swiper-container>
+    </ng-container>
+
+    <ng-template #noImg>
+      <div class="noimg">
+        <img src="assets/icon/shapes.svg" alt="sin imagen" />
+      </div>
+    </ng-template>
+
+    <!-- Título y productor -->
+    <div class="section">
+      <h1 class="title">{{ product.name }}</h1>
+      <div class="producer">
+        <span class="muted">Productor:</span>
+        <span class="link">{{ product.personName }}</span>
+      </div>
+    </div>
+
+    <!-- Precio -->
+    <div class="section">
+      <h2 class="sec-title">Precio</h2>
+      <div class="price">
+        {{ product.price | currency:'COP':'symbol' }}
+        <span class="unit">/ {{ product.unit || 'unidad' }}</span>
+      </div>
+    </div>
+
+    <!-- Info suelta -->
+    <div class="section grid-pairs">
+      <div class="pair">
+        <div class="lbl">Información de producción</div>
+        <div class="val">{{ product.production || '—' }}</div>
+      </div>
+      <div class="pair">
+        <div class="lbl">Cantidad disponible</div>
+        <div class="val">{{ product.stock }} {{ product.unit }}</div>
+      </div>
+      <div class="pair">
+        <div class="lbl">Ubicación</div>
+        <div class="val">{{ product.cityName }}, {{ product.departmentName }}</div>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="section">
+      <app-button
+        [text]="'Añadir al pedido'"
+        [type]="'button'"
+        [color]="'primary'"
+        [icon]="'cart'">
+      </app-button>
+    </div>
+
+    <!-- Descripción -->
+    <div class="section">
+      <h2 class="sec-title">Descripción</h2>
+      <p class="text">{{ product.description || 'Sin descripción.' }}</p>
+    </div>
+
+    <!-- Calificación -->
+    <div class="section">
+      <h2 class="sec-title">Calificación</h2>
+
+      <div class="rating-head">
+        <div class="avg">{{ averageRating | number:'1.1-1' }}</div>
+        <div class="stars">
+          <ion-icon *ngFor="let s of [1,2,3,4,5]"
+                    [name]="s <= Math.round(averageRating) ? 'star' : 'star-outline'">
+          </ion-icon>
+        </div>
+        <div class="muted small">{{ totalReviews }} reseñas</div>
+      </div>
+
+      <div class="dist" *ngFor="let item of distribution">
+        <span class="dlabel">{{ item.star }}</span>
+        <div class="bar"><div class="fill" [style.width.%]="item.percentage"></div></div>
+        <span class="dpct">{{ item.percentage | number:'1.0-0' }}%</span>
+      </div>
+    </div>
+
+    <!-- Reseñas -->
+    <div class="section">
+      <h2 class="sec-title">Reseñas</h2>
+
+      <ng-container *ngIf="(me$ | async) as me; else mustLogin">
+        <div class="new-review">
+          <div class="pick-stars">
+            <ion-icon
+              *ngFor="let _ of stars; let i = index"
+              [name]="i < selectedRating ? 'star' : 'star-outline'"
+              (click)="setRating(i+1)">
+            </ion-icon>
+          </div>
+
+          <ion-textarea
+            [(ngModel)]="newReview"
+            placeholder="Escribe tu reseña"
+            auto-grow="true"
+            class="textarea">
+          </ion-textarea>
+
+          <app-button
+            [text]="'Enviar reseña'"
+            [type]="'button'"
+            [color]="'primary'"
+            (click)="submitReview()"
+            [disabled]="selectedRating === 0 || !newReview.trim()">
+          </app-button>
+        </div>
+      </ng-container>
+      <ng-template #mustLogin>
+        <p class="muted">Inicia sesión para dejar una reseña.</p>
+      </ng-template>
+
+      <ng-container *ngIf="!loadingReviews; else loadingTpl">
+        <div *ngIf="reviews?.length; else emptyTpl" class="reviews">
+          <div class="item" *ngFor="let r of reviews; trackBy: trackByReview">
+            <div class="head">
+              <div>
+                <div class="name">{{ r.userName }}</div>
+                <div class="muted small">{{ r.createAt | date:'mediumDate':'':'es-CO' }}</div>
+              </div>
+              <div class="stars small">
+                <ion-icon *ngFor="let s of [1,2,3,4,5]"
+                          [name]="s <= r.rating ? 'star' : 'star-outline'">
+                </ion-icon>
+              </div>
+            </div>
+            <p class="text">{{ r.comment }}</p>
+
+            <div class="row-end" *ngIf="(me$ | async)?.id === r.userId">
+              <app-button
+                [text]="'Eliminar'"
+                [type]="'button'"
+                [color]="'danger'"
+                (click)="deleteReview(r.id)">
+              </app-button>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+      <ng-template #loadingTpl><p class="muted">Cargando reseñas…</p></ng-template>
+      <ng-template #emptyTpl><p class="muted">Aún no hay reseñas para este producto.</p></ng-template>
+    </div>
+
+    <div class="bottom-space"></div>
+  </ng-container>
+
+  <!-- Skeleton mientras carga el producto -->
+  <ng-template #skeleton>
+    <div class="skeleton hero"></div>
+    <div class="skeleton line"></div>
+    <div class="skeleton line"></div>
+    <div class="skeleton block"></div>
+  </ng-template>
+</ion-content>

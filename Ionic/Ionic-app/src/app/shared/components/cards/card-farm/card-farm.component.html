@@ -1,0 +1,34 @@
+<ion-card class="product-card">
+  <div class="image-wrap">
+    <img
+      class="card-image"
+      [src]="imageUrl"
+      alt="Imagen del producto"
+      (error)="onImgError($event)"
+    />
+  </div>
+
+  <ion-card-content class="content">
+    <h3 class="title line-2">{{ farm.name }}</h3>
+
+    <p class="info-row">
+      <ion-icon name="person" aria-hidden="true"></ion-icon>
+      {{ farm.producerName }}
+    </p>
+
+    <p class="info-row">
+      <ion-icon name="location" aria-hidden="true"></ion-icon>
+      {{ farm.cityName }}, {{ farm.departmentName }}
+    </p>
+
+    <!-- Botones de acción si está habilitado -->
+    <div *ngIf="showActions" class="actions">
+      <ion-button fill="clear" (click)="edit.emit(farm)" aria-label="Editar finca">
+        <ion-icon class="icon-edit" name="create"></ion-icon>
+      </ion-button>
+      <ion-button fill="clear" (click)="delete.emit(farm)" aria-label="Eliminar finca">
+        <ion-icon class="icon-delete" name="trash"></ion-icon>
+      </ion-button>
+    </div>
+  </ion-card-content>
+</ion-card>

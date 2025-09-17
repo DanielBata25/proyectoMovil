@@ -1,0 +1,42 @@
+/* Colores exactos */
+$verde: #2e7d32;
+$blanco: #ffffff;
+
+/* Fuerza el color del toolbar, evitando overrides globales */
+.nb-header,
+.nb-onebar,
+.nb-header ion-toolbar.nb-onebar {
+  --background: #2e7d32 !important;
+  --color: #ffffff !important;
+  --border-color: transparent !important;
+}
+
+/* Estructura de una sola fila */
+.nb-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto; /* logo | espacio | iconos */
+  align-items: center;
+  width: 100%;
+  min-height: 56px;
+  padding: 0 8px;
+}
+
+/* IZQUIERDA */
+.nb-left { display: flex; align-items: center; }
+.nb-logo { height: 22px; width: auto; display: block; }
+
+/* CENTRO (sin nada, solo para centrar composición) */
+.nb-center { min-width: 0; }
+
+/* DERECHA */
+.nb-right { display: flex; align-items: center; gap: 2px; }
+.nb-right ion-button { --padding-start: 6px; --padding-end: 6px; }
+
+/* Iconos blancos como en la captura */
+ion-button, ion-icon { color: $blanco !important; }
+
+/* Compacto en pantallas angostas */
+@media (max-width: 360px) {
+  .nb-logo { height: 18px; }
+  .nb-row { min-height: 50px; }
+}

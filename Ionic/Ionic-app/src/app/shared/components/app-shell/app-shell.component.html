@@ -1,0 +1,10 @@
+<!-- app-shell.component.html -->
+<ion-header *ngIf="!hideBars">
+  <app-navbar-bueno></app-navbar-bueno>
+</ion-header>
+
+<router-outlet></router-outlet>
+
+<ion-footer *ngIf="!hideBars">
+  <app-tabs></app-tabs>
+</ion-footer>

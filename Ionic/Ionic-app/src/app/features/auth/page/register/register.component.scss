@@ -1,0 +1,74 @@
+/* Hace que el viewport sea estable sin 100vh */
+.full-viewport { display: flex; min-height: 100%; }
+.fill-grid { height: 100%; }
+.fill-row  { height: 100%; }
+
+/* Safe areas (por si hay notch / barras) */
+.safe-page {
+  padding-top: env(safe-area-inset-top);
+  padding-right: env(safe-area-inset-right);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+}
+
+/* Helpers para centrar logo + card */
+/* Contenedor que centra TODO */
+.auth-viewport{
+  min-height: 100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center; /* 🔥 centra vertical */
+  padding: clamp(16px, 4vw, 32px);
+}
+/* Logo superior centrado */
+.top-logo-wrap{ display:flex; justify-content:center; }
+.brand-logo{
+  width: clamp(80px, 22vw, 110px); /* 🔥 más grande */
+  margin-bottom: 16px;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,.25));
+}
+
+/* Card del formulario con verde suave */
+.formaForm,
+.auth-card {
+  background: linear-gradient(180deg, #eef9f1 0%, #ffffff 65%);
+  box-shadow: 0 8px 22px rgba(0,0,0,.12);
+  border-radius: 16px;
+  max-width: 500px;
+  min-width: 300px;
+  width: 90%;
+  padding: clamp(18px, 3.5vw, 24px);
+}
+
+/* Títulos */
+.titleForm {
+  color: #2e7d32;
+  font-size: 2rem;
+  margin: 0;
+}
+
+/* Botón principal */
+.btn-custom {
+  --background: #1cc736;
+  --color: #fff;
+  height: 3rem;
+  border-radius: .5rem;
+}
+
+/* Inputs con fondo y texto oscuro */
+.input-custom {
+  --background: #f2f5f2;
+  --color: #1f1f1f;
+  --placeholder-color: #6b7280;
+  caret-color: #1f1f1f;
+  border-radius: .5rem;
+  min-height: 3rem;
+}
+
+/* Etiquetas y notas */
+.label { display: block; text-align: left; margin: .25rem 0; }
+.note  { display: block; margin-top: .25rem; text-align: left; }
+
+/* Fondo: lo sigues poniendo desde el HTML; aquí solo evitamos que Ionic lo sobrescriba */
+.fondo-auth { --background: transparent; }

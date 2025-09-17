@@ -1,0 +1,76 @@
+.carrusel-container {
+  width: 100%;
+  height: 260px;             /* base móvil */
+  display: block;
+  border-radius: 12px;
+  overflow: hidden;
+
+  /* bullets del swiper web component */
+  &::part(pagination) {
+    bottom: 8px;
+  }
+  &::part(bullet) {
+    background: rgba(255,255,255,.6);
+    width: 7px; height: 7px; margin: 0 4px;
+  }
+  &::part(bullet-active) {
+    background: #1cc736;
+  }
+
+  /* oculta flechas (no se usan en móvil) */
+  &::part(button-prev),
+  &::part(button-next) {
+    display: none;
+  }
+}
+
+@media (min-height: 700px) {
+  .carrusel-container { height: 320px; }
+}
+@media (min-height: 850px) {
+  .carrusel-container { height: 360px; }
+}
+
+.slide-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.slide-content img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;    /* no deforma */
+  display: block;
+  transform: translateZ(0); /* ayuda a GPU en Android */
+}
+
+/* Gradiente para legibilidad */
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;      /* texto abajo como hero */
+  justify-content: center;
+  padding: 18px 14px;
+  background: linear-gradient(
+    180deg,
+    rgba(0,0,0,0) 45%,
+    rgba(0,0,0,.35) 75%,
+    rgba(0,0,0,.55) 100%
+  );
+}
+
+.overlay-title {
+  color: #fff;
+  text-align: center;
+  font-weight: 700;
+  letter-spacing: .2px;
+  text-shadow: 0 2px 8px rgba(0,0,0,.35);
+  width: 92%;
+  margin: 0;
+  font-size: clamp(16px, 4.6vw, 22px);
+  line-height: 1.2;
+  /* borde suave para pantallas muy brillantes */
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,.25));
+}

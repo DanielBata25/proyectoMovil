@@ -1,0 +1,71 @@
+.detail-content { --background: #fff; }
+
+.topbar { padding: 10px 12px 0 12px; }
+
+/* ritmo vertical */
+.section { padding: 12px 16px; }
+.section + .section { border-top: 1px solid #eef2f4; }
+
+/* Carrusel (Swiper) */
+.gallery-swiper {
+  width: 100%;
+  height: 260px;
+  margin: 8px 0 2px;
+  --swiper-pagination-color: #2d6a4f;
+}
+swiper-slide {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+swiper-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.noimg {
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: .4;
+}
+
+/* Títulos / texto */
+.title { font-size: 1.25rem; font-weight: 800; margin: 0 0 4px; color: #1d3b20; }
+.sec-title { font-size: 1rem; font-weight: 700; margin: 0 0 6px; color: #1d3b20; }
+.text { margin: 0; color: #374151; }
+.muted { color: #6b7280; }
+.small { font-size: 12px; }
+
+.producer .link { color: #2d6a4f; text-decoration: underline; margin-left: 4px; }
+
+/* Precio */
+.price { font-size: 20px; font-weight: 800; color: #1b5e20; }
+.unit { font-weight: 500; color: #6b7280; }
+
+/* Pares “suelto” en columna */
+.grid-pairs { display: grid; gap: 8px; }
+.pair .lbl { font-weight: 700; color: #4b5563; }
+.pair .val { color: #111827; }
+
+/* Rating */
+.rating-head { display: grid; grid-template-columns: auto auto; align-items: center; gap: 8px; }
+.rating-head .avg { font-size: 28px; font-weight: 800; }
+.stars ion-icon { color: #f4b400; font-size: 20px; }
+.stars.small ion-icon { font-size: 16px; }
+
+.dist { display: grid; grid-template-columns: 16px 1fr 40px; gap: 8px; align-items: center; margin: 6px 0; }
+.bar { height: 8px; background: #eef2f4; border-radius: 999px; overflow: hidden; }
+.fill { height: 100%; background: #1f2937; }
+
+/* Reseñas */
+.new-review { display: grid; gap: 10px; }
+.pick-stars ion-icon { color: #f4b400; font-size: 24px; }
+.textarea { --padding-start: 12px; --padding-end: 12px; border: 1px solid #e5e7eb; border-radius: 10px; background: #fff; }
+.reviews { display: grid; gap: 12px; }
+.item .head { display: flex; justify-content: space-between; gap: 10px; }
+.item .name { font-weight: 700; }
+.row-end { display: flex; justify-content: flex-end; margin-top: 6px; }
+
+.bottom-space { height: 16px; }

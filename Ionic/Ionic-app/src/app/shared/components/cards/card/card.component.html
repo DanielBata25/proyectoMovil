@@ -1,0 +1,66 @@
+<ion-card
+  class="product-card"
+  role="button"
+  tabindex="0"
+  (click)="onDetail(product)"
+  (keyup.enter)="onDetail(product)"
+  (keyup.space)="onDetail(product); $event.preventDefault()"
+  aria-label="Abrir detalle del producto"
+>
+  <!-- Favorito (solo si está logueado) -->
+  <div *appIfLoggedIn>
+    <ion-button
+      *ngIf="showFavorite"
+      class="fav-btn"
+      fill="solid"
+      size="small"
+      [disabled]="disabledFavorite"
+      (click)="onFavoriteClick($event)"
+      (keyup.enter)="$event.stopPropagation()"
+      (keyup.space)="$event.stopPropagation(); $event.preventDefault()"
+      aria-label="Favorito"
+    >
+      <ion-icon slot="icon-only" [name]="product.isFavorite ? 'star' : 'star-outline'"></ion-icon>
+    </ion-button>
+  </div>
+
+  <!-- Imagen -->
+  <div class="image-wrap">
+    <img
+      class="card-image"
+      [src]="imageUrl"
+      alt="Imagen del producto"
+      loading="lazy"
+      decoding="async"
+      (error)="onImgError($event)"
+    />
+  </div>
+
+  <ion-card-content class="content">
+    <h3 class="title line-2" [title]="product.name">{{ product.name }}</h3>
+
+    <p class="info-row">
+      <ion-icon name="person-outline" aria-hidden="true"></ion-icon>
+      {{ product.personName }}
+    </p>
+
+    <p class="info-row">
+      <ion-icon name="location-outline" aria-hidden="true"></ion-icon>
+      {{ product.cityName }}, {{ product.departmentName }}
+    </p>
+
+    <p class="price">
+      ${{ product.price | number:'1.0-0' }}
+    </p>
+
+    <div *ngIf="showActions" class="actions">
+      <ion-button fill="clear" size="small" (click)="onEditClick($event)" aria-label="Editar producto">
+        <ion-icon class="icon-edit" name="create-outline"></ion-icon>
+      </ion-button>
+
+      <ion-button fill="clear" size="small" color="danger" (click)="onDeleteClick($event)" aria-label="Eliminar producto">
+        <ion-icon class="icon-delete" name="trash-outline"></ion-icon>
+      </ion-button>
+    </div>
+  </ion-card-content>
+</ion-card>

@@ -1,0 +1,136 @@
+<ion-content
+  class="fondo-auth safe-page full-viewport"
+  [style.background-image]="'url(assets/backgrounds/fondologin.jpg)'"
+  style="background-size:cover;background-position:center;--background:transparent"
+>
+  <div class="auth-viewport"><!-- 🔥 contenedor que centra -->
+
+    <!-- Logo superior -->
+    <div class="top-logo-wrap">
+      <img src="assets/logo/logo.png" alt="Logo" class="brand-logo" />
+    </div>
+
+    <!-- Card con verde suave -->
+    <ion-card class="formaForm auth-card">
+      <ion-card-content>
+
+        <h3 class="text-center mb-3 titleForm">Regístrate</h3>
+        <div class="ion-text-center" style="margin-top:.5rem">
+          ¿Ya tienes cuenta?
+          <a [routerLink]="['../login']" class="link">Inicia Sesión</a>
+        </div>
+
+        <!-- Paso 1 -->
+        <form [formGroup]="credentialsForm" *ngIf="currentStep === 1" class="mt-12">
+          <label for="email" class="label">Correo Electrónico</label>
+          <ion-item lines="none" class="input-custom">
+            <ion-input id="email" type="email" formControlName="email" placeholder="Correo Electrónico"></ion-input>
+          </ion-item>
+          <ion-note color="danger" *ngIf="credentialsForm.get('email')?.invalid && credentialsForm.get('email')?.touched" class="note">
+            {{ getErrorMessage(credentialsForm, 'email') }}
+          </ion-note>
+
+          <label for="password" class="label mt-12">Contraseña</label>
+          <ion-item lines="none" class="input-custom">
+            <ion-input id="password" type="password" formControlName="password" placeholder="Contraseña"></ion-input>
+          </ion-item>
+          <ion-note color="danger" *ngIf="credentialsForm.get('password')?.invalid && credentialsForm.get('password')?.touched" class="note">
+            {{ getErrorMessage(credentialsForm, 'password') }}
+          </ion-note>
+
+          <label for="confirmPassword" class="label mt-12">Confirmar Contraseña</label>
+          <ion-item lines="none" class="input-custom">
+            <ion-input id="confirmPassword" type="password" formControlName="confirmPassword" placeholder="Confirmar Contraseña"></ion-input>
+          </ion-item>
+          <ion-note color="danger"
+                    *ngIf="(credentialsForm.get('confirmPassword')?.touched || credentialsForm.get('password')?.touched) && credentialsForm.hasError('passwordMismatch')"
+                    class="note">
+            {{ getErrorMessage(credentialsForm, 'confirmPassword') }}
+          </ion-note>
+
+          <ion-button type="button" expand="block" class="btn-custom mt-12" (click)="nextStep()" [disabled]="credentialsForm.invalid">
+            Siguiente
+          </ion-button>
+        </form>
+
+        <!-- Paso 2 -->
+        <form [formGroup]="basicForm" *ngIf="currentStep === 2" class="mt-12">
+          <label for="firstName" class="label">Nombre</label>
+          <ion-item lines="none" class="input-custom">
+            <ion-input id="firstName" type="text" formControlName="firstName" placeholder="Nombre"></ion-input>
+          </ion-item>
+          <ion-note color="danger" *ngIf="basicForm.get('firstName')?.invalid && basicForm.get('firstName')?.touched" class="note">
+            {{ getErrorMessage(basicForm, 'firstName') }}
+          </ion-note>
+
+          <label for="lastName" class="label mt-12">Apellido</label>
+          <ion-item lines="none" class="input-custom">
+            <ion-input id="lastName" type="text" formControlName="lastName" placeholder="Apellido"></ion-input>
+          </ion-item>
+          <ion-note color="danger" *ngIf="basicForm.get('lastName')?.invalid && basicForm.get('lastName')?.touched" class="note">
+            {{ getErrorMessage(basicForm, 'lastName') }}
+          </ion-note>
+
+          <label for="identification" class="label mt-12">Número de Identidad</label>
+          <ion-item lines="none" class="input-custom">
+            <ion-input id="identification" type="text" inputmode="numeric" formControlName="identification" placeholder="Número de Identidad"></ion-input>
+          </ion-item>
+          <ion-note color="danger" *ngIf="basicForm.get('identification')?.invalid && basicForm.get('identification')?.touched" class="note">
+            {{ getErrorMessage(basicForm, 'identification') }}
+          </ion-note>
+
+          <div style="display:flex;gap:.5rem;margin-top:.75rem">
+            <ion-button fill="outline" (click)="prevStep()">Volver</ion-button>
+            <ion-button class="btn-custom" (click)="nextStep()" [disabled]="basicForm.invalid">Siguiente</ion-button>
+          </div>
+        </form>
+
+        <!-- Paso 3 -->
+        <form [formGroup]="contactForm" *ngIf="currentStep === 3" class="mt-12">
+          <label for="phoneNumber" class="label">Número de Teléfono</label>
+          <ion-item lines="none" class="input-custom">
+            <ion-input id="phoneNumber" type="tel" formControlName="phoneNumber" placeholder="Número de Teléfono"></ion-input>
+          </ion-item>
+          <ion-note color="danger" *ngIf="contactForm.get('phoneNumber')?.invalid && contactForm.get('phoneNumber')?.touched" class="note">
+            {{ getErrorMessage(contactForm, 'phoneNumber') }}
+          </ion-note>
+
+          <label for="address" class="label mt-12">Dirección</label>
+          <ion-item lines="none" class="input-custom">
+            <ion-input id="address" type="text" formControlName="address" placeholder="Dirección"></ion-input>
+          </ion-item>
+          <ion-note color="danger" *ngIf="contactForm.get('address')?.invalid && contactForm.get('address')?.touched" class="note">
+            {{ getErrorMessage(contactForm, 'address') }}
+          </ion-note>
+
+          <div style="display:flex;gap:.5rem;margin-top:1rem">
+            <div style="flex:1">
+              <label for="departmentId" class="label">Departamento</label>
+              <ion-item lines="none" class="input-custom">
+                <ion-select interface="popover" formControlName="departmentId" placeholder="Selecciona un departamento">
+                  <ion-select-option *ngFor="let dept of departments" [value]="dept.id">{{ dept.name }}</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </div>
+            <div style="flex:1">
+              <label for="cityId" class="label">Ciudad</label>
+              <ion-item lines="none" class="input-custom">
+                <ion-select interface="popover" formControlName="cityId" placeholder="Selecciona una ciudad">
+                  <ion-select-option *ngFor="let city of cities" [value]="city.id">{{ city.name }}</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:.5rem;margin-top:.75rem">
+            <ion-button fill="outline" (click)="prevStep()">Volver</ion-button>
+            <ion-button class="btn-custom" (click)="register()" [disabled]="contactForm.invalid || loading">
+              Registrarse
+            </ion-button>
+          </div>
+        </form>
+
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>
