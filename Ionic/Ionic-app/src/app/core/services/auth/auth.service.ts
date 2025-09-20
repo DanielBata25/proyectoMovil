@@ -18,7 +18,7 @@ const API_ORIGIN = new URL(environment.apiUrl.replace(/\/+$/, '') + '/').origin;
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private base = 'Auth/';
+  private base = '/Auth/';
 
   Register(obj: RegisterUserModel) {
     return from(ApiNative.post<void>(`${this.base}Register`, obj));
