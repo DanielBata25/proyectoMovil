@@ -1,8 +1,6 @@
-import { HttpClient } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
-import { Observable, switchMap } from 'rxjs';
-import { environment } from 'src/environments/environment';
-
+// src/app/core/services/auth/auth.service.ts
+import { Injectable } from '@angular/core';
+import { from, map, switchMap } from 'rxjs';
 import { RegisterUserModel } from '../../models/register.user.model';
 import { LoginModel, UserMeDto } from '../../models/login.model';
 import { PersonUpdateModel, UserSelectModel } from '../../models/user.model';
@@ -11,76 +9,65 @@ import {
   RecoverPasswordConfirmModel,
   RecoverPasswordModel
 } from '../../models/changePassword.model';
+import { Preferences } from '@capacitor/preferences';
+import { CapacitorCookies } from '@capacitor/core';
+import { environment } from 'src/environments/environment';
+import { ApiNative } from '../http/api.native';
 
-@Injectable({
-  providedIn: 'root',
-})
+const API_ORIGIN = new URL(environment.apiUrl.replace(/\/+$/, '') + '/').origin;
+
+@Injectable({ providedIn: 'root' })
 export class AuthService {
-  private http = inject(HttpClient);
-  private urlBase = environment.apiUrl + 'Auth/';
+  private base = 'Auth/';
 
-  constructor() {}
-
-  Register(Objeto: RegisterUserModel): Observable<any> {
-    return this.http.post<any>(this.urlBase + 'Register', Objeto);
+  Register(obj: RegisterUserModel) {
+    return from(ApiNative.post<void>(`${this.base}Register`, obj));
   }
 
-  /** Login: importante withCredentials para que guarde la cookie */
-  Login(Objeto: LoginModel): Observable<any> {
-    return this.http.post<any>(this.urlBase + 'login', Objeto, {
-      withCredentials: true,
-    });
+  Login(obj: LoginModel) {
+    return from(ApiNative.post<void>(`${this.base}Login`, obj)).pipe(map(() => void 0));
   }
 
-  ChangePassword(Objeto: ChangePasswordModel): Observable<any> {
-    return this.http.put<any>(this.urlBase + 'ChangePassword', Objeto, {
-      withCredentials: true,
-    });
+  ChangePassword(obj: ChangePasswordModel) {
+    return from(ApiNative.put<void>(`${this.base}ChangePassword`, obj));
   }
 
-  /** Auth/me requiere credenciales */
-  GetMe(): Observable<UserMeDto> {
-    return this.http.get<UserMeDto>(this.urlBase + 'me', {
-      withCredentials: true,
-    });
+  GetMe() {
+    return from(ApiNative.get<UserMeDto>(`${this.base}me`));
   }
 
-  GetDataBasic(): Observable<UserSelectModel> {
-    return this.http.get<UserSelectModel>(this.urlBase + 'DataBasic');
+  GetDataBasic() {
+    return from(ApiNative.get<UserSelectModel>(`${this.base}DataBasic`));
   }
 
-  /** logout también necesita credenciales */
-  LogOut(): Observable<any> {
-    return this.http.post<any>(this.urlBase + 'logout', [], {
-      withCredentials: true,
-    });
-  }
-
-  RefreshToken(): Observable<UserMeDto> {
-    return this.http
-      .post<any>(this.urlBase + 'refresh', {}, { withCredentials: true })
-      .pipe(switchMap(() => this.GetMe()));
-  }
-
-  UpdatePerson(objeto: PersonUpdateModel): Observable<any> {
-    return this.http.put<any>(this.urlBase + 'UpdatePerson', objeto, {
-      withCredentials: true,
-    });
-  }
-
-  RequestRecoverPassword(objeto: RecoverPasswordModel): Observable<any> {
-    return this.http.post<any>(
-      this.urlBase + 'recover/send-code',
-      objeto,
-      { withCredentials: true }
+  LogOut() {
+    return from(ApiNative.post<void>(`${this.base}logout`, {})).pipe(
+      // Limpieza local de XSRF (no HttpOnly)
+      switchMap(async () => {
+        await Preferences.remove({ key: 'XSRF' });
+        await CapacitorCookies.deleteCookie({ key: 'XSRF-TOKEN', url: API_ORIGIN }).catch(() => {});
+      }),
+      map(() => void 0)
     );
   }
 
-  ConfirmRecoverPassword(objeto: RecoverPasswordConfirmModel): Observable<any> {
-    return this.http.post<any>(
-      this.urlBase + 'recover/confirm',
-      objeto,
-      { withCredentials: true }
+  RefreshToken() {
+    // Mantén el patrón: refresh y luego /me
+    return from(ApiNative.refresh()).pipe(
+      switchMap(() => from(ApiNative.get<UserMeDto>(`${this.base}me`)))
     );
+  }
+
+  UpdatePerson(obj: PersonUpdateModel) {
+    // En tu back es [HttpPut("updatePerson")] (minúsculas)
+    return from(ApiNative.put<void>(`${this.base}updatePerson`, obj));
+  }
+
+  RequestRecoverPassword(obj: RecoverPasswordModel) {
+    return from(ApiNative.post<void>(`${this.base}recover/send-code`, obj));
+  }
+
+  ConfirmRecoverPassword(obj: RecoverPasswordConfirmModel) {
+    return from(ApiNative.post<void>(`${this.base}recover/confirm`, obj));
   }
 }

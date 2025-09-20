@@ -1,12 +1,12 @@
 // src/app/core/http/auth.interceptor.ts
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { Router } from '@angular/router';
 import { catchError, switchMap, throwError } from 'rxjs';
 
 import { AuthState } from '../../services/auth/auth.state';
 import { AuthService } from '../../services/auth/auth.service';
 import { environment } from 'src/environments/environment';
+import { Router } from '@angular/router';
 
 /** Lee un cookie por nombre (útil para CSRF/XSRF si tu backend lo usa) */
 function getCookie(name: string): string | null {

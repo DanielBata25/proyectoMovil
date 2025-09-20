@@ -1,6 +1,5 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { take, switchMap, finalize } from 'rxjs/operators';
 
@@ -18,6 +17,7 @@ import { eye, eyeOff } from 'ionicons/icons';
 // Servicios propios
 import { AuthService } from 'src/app/core/services/auth/auth.service';
 import { AuthState } from 'src/app/core/services/auth/auth.state';
+import { RouterLink, Router } from '@angular/router';
 
 @Component({
   standalone: true,
@@ -72,6 +72,8 @@ export class LoginComponent {
     if (this.formLogin.invalid || this.loading) return;
 
     const payload = this.formLogin.value as { email: string; password: string };
+    console.log(payload);
+    
 
     this.loading = true;
     const loading = await this.loadingCtrl.create({ message: 'Iniciando sesión...', spinner: 'circles' });

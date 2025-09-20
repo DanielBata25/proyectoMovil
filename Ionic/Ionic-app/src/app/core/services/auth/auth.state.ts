@@ -1,116 +1,70 @@
-// core/auth/auth.state.ts
+// src/app/core/services/auth/auth.state.ts
 import { Injectable, inject } from '@angular/core';
-import {
-  BehaviorSubject,
-  catchError,
-  firstValueFrom,
-  Observable,
-  of,
-  shareReplay,
-  switchMap,
-  tap,
-} from 'rxjs';
-
+import { BehaviorSubject, Observable, catchError, of, shareReplay, tap } from 'rxjs';
+import { Preferences } from '@capacitor/preferences';
 import { AuthService } from './auth.service';
 import { UserMeDto } from '../../models/login.model';
-
 
 @Injectable({ providedIn: 'root' })
 export class AuthState {
   private authService = inject(AuthService);
-
   private readonly storageKey = 'me';
   private _me$ = new BehaviorSubject<UserMeDto | null>(null);
   readonly me$ = this._me$.asObservable();
 
-  get current(): UserMeDto | null {
-    return this._me$.value;
-  }
+  get current(): UserMeDto | null { return this._me$.value; }
 
-  hydrateFromStorage(): void {
-    try {
-      const raw = sessionStorage.getItem(this.storageKey);
-      if (raw) this._me$.next(JSON.parse(raw) as UserMeDto);
-    } catch {
-      /* ignore */
-    }
+  async hydrateFromStorage(): Promise<void> {
+    const { value } = await Preferences.get({ key: this.storageKey });
+    if (value) this._me$.next(JSON.parse(value) as UserMeDto);
   }
 
   loadMe(): Observable<UserMeDto | null> {
     return this.authService.GetMe().pipe(
       tap((me) => this.normalizeAndCache(me)),
-
-      switchMap(() => of(this._me$.value)),
       shareReplay(1)
     );
   }
 
-  /** Forzar recarga desde el backend y re-cachear */
   reloadMe(): Observable<UserMeDto | null> {
     return this.authService.GetMe().pipe(
       tap((me) => this.normalizeAndCache(me)),
-      catchError((_err) => {
-        // Opcional: si falla, no dejes “me” sucio
-        this.clear();
+      catchError(() => {
+        void this.clear();
         return of(null);
       }),
       shareReplay(1)
     );
   }
 
-  /** Versión async conveniente para await */
-  async reloadMeOnce(): Promise<UserMeDto | null> {
-    return await firstValueFrom(this.reloadMe());
+  private async cache(me: UserMeDto) {
+    this._me$.next(me);
+    await Preferences.set({ key: this.storageKey, value: JSON.stringify(me) });
   }
 
   private normalizeAndCache(me: UserMeDto) {
-    // 1) Normaliza roles
-    me.roles = (me.roles ?? [])
-      .map((r) => (r ?? '').toString().trim())
-      .filter(Boolean);
-
-    // 2) Normaliza a minúsculas para cache (opcional pero consistente)
-    //    Si haces esto, ajusta hasRole a comparar en minúsculas (ya lo haces).
-    me.roles = me.roles.map((r) => r.toLowerCase());
-
-    // 3) Normaliza permisos y forms (como ya tenías)
-    me.permissions = (me.permissions ?? []).map((p) => p.toLowerCase());
-    me.menu?.forEach((s) =>
-      s.forms?.forEach(
-        (f) =>
-          (f.permissions = (f.permissions ?? []).map((p) => p.toLowerCase()))
-      )
-    );
-
-    this._me$.next(me);
-    sessionStorage.setItem(this.storageKey, JSON.stringify(me));
+    me.roles = (me.roles ?? []).map(r => (r ?? '').toString().trim().toLowerCase()).filter(Boolean);
+    me.permissions = (me.permissions ?? []).map(p => p.toLowerCase());
+    me.menu?.forEach(s => s.forms?.forEach(f => f.permissions = (f.permissions ?? []).map(p => p.toLowerCase())));
+    void this.cache(me);
   }
 
-  clear(): void {
-    sessionStorage.removeItem(this.storageKey);
+  async clear(): Promise<void> {
+    await Preferences.remove({ key: this.storageKey });
     this._me$.next(null);
   }
 
-
-
   hasRole(role: string): boolean {
     const me = this._me$.value;
-    if (!me?.roles?.length) return false;
-    const wanted = (role ?? '').toLowerCase();
-    return me.roles.some((r) => (r ?? '').toLowerCase() === wanted);
+    return !!me?.roles?.includes((role ?? '').toLowerCase());
   }
 
   hasFormPermission(routeKeyOrUrl: string, action: string): boolean {
-    const me = this._me$.value;
-    if (!me) return false;
+    const me = this._me$.value; if (!me) return false;
     const key = (routeKeyOrUrl ?? '').toLowerCase();
-    const form = me.menu
-      ?.flatMap((m) => m.forms ?? [])
-      .find((f) => (f.url ?? '').toLowerCase() === key);
+    const form = me.menu?.flatMap(m => m.forms ?? []).find(f => (f.url ?? '').toLowerCase() === key);
     return !!form && (form.permissions ?? []).includes(action.toLowerCase());
   }
 
-  getMenu() {
-    return this._me$.value?.menu ?? [];
-  }
+  getMenu() { return this._me$.value?.menu ?? []; }
 }
