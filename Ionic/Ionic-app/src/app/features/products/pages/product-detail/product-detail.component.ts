@@ -1,85 +1,93 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal, computed, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
-import { IonicModule, ToastController, AlertController } from '@ionic/angular';
-
-// Swiper web components
-import { register } from 'swiper/element/bundle';
-register();
-
 import {
-  ProductSelectModel
-} from 'src/app/shared/models/product/product.model';
-import {
-  ReviewRegisterModel,
-  ReviewSelectModel,
-} from 'src/app/shared/models/product/product.model';
+  IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton,
+  IonItem, IonLabel, IonButton, IonIcon, IonBadge,
+  IonSpinner, IonList, IonTextarea, IonNote
+} from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { cart, star, starOutline, personCircle, location } from 'ionicons/icons';
+import { ActivatedRoute, Router } from '@angular/router';
+import { firstValueFrom, Observable, of } from 'rxjs';
 
-import { ProductService } from 'src/app/shared/services/product/product.service';
-import { ReviewService } from 'src/app/shared/services/review/review.service';
-import { AuthState } from 'src/app/core/services/auth/auth.state';
+import { ProductService } from '../../../../shared/services/product/product.service';
+import { ReviewService } from '../../../../shared/services/review/review.service';
+import { ProductSelectModel, ReviewSelectModel, ReviewRegisterModel } from '../../../../shared/models/product/product.model';
+
+import { AlertController, ToastController, ModalController } from '@ionic/angular';
 import { UserMeDto } from 'src/app/core/models/login.model';
+import { AuthState } from 'src/app/core/services/auth/auth.state';
 
-import { Observable, of, firstValueFrom } from 'rxjs';
+// Swiper Web Components
+import { register } from 'swiper/element/bundle';
 
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { ButtonComponent } from 'src/app/shared/components/button/button.component';
+// 🔗 Modal de Order (Ionic)
+import { OrderCreateModalComponent, OrderCreateDialogData } from '../../modals/order-create-dialog/order-create-dialog.component'; // ajusta la ruta real
 
 @Component({
   selector: 'app-product-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule, ButtonComponent],
+  imports: [
+    CommonModule, FormsModule,
+    IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton,
+    IonItem, IonLabel, IonButton, IonIcon, IonBadge,
+    IonSpinner, IonList, IonTextarea, IonNote
+  ],
   templateUrl: './product-detail.component.html',
   styleUrls: ['./product-detail.component.scss'],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class ProductDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private productService = inject(ProductService);
   private reviewService = inject(ReviewService);
   private authState = inject(AuthState);
 
-  private toastCtrl = inject(ToastController);
   private alertCtrl = inject(AlertController);
+  private toastCtrl = inject(ToastController);
+  private modalCtrl = inject(ModalController);
 
-  // Usuario actual
   me$: Observable<UserMeDto | null> = of(null);
 
-  // Producto
   productId!: number;
   product!: ProductSelectModel;
   loadingProduct = true;
 
-  // (opcional) por si quieres usar fuera del carrusel
-  selectedImage: string | null = null;
+  // Carrusel (atributos de Web Component)
+  slidesOpts = { slidesPerView: 1, spaceBetween: 12, pagination: true };
 
-  // Reseñas
+  selectedImage = signal<string | null>(null);
+
   reviews: ReviewSelectModel[] = [];
   loadingReviews = true;
-
-  // Nueva reseña
   newReview = '';
   selectedRating = 0;
+  hoverRating = 0;
   stars = Array(5).fill(0);
 
-  // Métricas
   averageRating = 0;
   distribution: { star: number; count: number; percentage: number }[] = [];
   totalReviews = 0;
 
-  Math = Math; // para usar Math en el template
+  Math = Math;
+  principalImage = computed(() =>
+    this.selectedImage() || (this.product?.images?.length ? this.product.images[0].imageUrl : '')
+  );
+
+  constructor() {
+    addIcons({ cart, star, starOutline, personCircle, location });
+    register(); // habilita <swiper-container> y <swiper-slide>
+  }
 
   ngOnInit(): void {
-    // Usuario actual
     this.authState.hydrateFromStorage();
     this.me$ = this.authState.loadMe();
 
-    // Id de producto
     this.productId = Number(this.route.snapshot.paramMap.get('id'));
     if (!this.productId) return;
 
-    // Carga de datos
     this.loadProduct();
     this.loadReviews();
   }
@@ -88,15 +96,13 @@ export class ProductDetailComponent implements OnInit {
     this.loadingProduct = true;
     this.productService.getById(this.productId).subscribe({
       next: (data) => {
-        const images = Array.isArray(data.images)
-          ? data.images.filter(i => !!i?.imageUrl)
-          : [];
-        this.product = { ...data, images };
-        this.selectedImage = this.product.images[0]?.imageUrl ?? null;
+        this.product = data;
         this.loadingProduct = false;
+        if (this.product?.images?.length) this.selectedImage.set(this.product.images[0].imageUrl);
       },
       error: () => {
         this.loadingProduct = false;
+        this.showToast('No se pudo cargar el producto', 'danger');
       },
     });
   }
@@ -111,52 +117,89 @@ export class ProductDetailComponent implements OnInit {
       },
       error: () => {
         this.loadingReviews = false;
+        this.showToast('No se pudieron cargar las reseñas', 'warning');
       },
     });
   }
 
-  onImgError(ev: Event): void {
-    (ev.target as HTMLImageElement).src = 'assets/icon/shapes.svg';
+  // === Pedido (relación con Order) ===
+  async openCreateOrder(): Promise<void> {
+    const me = await firstValueFrom(this.me$);
+    if (!me) {
+      const alert = await this.alertCtrl.create({
+        header: 'Inicia sesión',
+        message: 'Debes iniciar sesión para crear un pedido.',
+        buttons: [
+          { text: 'Cancelar', role: 'cancel' },
+          {
+            text: 'Ir a iniciar sesión',
+            handler: () => this.router.navigate(['/auth/login'], { queryParams: { returnUrl: this.router.url } }),
+          },
+        ],
+      });
+      await alert.present();
+      return;
+    }
+
+    if ((this.product?.stock ?? 0) <= 0) {
+      const alert = await this.alertCtrl.create({
+        header: 'Sin stock',
+        message: 'Este producto no tiene stock disponible.',
+        buttons: ['Entendido'],
+      });
+      await alert.present();
+      return;
+    }
+
+    // Abrimos el modal de Order (Ionic)
+    const modal = await this.modalCtrl.create({
+      component: OrderCreateModalComponent,
+      componentProps: {
+        data: {
+          productId: this.product.id,
+          productName: this.product.name,
+          unitPrice: this.product.price,
+          stock: this.product.stock,
+          shippingNote: this.product.shippingIncluded ? 'Envío gratis' : 'No incluye envío',
+        } as OrderCreateDialogData
+      },
+      breakpoints: [0, 0.7, 0.95],
+      initialBreakpoint: 0.7,
+      backdropDismiss: false
+    });
+    await modal.present();
+
+    const { data } = await modal.onWillDismiss<{ IsSuccess: boolean; OrderId: number }>();
+    if (data?.IsSuccess) {
+      this.showToast(`Pedido #${data.OrderId} creado`, 'success', 'bottom');
+    }
   }
 
-  setRating(value: number): void {
-    this.selectedRating = value;
+  onDetail(item: ProductSelectModel) {
+    this.router.navigate(['home/product/profile', item.producerCode]);
   }
 
-  async submitReview(): Promise<void> {
+  setRating(v: number) { this.selectedRating = v; }
+  onMouseEnter(r: number) { this.hoverRating = r; }
+  onMouseLeave() { this.hoverRating = 0; }
+
+  submitReview(): void {
     if (this.selectedRating < 1 || this.selectedRating > 5) return;
     const comment = this.newReview.trim();
     if (!comment) return;
 
-    const payload: ReviewRegisterModel = {
-      productId: this.productId,
-      rating: this.selectedRating,
-      comment,
-    };
+    const payload: ReviewRegisterModel = { productId: this.productId, rating: this.selectedRating, comment };
 
     this.reviewService.createReview(payload).subscribe({
-      next: async (created) => {
+      next: (created) => {
         this.reviews.unshift(created);
         this.newReview = '';
         this.selectedRating = 0;
         this.recomputeStats();
-
-        const toast = await this.toastCtrl.create({
-          message: 'Reseña publicada',
-          duration: 1500,
-          position: 'bottom',
-          color: 'success',
-        });
-        await toast.present();
+        this.showToast('Reseña publicada', 'success', 'bottom');
       },
-      error: async (err) => {
-        const toast = await this.toastCtrl.create({
-          message: err?.error?.message ?? 'No se pudo publicar la reseña',
-          duration: 2000,
-          position: 'top',
-          color: 'danger',
-        });
-        await toast.present();
+      error: (err) => {
+        this.showToast(err?.error?.message ?? 'No se pudo publicar la reseña', 'danger', 'top');
       },
     });
   }
@@ -168,32 +211,19 @@ export class ProductDetailComponent implements OnInit {
       buttons: [
         { text: 'Cancelar', role: 'cancel' },
         {
-          text: 'Eliminar',
-          role: 'destructive',
+          text: 'Eliminar', role: 'destructive',
           handler: async () => {
             try {
               await firstValueFrom(this.reviewService.deleteReview(reviewId));
               this.reviews = this.reviews.filter(r => r.id !== reviewId);
               this.recomputeStats();
-
-              const ok = await this.toastCtrl.create({
-                message: 'Reseña eliminada',
-                duration: 1500,
-                position: 'bottom',
-                color: 'success',
-              });
-              await ok.present();
-            } catch (err: any) {
-              const errAlert = await this.alertCtrl.create({
-                header: 'No se pudo eliminar la reseña',
-                message: err?.error?.message ?? 'Inténtalo de nuevo',
-                buttons: ['OK'],
-              });
-              await errAlert.present();
+              this.showToast('Reseña eliminada', 'success', 'bottom');
+            } catch (e: any) {
+              this.showToast(e?.error?.message ?? 'No se pudo eliminar la reseña', 'danger');
             }
-          },
-        },
-      ],
+          }
+        }
+      ]
     });
     await alert.present();
   }
@@ -207,18 +237,27 @@ export class ProductDetailComponent implements OnInit {
       this.distribution = [5, 4, 3, 2, 1].map(star => ({ star, count: 0, percentage: 0 }));
       return;
     }
-
     const sum = this.reviews.reduce((acc, r) => acc + (r.rating || 0), 0);
     this.averageRating = sum / n;
 
-    const counts: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+    const counts: Record<number, number> = { 1:0, 2:0, 3:0, 4:0, 5:0 };
     for (const r of this.reviews) counts[r.rating] = (counts[r.rating] ?? 0) + 1;
 
-    this.distribution = [5, 4, 3, 2, 1].map(star => {
+    this.distribution = [5,4,3,2,1].map(star => {
       const count = counts[star] ?? 0;
-      return { star, count, percentage: (count / n) * 100 };
+      const percentage = (count / n) * 100;
+      return { star, count, percentage };
     });
   }
 
   trackByReview = (_: number, r: ReviewSelectModel) => r.id;
+
+  private async showToast(
+    message: string,
+    color: 'success' | 'warning' | 'danger' | 'medium' = 'medium',
+    position: 'top' | 'bottom' | 'middle' = 'top'
+  ) {
+    const t = await this.toastCtrl.create({ message, duration: 1600, position, color });
+    await t.present();
+  }
 }
