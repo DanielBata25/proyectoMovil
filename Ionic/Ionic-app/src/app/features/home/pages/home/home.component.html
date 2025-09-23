@@ -1,10 +1,12 @@
-<!-- home.component.html -->
+﻿<!-- home.component.html -->
 <ion-content [fullscreen]="true" class="home-content">
-  <app-carrusel></app-carrusel>
+  <div class="home-scroll">
+    <app-carrusel></app-carrusel>
 
-  <app-container-card
-    [title]="'Últimos Agregados'"
-    [showHeader]="true"
-    [products]="products">
-  </app-container-card>
+    <app-container-card
+      [title]="'Ultimos Agregados'"
+      [showHeader]="true"
+      [products]="products">
+    </app-container-card>
+  </div>
 </ion-content>

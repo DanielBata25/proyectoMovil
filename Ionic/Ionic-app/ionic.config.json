@@ -1,7 +1,12 @@
 {
-  "name": "Ionic-app",
-  "integrations": {
-    "capacitor": {}
-  },
-  "type": "angular-standalone"
+    "name": "Ionic-app",
+    "integrations": {
+        "capacitor": {}
+    },
+    "type": "angular-standalone",
+    "serve": {
+        "port": 8100,
+        "host": "localhost",
+        "ssl": false
+    }
 }

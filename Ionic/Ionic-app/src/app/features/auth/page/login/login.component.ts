@@ -10,14 +10,14 @@ import {
   IonItem, IonLabel, IonInput, IonNote,
   IonButton, IonIcon
 } from '@ionic/angular/standalone';
-import { LoadingController, ToastController } from '@ionic/angular';
+import { LoadingController, ToastController, NavController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { eye, eyeOff } from 'ionicons/icons';
 
 // Servicios propios
 import { AuthService } from 'src/app/core/services/auth/auth.service';
 import { AuthState } from 'src/app/core/services/auth/auth.state';
-import { RouterLink, Router } from '@angular/router';
+import { RouterLink } from '@angular/router';
 
 @Component({
   standalone: true,
@@ -36,7 +36,7 @@ export class LoginComponent {
   private fb = inject(FormBuilder);
   private auth = inject(AuthService);
   private authState = inject(AuthState);
-  private router = inject(Router);
+  private navCtrl = inject(NavController);
   private loadingCtrl = inject(LoadingController);
   private toastCtrl = inject(ToastController);
 
@@ -92,8 +92,8 @@ export class LoginComponent {
           await this.toast('No se pudo cargar tu sesión. Intenta nuevamente.', 'danger');
           return;
         }
-        await this.toast('Inicio de sesión exitoso.', 'success');
-        this.router.navigateByUrl('/home/inicio');
+        await this.toast('Inicio de sesi�n exitoso.', 'success');
+        await this.navCtrl.navigateRoot('/home/inicio');
       },
       error: async (err) => {
         const msg = err?.status === 401
@@ -104,3 +104,5 @@ export class LoginComponent {
     });
   }
 }
+
+
