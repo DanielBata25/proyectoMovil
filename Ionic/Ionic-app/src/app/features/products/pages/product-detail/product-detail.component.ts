@@ -10,6 +10,7 @@ import { addIcons } from 'ionicons';
 import { cart, star, starOutline, personCircle, location } from 'ionicons/icons';
 import { ActivatedRoute, Router } from '@angular/router';
 import { firstValueFrom, Observable, of } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 
 import { ProductService } from '../../../../shared/services/product/product.service';
 import { ReviewService } from '../../../../shared/services/review/review.service';
@@ -22,7 +23,7 @@ import { AuthState } from 'src/app/core/services/auth/auth.state';
 // Swiper Web Components
 import { register } from 'swiper/element/bundle';
 
-// 🔗 Modal de Order (Ionic)
+// Modal de Order (Ionic)
 import { OrderCreateModalComponent, OrderCreateDialogData } from '../../modals/order-create-dialog/order-create-dialog.component'; // ajusta la ruta real
 
 @Component({
@@ -31,12 +32,13 @@ import { OrderCreateModalComponent, OrderCreateDialogData } from '../../modals/o
   imports: [
     CommonModule, FormsModule,
     IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton,
-    IonItem, IonLabel, IonButton, IonIcon, IonBadge,
-    IonSpinner, IonList, IonTextarea, IonNote
-  ],
+    IonButton, IonIcon, IonBadge,
+    IonSpinner, IonTextarea, IonNote
+],
   templateUrl: './product-detail.component.html',
   styleUrls: ['./product-detail.component.scss'],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  providers: [AlertController, ToastController, ModalController],
 })
 export class ProductDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
@@ -65,7 +67,7 @@ export class ProductDetailComponent implements OnInit {
   newReview = '';
   selectedRating = 0;
   hoverRating = 0;
-  stars = Array(5).fill(0);
+  readonly starScale = [1, 2, 3, 4, 5] as const;
 
   averageRating = 0;
   distribution: { star: number; count: number; percentage: number }[] = [];
@@ -76,13 +78,15 @@ export class ProductDetailComponent implements OnInit {
     this.selectedImage() || (this.product?.images?.length ? this.product.images[0].imageUrl : '')
   );
 
+  sendingReview = false;
+  private readonly ratingLabels = ['Muy mala', 'Mala', 'Regular', 'Buena', 'Excelente'] as const;
   constructor() {
     addIcons({ cart, star, starOutline, personCircle, location });
     register(); // habilita <swiper-container> y <swiper-slide>
   }
 
   ngOnInit(): void {
-    this.authState.hydrateFromStorage();
+    void this.authState.hydrateFromStorage();
     this.me$ = this.authState.loadMe();
 
     this.productId = Number(this.route.snapshot.paramMap.get('id'));
@@ -117,22 +121,22 @@ export class ProductDetailComponent implements OnInit {
       },
       error: () => {
         this.loadingReviews = false;
-        this.showToast('No se pudieron cargar las reseñas', 'warning');
+        this.showToast('No se pudieron cargar las resenas', 'warning');
       },
     });
   }
 
-  // === Pedido (relación con Order) ===
+  // === Pedido (relacion con Order) ===
   async openCreateOrder(): Promise<void> {
     const me = await firstValueFrom(this.me$);
     if (!me) {
       const alert = await this.alertCtrl.create({
-        header: 'Inicia sesión',
-        message: 'Debes iniciar sesión para crear un pedido.',
+        header: 'Inicia sesion',
+        message: 'Debes iniciar sesion para crear un pedido.',
         buttons: [
           { text: 'Cancelar', role: 'cancel' },
           {
-            text: 'Ir a iniciar sesión',
+            text: 'Ir a iniciar sesion',
             handler: () => this.router.navigate(['/auth/login'], { queryParams: { returnUrl: this.router.url } }),
           },
         ],
@@ -160,7 +164,7 @@ export class ProductDetailComponent implements OnInit {
           productName: this.product.name,
           unitPrice: this.product.price,
           stock: this.product.stock,
-          shippingNote: this.product.shippingIncluded ? 'Envío gratis' : 'No incluye envío',
+          shippingNote: this.product.shippingIncluded ? 'Envio gratis' : 'No incluye envio',
         } as OrderCreateDialogData
       },
       breakpoints: [0, 0.7, 0.95],
@@ -184,30 +188,38 @@ export class ProductDetailComponent implements OnInit {
   onMouseLeave() { this.hoverRating = 0; }
 
   submitReview(): void {
+    if (this.sendingReview) return;
     if (this.selectedRating < 1 || this.selectedRating > 5) return;
     const comment = this.newReview.trim();
     if (!comment) return;
 
     const payload: ReviewRegisterModel = { productId: this.productId, rating: this.selectedRating, comment };
+    this.sendingReview = true;
 
-    this.reviewService.createReview(payload).subscribe({
+    this.reviewService.createReview(payload).pipe(
+      finalize(() => { this.sendingReview = false; })
+    ).subscribe({
       next: (created) => {
-        this.reviews.unshift(created);
+        if (created) {
+          this.reviews.unshift(created);
+          this.recomputeStats();
+        } else {
+          this.loadReviews();
+        }
         this.newReview = '';
         this.selectedRating = 0;
-        this.recomputeStats();
-        this.showToast('Reseña publicada', 'success', 'bottom');
+        this.showToast('Resena publicada', 'success', 'bottom');
       },
       error: (err) => {
-        this.showToast(err?.error?.message ?? 'No se pudo publicar la reseña', 'danger', 'top');
+        this.showToast(err?.error?.message ?? 'No se pudo publicar la resena', 'danger', 'top');
       },
     });
   }
 
   async deleteReview(reviewId: number): Promise<void> {
     const alert = await this.alertCtrl.create({
-      header: '¿Eliminar reseña?',
-      message: 'Esta acción no se puede deshacer.',
+      header: 'Eliminar resena?',
+      message: 'Esta accion no se puede deshacer.',
       buttons: [
         { text: 'Cancelar', role: 'cancel' },
         {
@@ -217,9 +229,9 @@ export class ProductDetailComponent implements OnInit {
               await firstValueFrom(this.reviewService.deleteReview(reviewId));
               this.reviews = this.reviews.filter(r => r.id !== reviewId);
               this.recomputeStats();
-              this.showToast('Reseña eliminada', 'success', 'bottom');
+              this.showToast('Resena eliminada', 'success', 'bottom');
             } catch (e: any) {
-              this.showToast(e?.error?.message ?? 'No se pudo eliminar la reseña', 'danger');
+              this.showToast(e?.error?.message ?? 'No se pudo eliminar la resena', 'danger');
             }
           }
         }
@@ -251,6 +263,11 @@ export class ProductDetailComponent implements OnInit {
   }
 
   trackByReview = (_: number, r: ReviewSelectModel) => r.id;
+
+  get ratingLabel(): string {
+    const idx = (this.hoverRating || this.selectedRating) - 1;
+    return idx >= 0 ? this.ratingLabels[idx] : '';
+  }
 
   private async showToast(
     message: string,

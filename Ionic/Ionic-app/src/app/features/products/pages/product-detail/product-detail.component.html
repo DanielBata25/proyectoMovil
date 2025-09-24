@@ -6,202 +6,181 @@
     <ion-title>Detalle del producto</ion-title>
   </ion-toolbar>
 </ion-header>
-
 <ion-content [fullscreen]="true" class="page-bg">
-  <!-- Loader inicial -->
-  <div class="center" *ngIf="loadingProduct">
-    <ion-spinner name="crescent"></ion-spinner>
-  </div>
-
-  <ng-container *ngIf="!loadingProduct && product">
-    <div class="body-pad">
-      <!-- Carrusel (Swiper Web Components) -->
-      <swiper-container
-        class="hero-swiper"
-        [attr.slides-per-view]="slidesOpts.slidesPerView"
-        [attr.space-between]="slidesOpts.spaceBetween"
-        [attr.pagination]="slidesOpts.pagination"
-        *ngIf="product.images?.length; else noImg"
-      >
-        <swiper-slide *ngFor="let img of product.images">
-          <img [src]="img.imageUrl" alt="producto" class="hero-img" />
-        </swiper-slide>
-      </swiper-container>
-      <ng-template #noImg>
-        <div class="no-img">Sin imágenes</div>
-      </ng-template>
-
-      <!-- Título y productor -->
-      <div class="title-box">
-        <h2 class="title">{{ product.name }}</h2>
-        <div class="producer">
-          <ion-icon name="person-circle"></ion-icon>
-          <ion-button fill="clear" size="small" (click)="onDetail(product)">
-            {{ product.personName }}
-          </ion-button>
-        </div>
+  <div class="detail-wrapper">
+    <div class="detail-inner">
+      <div class="center" *ngIf="loadingProduct">
+        <ion-spinner name="crescent"></ion-spinner>
       </div>
 
-      <!-- Datos claves -->
-      <ion-list class="fact-list">
-        <ion-item lines="none">
-          <ion-label>
-            <div class="label">Finca</div>
-            <div class="value">{{ product.farmName }}</div>
-          </ion-label>
-        </ion-item>
+      <section class="detail-card" *ngIf="!loadingProduct && product">
+        <h1 class="page-title">Detalle del producto</h1>
 
-        <ion-item lines="none">
-          <ion-label>
-            <div class="label">Categoría</div>
-            <div class="value">{{ product.categoryName }}</div>
-          </ion-label>
-        </ion-item>
-
-        <ion-item lines="none">
-          <ion-label>
-            <div class="label">Tipo de unidad</div>
-            <div class="value">{{ product.unit }}</div>
-          </ion-label>
-        </ion-item>
-
-        <ion-item lines="none">
-          <ion-label>
-            <div class="label">Precio</div>
-            <div class="value strong">
-              {{ product.price | currency:'COP':'symbol' }}
-            </div>
-          </ion-label>
-          <ion-badge *ngIf="product.shippingIncluded" slot="end" color="success">Envío gratis</ion-badge>
-          <ion-badge *ngIf="!product.shippingIncluded" slot="end" color="medium">No incluye envío</ion-badge>
-        </ion-item>
-
-        <ion-item lines="none">
-          <ion-icon name="location" slot="start"></ion-icon>
-          <ion-label>
-            <div class="label">Ubicación</div>
-            <div class="value">
-              {{ product.cityName }}, {{ product.departmentName }}
-            </div>
-          </ion-label>
-        </ion-item>
-      </ion-list>
-
-      <!-- CTA pedido (abre modal de Order) -->
-      <div class="cta">
-        <ion-button expand="block" size="large" (click)="openCreateOrder()"
-          [disabled]="loadingProduct || (product.stock ?? 0) <= 0">
-          <ion-icon name="cart" slot="start"></ion-icon>
-          Hacer pedido
-        </ion-button>
-        <ion-note class="stock" *ngIf="product.stock !== null && product.stock !== undefined">
-          Disponible: {{ product.stock }} {{ product.unit || '' }}
-        </ion-note>
-      </div>
-
-      <!-- Descripción -->
-      <div class="section">
-        <h3 class="section-title">Descripción</h3>
-        <p class="text">{{ product.description }}</p>
-      </div>
-
-      <!-- Más información -->
-      <div class="section soft-box">
-        <h3 class="section-title">Más información</h3>
-        <div class="info-row">
-          <div class="label">Información de producción</div>
-          <div class="value">{{ product.production }}</div>
-        </div>
-      </div>
-
-      <!-- Calificación -->
-      <div class="section">
-        <h3 class="section-title">Calificación</h3>
-
-        <div class="rating-head">
-          <div class="avg">{{ averageRating | number:'1.1-1' }}</div>
-          <div class="stars">
-            <ion-icon *ngFor="let s of [1,2,3,4,5]"
-              [name]="s <= Math.round(averageRating) ? 'star' : 'star-outline'">
-            </ion-icon>
-            <div class="muted">{{ totalReviews }} reseñas</div>
-          </div>
-        </div>
-
-        <div class="dist" *ngFor="let item of distribution">
-          <div class="dist-label">{{ item.star }}</div>
-          <div class="bar">
-            <div class="bar-inner" [style.width.%]="item.percentage"></div>
-          </div>
-          <div class="dist-val">{{ item.percentage | number:'1.0-0' }}%</div>
-        </div>
-      </div>
-
-      <!-- Reseñas -->
-      <div class="section">
-        <h3 class="section-title">Reseñas</h3>
-
-        <ng-container *ngIf="me$ | async as me; else mustLogin">
-          <div class="review-editor">
-            <div class="star-pick">
-              <ion-button fill="clear" size="small"
-                *ngFor="let _ of stars; let i = index"
-                (mouseenter)="onMouseEnter(i+1)"
-                (mouseleave)="onMouseLeave()"
-                (click)="setRating(i+1)">
-                <ion-icon [name]=" (i+1) <= (hoverRating || selectedRating) ? 'star' : 'star-outline' "></ion-icon>
-              </ion-button>
-            </div>
-
-            <ion-textarea
-              [(ngModel)]="newReview"
-              placeholder="Escribe tu reseña"
-              autoGrow="true">
-            </ion-textarea>
-
-            <ion-button expand="block" class="mt-8"
-              (click)="submitReview()"
-              [disabled]="selectedRating === 0 || !newReview.trim()">
-              Enviar reseña
-            </ion-button>
-          </div>
-        </ng-container>
-
-        <ng-template #mustLogin>
-          <div class="muted">Inicia sesión para dejar una reseña.</div>
+        <swiper-container class="hero-swiper" [attr.slides-per-view]="slidesOpts.slidesPerView"
+          [attr.space-between]="slidesOpts.spaceBetween" [attr.pagination]="slidesOpts.pagination"
+          *ngIf="product.images?.length; else noImg">
+          <swiper-slide *ngFor="let img of product.images">
+            <img [src]="img.imageUrl" alt="producto" class="hero-img" />
+          </swiper-slide>
+        </swiper-container>
+        <ng-template #noImg>
+          <div class="no-img">Sin imagenes</div>
         </ng-template>
 
-        <div *ngIf="!loadingReviews; else loadingTpl">
-          <div class="reviews" *ngIf="reviews.length; else emptyTpl">
-            <div class="review-item" *ngFor="let r of reviews; trackBy: trackByReview">
-              <div class="review-head">
-                <div class="who">
-                  <div class="name">{{ r.userName }}</div>
-                  <div class="date">{{ r.createAt | date:'mediumDate':'':'es-CO' }}</div>
-                  <div class="mini-stars">
-                    <ion-icon *ngFor="let s of [1,2,3,4,5]"
-                      [name]="s <= r.rating ? 'star' : 'star-outline'"></ion-icon>
-                  </div>
+        <div class="block">
+          <h2 class="title">{{ product.name }}</h2>
+          <div class="producer">
+            <ion-icon name="person-circle" class="pr-icon"></ion-icon>
+            <button class="link" (click)="onDetail(product)">{{ product.personName }}</button>
+          </div>
+        </div>
+
+        <div class="block facts">
+          <div class="pair">
+            <div class="lbl">Finca</div>
+            <div class="val">{{ product.farmName }}</div>
+          </div>
+          <div class="pair">
+            <div class="lbl">Categoria</div>
+            <div class="val">{{ product.categoryName }}</div>
+          </div>
+          <div class="pair">
+            <div class="lbl">Tipo de unidad</div>
+            <div class="val">{{ product.unit }}</div>
+          </div>
+          <div class="pair price-line">
+            <div>
+              <div class="lbl">Precio</div>
+              <div class="val strong">{{ product.price | currency:'COP':'symbol' }}</div>
+            </div>
+            <ion-badge *ngIf="product.shippingIncluded" color="success" class="chip">Envio gratis</ion-badge>
+            <ion-badge *ngIf="!product.shippingIncluded" color="medium" class="chip">No incluye envio</ion-badge>
+          </div>
+          <div class="pair with-icon">
+            <ion-icon name="location" class="ic"></ion-icon>
+            <div class="lbl">Ubicacion</div>
+            <div class="val">{{ product.cityName }}, {{ product.departmentName }}</div>
+          </div>
+        </div>
+
+        <div class="block cta">
+          <ion-button expand="block" size="large" (click)="openCreateOrder()"
+            [disabled]="loadingProduct || (product.stock ?? 0) <= 0" class="btn-order">
+            <ion-icon name="cart" slot="start"></ion-icon>
+            Anadir al pedido
+          </ion-button>
+          <ion-note class="stock" *ngIf="product.stock !== null && product.stock !== undefined">
+            Disponible: {{ product.stock }} {{ product.unit || '' }}
+          </ion-note>
+        </div>
+
+        <div class="block">
+          <h3 class="h-title">Descripcion</h3>
+          <p class="body-text">{{ product.description }}</p>
+        </div>
+
+        <div class="block soft">
+          <h3 class="h-title">Mas informacion</h3>
+          <div class="pair">
+            <div class="lbl">Produccion</div>
+            <div class="val">{{ product.production }}</div>
+          </div>
+        </div>
+
+        <div class="block">
+          <h3 class="h-title">Resenas</h3>
+
+          <div class="rating-panel">
+            <div class="left">
+              <div class="score">{{ averageRating | number:'1.1-1' }}</div>
+              <div class="star-row">
+                <ion-icon *ngFor="let s of starScale"
+                  [name]="s <= Math.round(averageRating) ? 'star' : 'star-outline'"></ion-icon>
+              </div>
+              <div class="muted small">{{ totalReviews }} resenas</div>
+            </div>
+            <div class="right">
+              <div class="dist-row" *ngFor="let item of distribution">
+                <span class="d-label">{{ item.star }}</span>
+                <div class="prog">
+                  <div class="prog-in" [style.width.%]="item.percentage"></div>
                 </div>
-                <ion-button fill="clear" color="danger" size="small"
-                  *ngIf="(me$ | async)?.id === r.userId"
-                  (click)="deleteReview(r.id)">
-                  Eliminar
+                <span class="d-val">{{ item.percentage | number:'1.0-0' }}%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="block">
+          <h3 class="h-title">Escribir una resena</h3>
+
+          <ng-container *ngIf="me$ | async as me">
+            <div *ngIf="me; else mustLogin" class="review-editor">
+              <div class="star-picker">
+                <button type="button" class="star-btn" *ngFor="let star of starScale"
+                  [class.active]="star <= (hoverRating || selectedRating)" (mouseenter)="onMouseEnter(star)"
+                  (mouseleave)="onMouseLeave()" (click)="setRating(star)">
+                  <ion-icon [name]="star <= (hoverRating || selectedRating) ? 'star' : 'star-outline'"></ion-icon>
+                </button>
+                <span class="star-hint" *ngIf="ratingLabel">{{ ratingLabel }}</span>
+              </div>
+
+              <ion-textarea [(ngModel)]="newReview" placeholder="Comparte tu experiencia" autoGrow="true"
+                class="review-textarea">
+              </ion-textarea>
+
+              <div class="row-end">
+                <ion-button class="btn-send" (click)="submitReview()"
+                  [disabled]="selectedRating === 0 || !newReview.trim() || (sendingReview)">
+                  <ion-spinner slot="start" name="crescent" *ngIf="sendingReview"></ion-spinner>
+                  Enviar resena
                 </ion-button>
               </div>
-              <p class="text">{{ r.comment }}</p>
             </div>
-          </div>
+          </ng-container>
+          <ng-template #mustLogin>
+            <div class="muted">Inicia sesion para dejar una resena.</div>
+          </ng-template>
         </div>
 
-        <ng-template #loadingTpl>
-          <div class="muted">Cargando reseñas…</div>
-        </ng-template>
+        <div class="block">
+          <h3 class="h-title">Comentarios</h3>
 
-        <ng-template #emptyTpl>
-          <div class="muted">Aún no hay reseñas para este producto.</div>
-        </ng-template>
-      </div>
+          <div *ngIf="!loadingReviews; else loadingTpl">
+            <div class="reviews" *ngIf="reviews.length; else emptyTpl">
+              <div class="r-item" *ngFor="let r of reviews; trackBy: trackByReview">
+                <div class="r-head">
+                  <div class="who">
+                    <div class="avatar">{{ r.userName?.[0] || 'U' }}</div>
+                    <div>
+                      <div class="name">{{ r.userName }}</div>
+                      <div class="date muted small">{{ r.createAt | date:'mediumDate':'':'es-CO' }}</div>
+                      <div class="mini-stars">
+                        <ion-icon *ngFor="let s of starScale"
+                          [name]="s <= r.rating ? 'star' : 'star-outline'"></ion-icon>
+                      </div>
+                    </div>
+                  </div>
+                  <ion-button fill="clear" color="danger" size="small" *ngIf="(me$ | async)?.id === r.userId"
+                    (click)="deleteReview(r.id)">
+                    Eliminar
+                  </ion-button>
+                </div>
+                <p class="body-text">{{ r.comment }}</p>
+              </div>
+            </div>
+          </div>
+
+          <ng-template #loadingTpl>
+            <div class="muted">Cargando resenas...</div>
+          </ng-template>
+          <ng-template #emptyTpl>
+            <div class="muted">Aun no hay resenas para este producto.</div>
+          </ng-template>
+        </div>
+
+        <div class="bottom-space"></div>
+      </section>
     </div>
-  </ng-container>
+  </div>
 </ion-content>

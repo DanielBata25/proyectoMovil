@@ -1,11 +1,21 @@
 import { Component, Input, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+  AbstractControl,
+  ValidationErrors,
+  ValidatorFn
+} from '@angular/forms';
+
 import {
   IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonIcon, IonContent, IonItem, IonLabel, IonInput,
-  IonSelect, IonSelectOption, IonTextarea, IonNote, IonFooter, IonList, IonBadge, IonGrid, IonRow, IonCol
+  IonSelect, IonSelectOption, IonTextarea, IonNote, IonGrid, IonRow, IonCol
 } from '@ionic/angular/standalone';
 import { ModalController, ToastController, AlertController, LoadingController } from '@ionic/angular';
+
 import { addIcons } from 'ionicons';
 import { close, checkmark, chevronBack, chevronForward, cloudUpload, trash } from 'ionicons/icons';
 
@@ -13,13 +23,13 @@ import { DepartmentModel, CityModel } from '../../../../shared/models/location/l
 import { LocationService } from '../../../../shared/services/location/location.service';
 import { OrderService } from '../../services/order/order.service';
 
-// === Props que recibirás desde el padre (mismo shape que tu web) ===
+// === Props desde el padre ===
 export interface OrderCreateDialogData {
   productId: number;
   productName: string;
   unitPrice: number;
   stock: number;
-  shippingNote: string; // 'Envío gratis' | 'No incluye envío'
+  shippingNote: string; // 'Envio gratis' | 'No incluye envio'
 }
 
 // ===== Validadores utilitarios =====
@@ -42,7 +52,7 @@ const requiredTrimmed = (label: string): ValidatorFn => (c: AbstractControl): Va
 const phoneBasic = (label: string): ValidatorFn => (c: AbstractControl): ValidationErrors | null => {
   const v = (c.value ?? '').toString().trim();
   if (!v) return { required: `${label} es obligatorio.` };
-  if (!/^[0-9 +()\-]{7,20}$/.test(v)) return { pattern: `${label} no es válido.` };
+  if (!/^[0-9 +()\-]{7,20}$/.test(v)) return { pattern: `${label} no es valido.` };
   return null;
 };
 
@@ -54,12 +64,12 @@ const phoneBasic = (label: string): ValidatorFn => (c: AbstractControl): Validat
     IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonIcon,
     IonContent, IonItem, IonLabel, IonInput, IonSelect, IonSelectOption, IonTextarea,
     IonNote, IonGrid, IonRow, IonCol
-],
+  ],
   templateUrl: './order-create-dialog.component.html',
   styleUrls: ['./order-create-dialog.component.scss'],
 })
 export class OrderCreateModalComponent implements OnInit {
-  // ⬇️ Datos que llegan del padre vía componentProps
+  // - Datos que llegan del padre via componentProps
   @Input() data!: OrderCreateDialogData;
 
   // Inyecciones
@@ -82,7 +92,7 @@ export class OrderCreateModalComponent implements OnInit {
   deliveryGroup!: FormGroup;
   paymentGroup!: FormGroup;
 
-  // Catálogos
+  // Catalogos
   departments: DepartmentModel[] = [];
   cities: CityModel[] = [];
 
@@ -107,25 +117,26 @@ export class OrderCreateModalComponent implements OnInit {
 
     this.deliveryGroup = this.fb.group({
       recipientName: ['', [requiredTrimmed('Nombre del destinatario')]],
-      contactPhone: ['', [phoneBasic('Teléfono de contacto')]],
+      contactPhone: ['', [phoneBasic('Telefono de contacto')]],
       departmentId: [null, [Validators.required]],
       cityId: [null, [Validators.required, positiveInt('Ciudad')]],
-      addressLine1: ['', [requiredTrimmed('Dirección')]],
+      addressLine1: ['', [requiredTrimmed('Direccion')]],
       addressLine2: [''],
       additionalNotes: [''],
     });
 
     this.paymentGroup = this.fb.group({
-      paymentImage: [null, [Validators.required]],
+      paymentImage: [null, [Validators.required]], // marcador para el paso 3
     });
   }
 
-  // ====== Catálogos ======
+  // ====== Catalogos ======
   private loadDepartments(): void {
     this.locationSrv.getDepartment().subscribe({
       next: (deps) => (this.departments = deps ?? []),
     });
   }
+
   onDepartmentChange(depId: number): void {
     this.deliveryGroup.patchValue({ cityId: null });
     this.cities = [];
@@ -146,16 +157,48 @@ export class OrderCreateModalComponent implements OnInit {
     return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(n);
   }
 
-  // ====== Navegación de pasos ======
+  // ====== Navegacion de pasos ======
   canNextFromStep1(): boolean { return this.productGroup.valid; }
   canNextFromStep2(): boolean { return this.deliveryGroup.valid; }
+
   goNext(): void {
-    if (this.currentStep === 1 && !this.canNextFromStep1()) { this.productGroup.markAllAsTouched(); return; }
-    if (this.currentStep === 2 && !this.canNextFromStep2()) { this.deliveryGroup.markAllAsTouched(); return; }
+    if (this.currentStep === 1 && !this.canNextFromStep1()) {
+      this.productGroup.markAllAsTouched();
+      return;
+    }
+    if (this.currentStep === 2 && !this.canNextFromStep2()) {
+      this.deliveryGroup.markAllAsTouched();
+      return;
+    }
     if (this.currentStep < 3) this.currentStep++;
   }
-  goPrev(): void { if (this.currentStep > 1) this.currentStep--; }
-  goTo(step: number): void { this.currentStep = step; }
+
+  goPrev(): void {
+    if (this.currentStep > 1) this.currentStep--;
+  }
+
+goTo(step: number, bypassValidation = false): void {
+  if (step === this.currentStep) return;
+  if (step <= 0 || step > 3) return;
+
+  if (!bypassValidation) {
+    // Comportamiento estricto (como antes)
+    if (step >= 2 && !this.canNextFromStep1()) {
+      this.productGroup.markAllAsTouched();
+      return;
+    }
+    if (step === 3 && !this.canNextFromStep2()) {
+      this.deliveryGroup.markAllAsTouched();
+      return;
+    }
+  } else {
+    // Navegación libre por tabs (no permite enviar si falta algo)
+    if (!this.canNextFromStep1()) this.productGroup.markAllAsTouched();
+    if (step >= 3 && !this.canNextFromStep2()) this.deliveryGroup.markAllAsTouched();
+  }
+
+  this.currentStep = step;
+}
 
   // ====== Archivo ======
   onFilePicked(ev: Event): void {
@@ -163,15 +206,23 @@ export class OrderCreateModalComponent implements OnInit {
     const file = input.files && input.files[0];
     if (!file) return;
 
-    if (!file.type.startsWith('image/')) { this.toast('El comprobante debe ser una imagen (JPG/PNG/WEBP).', 'warning'); return; }
-    if (file.size > this.MAX_FILE_BYTES) { this.toast(`La imagen excede ${this.MAX_FILE_MB} MB.`, 'warning'); return; }
+    if (!file.type.startsWith('image/')) {
+      this.toast('El comprobante debe ser una imagen (JPG/PNG/WEBP).', 'warning');
+      return;
+    }
+    if (file.size > this.MAX_FILE_BYTES) {
+      this.toast(`La imagen excede ${this.MAX_FILE_MB} MB.`, 'warning');
+      return;
+    }
 
     this.paymentFile = file;
     this.paymentGroup.get('paymentImage')!.setValue('ok');
+
     const reader = new FileReader();
     reader.onload = e => this.paymentPreview = e.target?.result as string;
     reader.readAsDataURL(file);
   }
+
   removeFile(): void {
     this.paymentFile = undefined;
     this.paymentPreview = undefined;
@@ -191,7 +242,6 @@ export class OrderCreateModalComponent implements OnInit {
     const qty = Number(this.productGroup.value.quantityRequested);
     const d = this.deliveryGroup.value;
 
-    // Mantengo el DTO como en tu servicio actual (archivo incluido)
     const dto = {
       productId: this.data.productId,
       quantityRequested: qty,
@@ -201,10 +251,10 @@ export class OrderCreateModalComponent implements OnInit {
       addressLine2: (d.addressLine2 ?? '').trim() || undefined,
       cityId: Number(d.cityId),
       additionalNotes: (d.additionalNotes ?? '').trim() || undefined,
-      paymentImage: this.paymentFile, // <- archivo
+      paymentImage: this.paymentFile!, // <- archivo
     };
 
-    const loading = await this.loadingCtrl.create({ message: 'Creando pedido…' });
+    const loading = await this.loadingCtrl.create({ message: 'Creando pedido...' });
     await loading.present();
     this.isSubmitting = true;
 
@@ -213,7 +263,6 @@ export class OrderCreateModalComponent implements OnInit {
         this.isSubmitting = false;
         await loading.dismiss();
 
-        // Soporto ambas variantes (isSuccess o IsSuccess)
         const ok = resp?.IsSuccess ?? resp?.isSuccess ?? false;
         const orderId = resp?.OrderId ?? resp?.orderId;
 

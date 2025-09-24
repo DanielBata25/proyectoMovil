@@ -5,67 +5,174 @@
   --line: #dfe3e8;
 }
 
-.content-pad { padding: 12px; }
+.content-pad {
+  padding: 16px 12px 24px;
+  background: #f4f7f5;
+}
 
-/* Steps */
 .steps {
-  display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap;
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+
   .step {
-    padding: 6px 10px; border-radius: 10px; border: 1px solid var(--line);
-    background: #fff; font-size: 13px;
+    padding: 6px 12px;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: #fff;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
   }
-  .active { background: #e9f7ef; border-color: #c7ebd2; font-weight: 600; }
+
+  .active {
+    background: #e9f7ef;
+    border-color: #c7ebd2;
+    font-weight: 600;
+  }
 }
 
 .card {
-  background: #fff; border-radius: 12px; padding: 12px;
-  box-shadow: 0 2px 10px rgba(0,0,0,.04);
+  background: #fff;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 12px 28px rgba(15, 56, 28, 0.08);
 }
 
-.info h3 { margin: 0 0 .25rem; color: var(--text-strong); font-weight: 700; }
-.info span { color: var(--text-muted); }
+.info h3 {
+  margin: 0 0 4px;
+  color: var(--text-strong);
+  font-weight: 700;
+}
 
-.product-summary { border: 1px solid var(--line); border-radius: 10px; padding: 12px; margin: 8px 0 14px; }
-.label { font-size: 12px; color: var(--text-muted); }
-.value { font-size: 14px; }
-.value.strong { font-weight: 600; color: var(--text-strong); }
+.info span {
+  color: var(--text-muted);
+  font-size: 13px;
+}
 
-.row-2 { margin-top: 6px; }
+.product-summary {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 12px;
+  margin: 12px 0 18px;
+  background: #fbfdfb;
+}
+
+.label {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.value {
+  font-size: 14px;
+}
+
+.value.strong {
+  font-weight: 600;
+  color: var(--text-strong);
+}
+
+.row-2 {
+  margin-top: 8px;
+}
+
+.form-item {
+  --background: #f6faf7;
+  --padding-start: 12px;
+  --inner-padding-end: 12px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+}
+
+.form-item ion-label {
+  color: var(--text-muted);
+}
 
 .totals-box {
   border: 1px dashed var(--line);
-  border-radius: 10px;
-  padding: 12px;
-  display: flex; flex-direction: column; gap: 4px;
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: #fefefe;
 }
-.totals-box .total { font-weight: 700; font-size: 18px; color: var(--text-strong); }
-.muted { color: var(--text-muted); }
 
-.actions, .actions.space-between { display: flex; gap: 12px; margin-top: 12px; }
-.actions { justify-content: flex-end; }
-.actions.space-between { justify-content: space-between; }
+.totals-box .total {
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--text-strong);
+}
 
-/* File */
+.muted {
+  color: var(--text-muted);
+}
+
+.actions,
+.actions.space-between {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.actions {
+  justify-content: flex-end;
+}
+
+.actions.space-between {
+  justify-content: space-between;
+}
+
+/* Zona para subir archivo */
 .drop-zone {
   border: 2px dashed #9ccc9c;
-  border-radius: 10px;
-  padding: 18px;
+  border-radius: 12px;
+  padding: 20px;
   text-align: center;
   cursor: pointer;
-  transition: background .2s, border-color .2s;
-  max-width: 100%;
+  transition: background 0.2s, border-color 0.2s;
   background: #f8fff8;
-  margin-top: 10px;
-  ion-icon { font-size: 40px; color: var(--primary); display: block; margin: 0 auto 8px; }
+  margin-top: 14px;
+
+  ion-icon {
+    font-size: 42px;
+    color: var(--primary);
+    display: block;
+    margin: 0 auto 8px;
+  }
+
+  &:hover {
+    background: #f1fbf1;
+    border-color: #6fcf97;
+  }
 }
+
+/* Preview del comprobante */
 .preview {
-  margin-top: 12px;
+  margin-top: 16px;
   width: 100%;
   max-height: 260px;
   overflow: hidden;
-  border-radius: 10px;
+  border-radius: 12px;
   border: 1px solid #e0e0e0;
   position: relative;
-  img { width: 100%; height: auto; display: block; }
-  .remove-btn { position: absolute; top: 4px; right: 4px; }
+
+  img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .remove-btn {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+  }
+}
+
+@media (min-width: 768px) {
+  .card {
+    padding: 20px;
+  }
 }

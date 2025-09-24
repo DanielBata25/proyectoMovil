@@ -10,15 +10,14 @@
 </ion-header>
 
 <ion-content class="content-pad">
-  <!-- Chips de pasos -->
   <div class="steps">
-    <button class="step" [class.active]="currentStep===1" (click)="goTo(1)">1. Producto</button>
-    <button class="step" [class.active]="currentStep===2" (click)="goTo(2)">2. Entrega</button>
-    <button class="step" [class.active]="currentStep===3" (click)="goTo(3)">3. Comprobante</button>
-  </div>
+  <button class="step" [class.active]="currentStep===1" (click)="goTo(1, true)">1. Producto</button>
+  <button class="step" [class.active]="currentStep===2" (click)="goTo(2, true)">2. Entrega</button>
+  <button class="step" [class.active]="currentStep===3" (click)="goTo(3, true)">3. Comprobante</button>
+</div>
 
   <!-- Paso 1: Producto -->
-  <div *ngIf="currentStep===1" class="card">
+  <div *ngIf="currentStep===1" class="card" [formGroup]="productGroup">
     <div class="info">
       <h3>Resumen del producto</h3>
       <span>Confirma los datos y la cantidad</span>
@@ -43,7 +42,7 @@
             <div class="value">{{ data.stock }} en stock</div>
           </ion-col>
           <ion-col size="12" sizeMd="6">
-            <div class="label">Envío</div>
+            <div class="label">Envio</div>
             <div class="value">{{ data.shippingNote }}</div>
           </ion-col>
         </ion-row>
@@ -53,20 +52,30 @@
     <ion-grid class="row-2">
       <ion-row>
         <ion-col size="12" sizeMd="6">
-          <ion-item>
+          <ion-item class="form-item" lines="none">
             <ion-label position="floating">Cantidad</ion-label>
-            <ion-input type="number" formControlName="quantityRequested" [formGroup]="productGroup" min="1" [max]="data.stock"></ion-input>
+            <ion-input
+              type="number"
+              formControlName="quantityRequested"
+              inputmode="numeric"
+              min="1"
+              [max]="data.stock">
+            </ion-input>
           </ion-item>
-          <ion-note color="medium">Máximo {{ data.stock }}</ion-note>
-          <ion-note color="danger" *ngIf="productGroup.get('quantityRequested')?.hasError('positiveInt')">Debe ser mayor a 0</ion-note>
-          <ion-note color="danger" *ngIf="productGroup.get('quantityRequested')?.hasError('max')">Excede stock</ion-note>
+          <ion-note color="medium">Maximo {{ data.stock }}</ion-note>
+          <ion-note color="danger" *ngIf="productGroup.get('quantityRequested')?.hasError('positiveInt')">
+            Debe ser mayor a 0
+          </ion-note>
+          <ion-note color="danger" *ngIf="productGroup.get('quantityRequested')?.hasError('max')">
+            Excede stock
+          </ion-note>
         </ion-col>
 
         <ion-col size="12" sizeMd="6">
           <div class="totals-box">
             <div class="label">Subtotal</div>
             <div class="total">{{ formatCop(subtotal) }}</div>
-            <small class="muted">No se cobra envío en la plataforma</small>
+            <small class="muted">No se cobra envio en la plataforma</small>
           </div>
         </ion-col>
       </ion-row>
@@ -84,61 +93,78 @@
   <div *ngIf="currentStep===2" class="card" [formGroup]="deliveryGroup">
     <div class="info">
       <h3>Datos de entrega</h3>
-      <span>Contacto y dirección</span>
+      <span>Contacto y direccion</span>
     </div>
 
     <ion-grid class="row-2">
       <ion-row>
         <ion-col size="12" sizeMd="6">
-          <ion-item>
+          <ion-item class="form-item" lines="none">
             <ion-label position="floating">Nombre del destinatario</ion-label>
             <ion-input formControlName="recipientName"></ion-input>
           </ion-item>
-          <ion-note color="danger" *ngIf="deliveryGroup.get('recipientName')?.hasError('required')">Obligatorio</ion-note>
+          <ion-note color="danger" *ngIf="deliveryGroup.get('recipientName')?.hasError('required')">
+            Obligatorio
+          </ion-note>
         </ion-col>
 
         <ion-col size="12" sizeMd="6">
-          <ion-item>
-            <ion-label position="floating">Teléfono de contacto</ion-label>
+          <ion-item class="form-item" lines="none">
+            <ion-label position="floating">Telefono de contacto</ion-label>
             <ion-input formControlName="contactPhone"></ion-input>
           </ion-item>
-          <ion-note color="danger" *ngIf="deliveryGroup.get('contactPhone')?.invalid">Teléfono inválido</ion-note>
+          <ion-note color="danger" *ngIf="deliveryGroup.get('contactPhone')?.invalid">
+            Telefono invalido
+          </ion-note>
         </ion-col>
       </ion-row>
 
       <ion-row>
         <ion-col size="12" sizeMd="6">
-          <ion-item>
+          <ion-item class="form-item" lines="none">
             <ion-label>Departamento</ion-label>
-            <ion-select interface="popover" formControlName="departmentId" (ionChange)="onDepartmentChange($event.detail.value)">
+            <ion-select
+              interface="popover"
+              formControlName="departmentId"
+              (ionChange)="onDepartmentChange($event.detail.value)"
+              [disabled]="departments.length === 0">
               <ion-select-option *ngFor="let d of departments" [value]="d.id">{{ d.name }}</ion-select-option>
             </ion-select>
           </ion-item>
-          <ion-note color="danger" *ngIf="deliveryGroup.get('departmentId')?.hasError('required')">Obligatorio</ion-note>
+          <ion-note color="danger" *ngIf="deliveryGroup.get('departmentId')?.hasError('required')">
+            Obligatorio
+          </ion-note>
         </ion-col>
 
         <ion-col size="12" sizeMd="6">
-          <ion-item>
+          <ion-item class="form-item" lines="none">
             <ion-label>Ciudad</ion-label>
-            <ion-select interface="popover" formControlName="cityId">
+            <ion-select
+              interface="popover"
+              formControlName="cityId"
+              [disabled]="cities.length === 0">
               <ion-select-option *ngFor="let c of cities" [value]="c.id">{{ c.name }}</ion-select-option>
             </ion-select>
           </ion-item>
-          <ion-note color="danger" *ngIf="deliveryGroup.get('cityId')?.invalid">Seleccione ciudad</ion-note>
+          <ion-note color="danger" *ngIf="deliveryGroup.get('cityId')?.invalid">
+            Seleccione ciudad
+          </ion-note>
         </ion-col>
       </ion-row>
 
       <ion-row>
         <ion-col size="12" sizeMd="6">
-          <ion-item>
-            <ion-label position="floating">Dirección</ion-label>
+          <ion-item class="form-item" lines="none">
+            <ion-label position="floating">Direccion</ion-label>
             <ion-input formControlName="addressLine1"></ion-input>
           </ion-item>
-          <ion-note color="danger" *ngIf="deliveryGroup.get('addressLine1')?.hasError('required')">Obligatorio</ion-note>
+          <ion-note color="danger" *ngIf="deliveryGroup.get('addressLine1')?.hasError('required')">
+            Obligatorio
+          </ion-note>
         </ion-col>
 
         <ion-col size="12" sizeMd="6">
-          <ion-item>
+          <ion-item class="form-item" lines="none">
             <ion-label position="floating">Complemento (opcional)</ion-label>
             <ion-input formControlName="addressLine2"></ion-input>
           </ion-item>
@@ -147,7 +173,7 @@
 
       <ion-row>
         <ion-col size="12">
-          <ion-item>
+          <ion-item class="form-item" lines="none">
             <ion-label position="stacked">Notas adicionales (opcional)</ion-label>
             <ion-textarea rows="3" formControlName="additionalNotes"></ion-textarea>
           </ion-item>
@@ -167,17 +193,17 @@
     </div>
   </div>
 
-  <!-- Paso 3: Comprobante -->
+  <!-- Paso 3: Comprobante (con subida de imagen) -->
   <div *ngIf="currentStep===3" class="card" [formGroup]="paymentGroup">
     <div class="info">
       <h3>Comprobante de pago</h3>
-      <span>Formatos: JPG, PNG, WEBP · Máx {{ MAX_FILE_MB }} MB</span>
+      <span>Formatos: JPG, PNG, WEBP - Max {{ MAX_FILE_MB }} MB</span>
     </div>
 
     <div class="drop-zone" (click)="fileInput.click()">
       <ion-icon name="cloud-upload"></ion-icon>
       <p>Haz clic para seleccionar una imagen</p>
-      <small>El archivo se enviará como multipart/form-data</small>
+      <small>El archivo se enviara como multipart/form-data</small>
       <input #fileInput type="file" accept="image/*" hidden (change)="onFilePicked($event)" />
     </div>
 
