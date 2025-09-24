@@ -5,6 +5,7 @@ export interface ApiOk {
 }
 
 export interface ProductSelectModel {
+imageUrl: any;
   id: number;
   name: string;
   description: string;

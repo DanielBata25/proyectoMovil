@@ -1,13 +1,5 @@
-<ion-header>
-  <ion-toolbar color="success">
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/home"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Detalle del producto</ion-title>
-  </ion-toolbar>
-</ion-header>
-<ion-content [fullscreen]="true" class="page-bg">
-  <div class="detail-wrapper">
+<ion-content [fullscreen]="true" class="page-bg" forceOverscroll="false">
+  <div class="detail-body">
     <div class="detail-inner">
       <div class="center" *ngIf="loadingProduct">
         <ion-spinner name="crescent"></ion-spinner>
@@ -64,7 +56,7 @@
         </div>
 
         <div class="block cta">
-          <ion-button expand="block" size="large" (click)="openCreateOrder()"
+          <ion-button expand="block" size="small" (click)="openCreateOrder()"
             [disabled]="loadingProduct || (product.stock ?? 0) <= 0" class="btn-order">
             <ion-icon name="cart" slot="start"></ion-icon>
             Anadir al pedido
@@ -133,13 +125,13 @@
                 <ion-button class="btn-send" (click)="submitReview()"
                   [disabled]="selectedRating === 0 || !newReview.trim() || (sendingReview)">
                   <ion-spinner slot="start" name="crescent" *ngIf="sendingReview"></ion-spinner>
-                  Enviar resena
+                  Enviar reseña
                 </ion-button>
               </div>
             </div>
           </ng-container>
           <ng-template #mustLogin>
-            <div class="muted">Inicia sesion para dejar una resena.</div>
+            <div class="muted">Inicia sesion para dejar una reseña.</div>
           </ng-template>
         </div>
 
@@ -172,10 +164,10 @@
           </div>
 
           <ng-template #loadingTpl>
-            <div class="muted">Cargando resenas...</div>
+            <div class="muted">Cargando reseñas...</div>
           </ng-template>
           <ng-template #emptyTpl>
-            <div class="muted">Aun no hay resenas para este producto.</div>
+            <div class="muted">Aun no hay reseñas para este producto.</div>
           </ng-template>
         </div>
 

@@ -1,11 +1,10 @@
+// src/app/shared/services/favorite/favorite-facade.service.ts
 import { Injectable, signal } from '@angular/core';
 import { Subject, Observable, EMPTY, tap, finalize } from 'rxjs';
 import { ProductSelectModel } from '../../models/product/product.model';
 import { FavoriteService } from './favorite.service';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class FavoriteFacadeService {
   private _inFlight = signal<Set<number>>(new Set<number>());
   private _changes = new Subject<{ id: number; isFavorite: boolean }>();
@@ -22,7 +21,7 @@ export class FavoriteFacadeService {
     if (this.isToggling(product.id)) return EMPTY;
 
     const original = !!product.isFavorite;
-    product.isFavorite = !original;           // optimista
+    product.isFavorite = !original; // optimista
     this.mark(product.id, true);
 
     return this.api.toggle(product.id, original).pipe(
@@ -31,7 +30,7 @@ export class FavoriteFacadeService {
           product.isFavorite = newState;
           this._changes.next({ id: product.id, isFavorite: newState });
         },
-        error: () => { product.isFavorite = original; }, // rollback
+        error: () => { product.isFavorite = original; }, // rollback si algo falla
       }),
       finalize(() => this.mark(product.id, false))
     );

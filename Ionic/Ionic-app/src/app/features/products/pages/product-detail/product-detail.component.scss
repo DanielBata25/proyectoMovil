@@ -1,26 +1,33 @@
 .page-bg {
   --background: #f4f6f5;
+  --padding-top: 0;
+  --padding-bottom: 24px;
+  --padding-start: 0;
+  --padding-end: 0;
 }
 
-.detail-wrapper {
+/* ðŸ”¹ Contenedor principal que llena la pantalla */
+.detail-body {
   min-height: 100%;
   display: flex;
-  justify-content: center;
-  padding: 24px 0 32px;
+  flex-direction: column;
+  padding: 0;
 }
 
+/* ðŸ”¹ Ancho mÃ¡ximo centrado */
 .detail-inner {
   width: 100%;
   max-width: 920px;
-  padding: 0 16px;
+  margin: 0 auto;
+  padding: 0 16px 32px;
   box-sizing: border-box;
 }
 
 .detail-card {
-  background: #fff;
-  border-radius: 18px;
-  padding: 20px;
-  box-shadow: 0 12px 28px rgba(24, 61, 32, 0.08);
+  background: transparent;
+  border-radius: 0;
+  padding: 24px 0 0;
+  box-shadow: none;
 }
 
 .page-title {
@@ -148,11 +155,13 @@
 }
 
 .btn-order {
-  --background: #7a4a26;
-  --background-activated: #6c3f1f;
-  --background-focused: #6c3f1f;
+  --background: #4CAF50;
+  --background-activated: #388E3C;
+  --background-focused: #388E3C;
 }
-
+.btn-send {
+  --background: #4CAF50;
+}
 .stock {
   display: block;
   margin-top: 6px;
@@ -267,10 +276,6 @@
   justify-content: flex-end;
 }
 
-.btn-send {
-  --background: #7a4a26;
-}
-
 .reviews {
   display: grid;
   gap: 14px;
@@ -337,6 +342,7 @@
   }
 
   .detail-card {
-    padding: 18px 16px;
+    padding: 24px 0 0;
   }
 }
+

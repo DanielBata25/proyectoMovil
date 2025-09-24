@@ -55,3 +55,17 @@
 .label {
   line-height: 1;
 }
+/* === Flat (plano, sin color de fondo) === */
+.custom-btn.btn-flat {
+  background: transparent !important;
+  color: #1f2f25 !important;   /* texto oscuro */
+  box-shadow: none !important;
+  border-radius: 0;
+  padding: 8px 0;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.custom-btn.btn-flat .icon-btn {
+  color: #999 !important;  /* chevron gris tenue */
+}
