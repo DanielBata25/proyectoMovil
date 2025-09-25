@@ -1,11 +1,19 @@
 <ion-content class="ion-padding page-bg">
-  <div class="not-found-container">
-    <h2>404 - Página no encontrada</h2>
-    <p>No se encontró la página que buscas.</p>
+  <div class="not-found-wrapper">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>404 - Página no encontrada</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p>No se encontró la página que buscas.</p>
 
-    <ion-button expand="block" color="primary" (click)="goBack()">
-      <ion-icon slot="start" name="arrow-back"></ion-icon>
-      Volver
-    </ion-button>
+        <div class="form-actions">
+          <ion-button expand="block" color="primary" (click)="goBack()">
+            <ion-icon slot="start" name="arrow-back"></ion-icon>
+            Volver
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
   </div>
 </ion-content>

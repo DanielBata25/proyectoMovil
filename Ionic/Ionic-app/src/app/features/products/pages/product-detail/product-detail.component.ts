@@ -10,7 +10,7 @@ import { addIcons } from 'ionicons';
 import { cart, star, starOutline, personCircle, location } from 'ionicons/icons';
 import { ActivatedRoute, Router } from '@angular/router';
 import { firstValueFrom, Observable, of } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import { finalize, switchMap } from 'rxjs/operators';
 
 import { ProductService } from '../../../../shared/services/product/product.service';
 import { ReviewService } from '../../../../shared/services/review/review.service';
@@ -196,21 +196,23 @@ export class ProductDetailComponent implements OnInit {
     const payload: ReviewRegisterModel = { productId: this.productId, rating: this.selectedRating, comment };
     this.sendingReview = true;
 
+    this.loadingReviews = true;
+
     this.reviewService.createReview(payload).pipe(
+      switchMap(() => this.reviewService.getReviewByProduct(this.productId)),
       finalize(() => { this.sendingReview = false; })
     ).subscribe({
-      next: (created) => {
-        if (created) {
-          this.reviews.unshift(created);
-          this.recomputeStats();
-        } else {
-          this.loadReviews();
-        }
+      next: (list) => {
+        this.reviews = list ?? [];
+        this.recomputeStats();
         this.newReview = '';
         this.selectedRating = 0;
+        this.hoverRating = 0;
+        this.loadingReviews = false;
         this.showToast('Resena publicada', 'success', 'bottom');
       },
       error: (err) => {
+        this.loadingReviews = false;
         this.showToast(err?.error?.message ?? 'No se pudo publicar la resena', 'danger', 'top');
       },
     });

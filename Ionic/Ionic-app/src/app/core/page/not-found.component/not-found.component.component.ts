@@ -1,18 +1,20 @@
 import { Location } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import {
-  IonContent,
-  IonButton,
-  IonIcon
+  IonContent, IonCard, IonCardHeader, IonCardTitle,
+  IonCardContent, IonButton, IonIcon
 } from '@ionic/angular/standalone';
-import { Router } from '@angular/router';
 import { addIcons } from 'ionicons';
 import { arrowBack } from 'ionicons/icons';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-not-found',
   standalone: true,
-  imports: [IonContent, IonButton, IonIcon],
+  imports: [
+    IonContent, IonCard, IonCardHeader, IonCardTitle,
+    IonCardContent, IonButton, IonIcon
+  ],
   templateUrl: './not-found.component.component.html',
   styleUrls: ['./not-found.component.component.scss']
 })
@@ -25,10 +27,11 @@ export class NotFoundComponent {
   }
 
   goBack(): void {
-    // Regresa a la página anterior si existe; si no, va al inicio
+    // Si hay historial, vuelve atrás
     if (window.history.length > 1) {
       this.location.back();
     } else {
+      // Si no, redirige al home
       this.router.navigateByUrl('/');
     }
   }
