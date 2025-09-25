@@ -1,14 +1,32 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import {
+  IonContent, IonButton, IonIcon
+} from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { mail, call } from 'ionicons/icons';
 
 @Component({
   selector: 'app-support',
+  standalone: true,
+  imports: [
+    IonContent, IonButton, IonIcon
+  ],
   templateUrl: './support.component.html',
-  styleUrls: ['./support.component.scss'],
+  styleUrls: ['./support.component.scss']
 })
-export class SupportComponent  implements OnInit {
+export class SupportComponent {
+  email = 'portalagrocomercialhuila@gmail.com';
+  phone = '+57 310 123 4567';
 
-  constructor() { }
+  constructor() {
+    addIcons({ mail, call });
+  }
 
-  ngOnInit() {}
+  sendEmail() {
+    window.location.href = `mailto:${this.email}`;
+  }
 
+  callPhone() {
+    window.location.href = `tel:${this.phone}`;
+  }
 }

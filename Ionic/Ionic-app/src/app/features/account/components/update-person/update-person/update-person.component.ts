@@ -178,12 +178,13 @@ export class UpdatePersonComponent implements OnInit {
       return;
     }
 
+    const raw = this.form.getRawValue();
     const dto: PersonUpdateModel = {
-      firstName: this.form.value.firstName!,
-      lastName: this.form.value.lastName!,
-      address: this.form.value.address!,
-      phoneNumber: this.form.value.phoneNumber!
-      // cityId eliminado porque tu modelo PersonUpdateModel no lo incluye
+      firstName: raw.firstName!,
+      lastName: raw.lastName!,
+      address: raw.address!,
+      phoneNumber: raw.phoneNumber!,
+      cityId: raw.cityId!
     };
 
     this.isLoading = true;

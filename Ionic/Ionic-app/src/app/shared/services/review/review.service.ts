@@ -9,7 +9,7 @@ import {
 
 @Injectable({ providedIn: 'root' })
 export class ReviewService {
-  /** Base relativa, igual que Auth */
+  /** Base relativa */
   private readonly base = '/Review';
 
   /** GET /Review/by-product/:id */
@@ -19,9 +19,19 @@ export class ReviewService {
     );
   }
 
-  /** POST /Review  (JSON) */
+  /** POST /Review/create (JSON) */
   createReview(data: ReviewRegisterModel): Observable<ReviewSelectModel> {
-    return from(ApiNative.post<ReviewSelectModel>(`${this.base}`, data));
+    const comment = (data.comment ?? '').trim();
+    const rating = Math.max(1, Math.min(5, Math.round(Number(data.rating ?? 0))));
+    const payload = {
+      ProductId: data.productId,
+      Rating: rating,
+      Comment: comment,
+    } as const;
+
+    console.log('[ReviewService][createReview] Payload enviado:', payload);
+
+    return from(ApiNative.post<ReviewSelectModel>(`${this.base}/create`, payload));
   }
 
   /** DELETE /Review/:id */

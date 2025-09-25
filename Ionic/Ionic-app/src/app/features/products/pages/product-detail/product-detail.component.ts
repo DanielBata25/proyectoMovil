@@ -31,7 +31,7 @@ import { OrderCreateModalComponent, OrderCreateDialogData } from '../../modals/o
   standalone: true,
   imports: [
     CommonModule, FormsModule,
-    IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton,
+    IonContent,
     IonButton, IonIcon, IonBadge,
     IonSpinner, IonTextarea, IonNote
 ],
@@ -80,6 +80,7 @@ export class ProductDetailComponent implements OnInit {
 
   sendingReview = false;
   private readonly ratingLabels = ['Muy mala', 'Mala', 'Regular', 'Buena', 'Excelente'] as const;
+
   constructor() {
     addIcons({ cart, star, starOutline, personCircle, location });
     register(); // habilita <swiper-container> y <swiper-slide>
@@ -191,11 +192,21 @@ export class ProductDetailComponent implements OnInit {
     if (this.sendingReview) return;
     if (this.selectedRating < 1 || this.selectedRating > 5) return;
     const comment = this.newReview.trim();
-    if (!comment) return;
+    if (comment.length < 4) {
+      void this.showToast('La reseña debe tener al menos 4 caracteres.', 'warning', 'top');
+      return;
+    }
 
-    const payload: ReviewRegisterModel = { productId: this.productId, rating: this.selectedRating, comment };
+    const payload: ReviewRegisterModel = { 
+      productId: this.productId, 
+      rating: this.selectedRating, 
+      comment 
+    };
+
+    // 👇 Log para depuración
+    console.log('Payload reseña:', payload);
+
     this.sendingReview = true;
-
     this.loadingReviews = true;
 
     this.reviewService.createReview(payload).pipe(
@@ -209,11 +220,17 @@ export class ProductDetailComponent implements OnInit {
         this.selectedRating = 0;
         this.hoverRating = 0;
         this.loadingReviews = false;
-        this.showToast('Resena publicada', 'success', 'bottom');
+        this.showToast('Reseña publicada', 'success', 'bottom');
       },
       error: (err) => {
         this.loadingReviews = false;
-        this.showToast(err?.error?.message ?? 'No se pudo publicar la resena', 'danger', 'top');
+        console.error('[Review][create]', err);
+        const message =
+          (err as any)?.data?.message ||
+          (err as any)?.error?.message ||
+          err?.message ||
+          'No se pudo publicar la reseña';
+        this.showToast(message, 'danger', 'top');
       },
     });
   }

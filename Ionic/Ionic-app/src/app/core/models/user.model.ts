@@ -21,4 +21,5 @@ export interface PersonUpdateModel{
     address:        string;
     phoneNumber:    string;
     // email:          string;
+    cityId:         number;
 }

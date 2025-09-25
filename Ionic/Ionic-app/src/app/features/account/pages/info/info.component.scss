@@ -1,5 +1,4 @@
-.page-bg { --background: #f5f7f6; }
-
+/* Loader */
 .center {
   display: grid;
   place-items: center;
@@ -14,7 +13,7 @@
   box-shadow: 0 6px 18px rgba(0,0,0,.06);
 }
 
-/* Header usuario dentro del contenedor */
+/* Header usuario */
 .account-header {
   text-align: center;
   margin-bottom: 12px;
@@ -48,7 +47,7 @@
   padding: 6px 0;
 }
 
-/* Info texto */
+/* Texto */
 .info-line {
   display: flex;
   flex-direction: column;
@@ -66,11 +65,13 @@
 
 /* Iconos en pastilla */
 .pill-icon {
-  width: 44px; height: 44px;
+  width: 44px;
+  height: 44px;
   border-radius: 12px;
   background: #eef7f1;
   border: 1px solid #e2efe7;
-  display: grid; place-items: center;
+  display: grid;
+  place-items: center;
   color: #2d6a4f;
 
   ion-icon { font-size: 22px; }

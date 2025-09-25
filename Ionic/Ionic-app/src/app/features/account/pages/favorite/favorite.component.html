@@ -1,4 +1,14 @@
+<!-- <ion-header>
+  <ion-toolbar color="light">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title class="page-title">Favoritos</ion-title>
+  </ion-toolbar>
+</ion-header> -->
+
 <ion-content [fullscreen]="true" class="page-bg">
+
   <!-- Refresher -->
   <ion-refresher slot="fixed" (ionRefresh)="refresh($event)">
     <ion-refresher-content pullingText="Desliza para recargar"></ion-refresher-content>
@@ -28,18 +38,17 @@
       <ion-row>
         <ion-col size="6" *ngFor="let p of products; trackBy: trackById">
           <ion-card class="product-card" (click)="gotoProduct(p)">
-            <!-- Corazón (mismo lugar) -->
+            <!-- Corazón -->
             <div class="fav-btn" (click)="toggleFavorite(p, $event)" aria-label="Quitar de favoritos">
               <ion-icon name="heart"></ion-icon>
             </div>
 
             <!-- Imagen -->
             <div class="image-wrap">
-              <ion-img [src]="p.imageUrl || p.images[0]?.imageUrl || 'assets/1.png'" [alt]="p.name">
-              </ion-img>
+              <ion-img [src]="p.imageUrl || p.images[0]?.imageUrl || 'assets/1.png'" [alt]="p.name"></ion-img>
             </div>
 
-            <!-- Contenido (idéntico a Home) -->
+            <!-- Contenido -->
             <ion-card-content class="content">
               <h3 class="title">{{ p.name }}</h3>
 
@@ -60,8 +69,7 @@
               </div>
             </ion-card-content>
 
-
-            <!-- Barra/acento inferior como en Home -->
+            <!-- Barra inferior -->
             <div class="accent-bar"></div>
           </ion-card>
         </ion-col>

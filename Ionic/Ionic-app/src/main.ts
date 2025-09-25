@@ -7,7 +7,6 @@ import {
 } from '@angular/router';
 import { IonicRouteStrategy, provideIonicAngular } from '@ionic/angular/standalone';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-
 import { AppComponent } from './app/app.component';
 import { routes } from './app/app.routes';
 
@@ -17,7 +16,6 @@ import { authInterceptor } from './app/core/interceptors/auth/auth.interceptor';
 /** === Ionicons: registra solo los íconos que usas === */
 import { addIcons } from 'ionicons';
 import {
-  // ——— LOS QUE YA TENÍAS ———
   person,
   location,
   create,
@@ -40,8 +38,6 @@ import {
   trendingUpOutline,
   leafOutline,
   idCard,
-
-  // ——— NUEVOS PARA NAVBAR/TABS/PÁGINAS ———
   homeOutline,
   heartOutline,
   bagHandleOutline,
@@ -54,9 +50,15 @@ import {
   createOutline,
 } from 'ionicons/icons';
 
+/** 👇 Importamos y registramos locale español Colombia */
+import { registerLocaleData } from '@angular/common';
+import localeEsCO from '@angular/common/locales/es-CO';
+import { LOCALE_ID } from '@angular/core';
+
+registerLocaleData(localeEsCO, 'es-CO');
+
 // Registra los SVG (evita cargas por URL y quita warnings de iconos no encontrados)
 addIcons({
-  // ——— EXISTENTES ———
   person,
   location,
   create,
@@ -79,13 +81,10 @@ addIcons({
   'trending-up-outline': trendingUpOutline,
   'leaf-outline': leafOutline,
   'id-card': idCard,
-
-  // ——— NUEVOS ———
   'home-outline': homeOutline,
   'heart-outline': heartOutline,
   'bag-handle-outline': bagHandleOutline,
   'person-outline': personOutline,
-
   'calendar-outline': calendarOutline,
   'id-card-outline': idCardOutline,
   'location-outline': locationOutline,
@@ -100,6 +99,8 @@ bootstrapApplication(AppComponent, {
     provideIonicAngular(),
     provideHttpClient(withInterceptors([authInterceptor])),
     provideRouter(routes, withPreloading(PreloadAllModules)),
+
+    /** 👇 Esto asegura que todo Angular use es-CO por defecto */
+    { provide: LOCALE_ID, useValue: 'es-CO' },
   ],
 });
-
