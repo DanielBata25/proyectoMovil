@@ -19,27 +19,29 @@ export const ACCOUNT_ROUTES: Routes = [
                 //data: { roles: ['Consumer'] },
                 pathMatch: 'full',
             },
-            // Home info
+            // Home info + subrutas protegidas
             {
                 path: 'info',
-                title: 'Informacion',
                 canMatch: [roleMatchGuard],
                 data: { roles: ['Consumer'] },
-                component: InfoComponent,
-            },
-            {
-                path: 'info/changePassword',
-                title: 'Cambiar Contraseña',
-                canMatch: [roleMatchGuard],
-                data: { roles: ['Consumer'] },
-                component: FormChangePasswordComponent,
-            },
-            {
-                path: 'info/updateDataBasic',
-                title: 'Actualizar Datos Basicos',
-                canMatch: [roleMatchGuard],
-                data: { roles: ['Consumer'] },
-                component: UpdatePersonComponent,
+                children: [
+                    {
+                        path: '',
+                        pathMatch: 'full',
+                        title: 'Informacion',
+                        component: InfoComponent,
+                    },
+                    {
+                        path: 'form-change-password',
+                        title: 'Cambiar Contraseña',
+                        component: FormChangePasswordComponent,
+                    },
+                    {
+                        path: 'update-person',
+                        title: 'Actualizar Datos Basicos',
+                        component: UpdatePersonComponent,
+                    },
+                ],
             },
             {
                 path: 'favorite',

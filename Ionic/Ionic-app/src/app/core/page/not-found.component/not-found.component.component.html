@@ -1,3 +1,11 @@
-<p>
-  not-found.component works!
-</p>
+<ion-content class="ion-padding page-bg">
+  <div class="not-found-container">
+    <h2>404 - Página no encontrada</h2>
+    <p>No se encontró la página que buscas.</p>
+
+    <ion-button expand="block" color="primary" (click)="goBack()">
+      <ion-icon slot="start" name="arrow-back"></ion-icon>
+      Volver
+    </ion-button>
+  </div>
+</ion-content>

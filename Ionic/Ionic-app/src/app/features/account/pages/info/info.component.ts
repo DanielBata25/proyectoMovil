@@ -2,7 +2,8 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   IonContent, IonIcon,
-  IonCard, IonCardContent, IonSpinner
+  IonCard, IonCardContent, IonSpinner,
+  ToastController
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -15,6 +16,7 @@ import {
 import { Router, RouterModule } from '@angular/router';
 
 import { AuthService } from 'src/app/core/services/auth/auth.service';
+import { AuthState } from 'src/app/core/services/auth/auth.state';
 import { UserSelectModel } from 'src/app/core/models/user.model';
 
 @Component({
@@ -30,10 +32,13 @@ import { UserSelectModel } from 'src/app/core/models/user.model';
 })
 export class InfoComponent implements OnInit {
   private authService = inject(AuthService);
-  private router = inject(Router);   // ✅ usamos Router oficial
+  private router = inject(Router);
+  private authState = inject(AuthState);
+  private toastCtrl = inject(ToastController);
 
   person?: UserSelectModel;
   loading = true;
+  loggingOut = false;
 
   constructor() {
     addIcons({
@@ -62,12 +67,11 @@ export class InfoComponent implements OnInit {
     });
   }
 
-  // 👉 método oficial para navegar
+  // 👉 método oficial con navigateByUrl (más seguro)
   goto(path: string) {
-    this.router.navigate([path]);
+    this.router.navigateByUrl(path);
   }
 
-  // Nombre amigable sin romper tipos
   get displayName(): string {
     const p: any = this.person || {};
     return (
@@ -78,6 +82,30 @@ export class InfoComponent implements OnInit {
   }
 
   logout() {
-    try { (this.authService as any)?.Logout?.(); } catch {}
+    if (this.loggingOut) return;
+    this.loggingOut = true;
+
+    this.authService.LogOut().subscribe({
+      next: async () => {
+        await this.authState.clear();
+        const toast = await this.toastCtrl.create({
+          message: 'Sesión cerrada correctamente ✅',
+          duration: 2000,
+          color: 'success'
+        });
+        await toast.present();
+        this.router.navigateByUrl('/auth/login');
+      },
+      error: async (err) => {
+        const toast = await this.toastCtrl.create({
+          message: err?.error?.message ?? 'No se pudo cerrar sesión.',
+          duration: 2500,
+          color: 'danger'
+        });
+        await toast.present();
+        this.loggingOut = false;
+      },
+      complete: () => { this.loggingOut = false; }
+    });
   }
 }

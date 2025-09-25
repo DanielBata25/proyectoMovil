@@ -1,0 +1,97 @@
+
+.page-bg {
+  --background: #f8f7f2; // Fondo suave
+}
+
+.page-container {
+  min-height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 32px 16px 40px;
+  box-sizing: border-box;
+}
+
+.form-card {
+  width: 100%;
+  max-width: 520px;
+  border-radius: 18px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.form-card ion-card-header {
+  padding: 22px 20px 12px;
+}
+
+.form-card ion-card-title {
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: #2e7d32; // Verde institucional
+  text-align: center;
+}
+
+.form-card ion-card-content {
+  padding: 20px 20px 28px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+ion-item {
+  --highlight-color-focused: #2e7d32; // Color del borde activo
+  --padding-start: 12px;
+  --inner-padding-end: 10px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  --background: #f3f7f2;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+ion-item::part(native) {
+  border-radius: 12px;
+}
+
+ion-label {
+  font-size: 0.95rem;
+}
+
+ion-input {
+  font-size: 1rem;
+  color: #333;
+}
+
+.error {
+  font-size: 0.8rem;
+  color: #d32f2f; // Rojo error
+  margin: -6px 0 4px 12px;
+}
+
+.form-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+ion-button {
+  --border-radius: 12px;
+  font-weight: 600;
+}
+
+ion-button[color="success"] {
+  --background: #2e7d32;
+  --background-hover: #1b5e20;
+  --background-activated: #1b5e20;
+  --color: #fff;
+}
+
+ion-button[color="medium"] {
+  --background: #9e9e9e;
+  --background-hover: #757575;
+  --background-activated: #616161;
+  --color: #fff;
+}

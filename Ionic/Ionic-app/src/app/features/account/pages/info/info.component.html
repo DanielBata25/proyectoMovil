@@ -57,7 +57,7 @@
       <h2 class="group-title">Opciones de Cuenta</h2>
       <div class="row-btn">
         <div class="pill-icon"><ion-icon name="create-outline"></ion-icon></div>
-        <button class="flat-btn" (click)="goto('/account/info/updateDataBasic')">
+        <button class="flat-btn" (click)="goto('/account/info/update-person')">
           <span>Actualizar Información</span>
           <ion-icon name="chevron-forward"></ion-icon>
         </button>
@@ -65,7 +65,7 @@
 
       <div class="row-btn">
         <div class="pill-icon"><ion-icon name="lock-closed-outline"></ion-icon></div>
-        <button class="flat-btn" (click)="goto('/account/info/changePassword')">
+        <button class="flat-btn" (click)="goto('/account/info/form-change-password')">
           <span>Cambiar Contraseña</span>
           <ion-icon name="chevron-forward"></ion-icon>
         </button>
@@ -73,7 +73,7 @@
 
       <div class="row-btn">
         <div class="pill-icon"><ion-icon name="log-out-outline"></ion-icon></div>
-        <button class="flat-btn" (click)="logout()">
+        <button class="flat-btn" (click)="logout()" [disabled]="loggingOut">
           <span>Cerrar Sesión</span>
           <ion-icon name="chevron-forward"></ion-icon>
         </button>
