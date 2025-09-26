@@ -1,13 +1,14 @@
 <ion-content [fullscreen]="true" class="page-bg">
+  <div class="page-shell">
 
-  <!-- Loader -->
-  <div class="center" *ngIf="loading">
-    <ion-spinner name="crescent"></ion-spinner>
-  </div>
+    <!-- Loader -->
+    <div class="center" *ngIf="loading">
+      <ion-spinner name="crescent"></ion-spinner>
+    </div>
 
-  <!-- Contenedor único -->
-  <ion-card class="info-card" *ngIf="person">
-    <ion-card-content>
+    <!-- Contenedor único -->
+    <ion-card class="info-card" *ngIf="person">
+      <ion-card-content>
 
       <!-- Header usuario dentro del contenedor -->
       <div class="account-header">
@@ -115,6 +116,8 @@
         </button>
       </div>
 
-    </ion-card-content>
-  </ion-card>
+      </ion-card-content>
+    </ion-card>
+
+  </div>
 </ion-content>

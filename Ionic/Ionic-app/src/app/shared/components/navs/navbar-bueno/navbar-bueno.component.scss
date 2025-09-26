@@ -1,3 +1,9 @@
+:host {
+  display: block;
+  width: 100%;
+  z-index: 10;
+}
+
 /* Colores exactos */
 $verde: #2e7d32;
 $blanco: #ffffff;
@@ -6,7 +12,7 @@ $blanco: #ffffff;
 .nb-header,
 .nb-onebar,
 .nb-header ion-toolbar.nb-onebar {
-  --background: #2e7d32 !important;
+  --background: #000000 !important;
   --color: #ffffff !important;
   --border-color: transparent !important;
 }
@@ -16,7 +22,6 @@ $blanco: #ffffff;
   display: grid;
   grid-template-columns: auto 1fr auto; /* logo | espacio | iconos */
   align-items: center;
-  width: 100%;
   min-height: 56px;
   padding: 0 8px;
 }

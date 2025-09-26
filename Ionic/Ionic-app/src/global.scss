@@ -35,14 +35,10 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 // @import '@ionic/angular/css/palettes/dark.system.css';
-ion-content {
-  --padding-top: 0;
-  --padding-bottom: 0;
-  --background: #f5f7f6;   // color global de fondo
-}
 
-ion-card {
-  margin: 0;
-  border-radius: 0;
-  box-shadow: none;
+ion-content {
+//   --offset-top: 0 !important;
+//   --offset-bottom: 0 !important;
+  --padding-top: 0 !important;
+  --padding-bottom: 0 !important;
 }
