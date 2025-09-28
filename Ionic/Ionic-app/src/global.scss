@@ -42,3 +42,35 @@ ion-content {
   --padding-top: 0 !important;
   --padding-bottom: 0 !important;
 }
+
+:root {
+  --app-content-max-width: 920px;
+  --app-content-padding-x: 16px;
+  --app-content-padding-top: 24px;
+  --app-content-padding-bottom: 32px;
+}
+
+.page-bg {
+  --background: var(--ion-color-light, #f5f5f5);
+}
+
+.page-shell {
+  width: 100%;
+  max-width: var(--app-content-max-width);
+  margin: 0 auto;
+  padding: var(--app-content-padding-top) var(--app-content-padding-x) calc(var(--app-content-padding-bottom) + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.page-shell.page-shell--center {
+  justify-content: center;
+  align-items: center;
+  min-height: 100%;
+}
+
+.page-shell > .page-shell__section {
+  margin-block: 0;
+}

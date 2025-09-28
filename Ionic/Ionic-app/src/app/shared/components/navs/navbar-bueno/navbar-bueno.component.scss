@@ -12,7 +12,7 @@ $blanco: #ffffff;
 .nb-header,
 .nb-onebar,
 .nb-header ion-toolbar.nb-onebar {
-  --background: #000000 !important;
+  --background: #2e7d32 !important;
   --color: #ffffff !important;
   --border-color: transparent !important;
 }
@@ -23,7 +23,7 @@ $blanco: #ffffff;
   grid-template-columns: auto 1fr auto; /* logo | espacio | iconos */
   align-items: center;
   min-height: 56px;
-  padding: 0 8px;
+  // padding: 0 8px;
 }
 
 /* IZQUIERDA */

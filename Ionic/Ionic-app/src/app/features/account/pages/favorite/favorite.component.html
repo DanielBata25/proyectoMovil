@@ -8,77 +8,78 @@
 </ion-header> -->
 
 <ion-content [fullscreen]="true" class="page-bg">
-
   <!-- Refresher -->
   <ion-refresher slot="fixed" (ionRefresh)="refresh($event)">
     <ion-refresher-content pullingText="Desliza para recargar"></ion-refresher-content>
   </ion-refresher>
 
-  <!-- Loading skeleton -->
-  <ng-container *ngIf="loading; else gridTpl">
-    <ion-grid>
-      <ion-row>
-        <ion-col size="6" *ngFor="let s of [1,2,3,4]">
-          <ion-card class="product-card skeleton">
-            <ion-skeleton-text animated style="width: 100%; height: 150px; border-radius: 12px;"></ion-skeleton-text>
-            <ion-card-content class="content">
-              <ion-skeleton-text animated style="width: 80%; height: 18px; margin-bottom: 8px;"></ion-skeleton-text>
-              <ion-skeleton-text animated style="width: 60%; height: 14px; margin-bottom: 6px;"></ion-skeleton-text>
-              <ion-skeleton-text animated style="width: 50%; height: 14px;"></ion-skeleton-text>
-            </ion-card-content>
-          </ion-card>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-  </ng-container>
+  <div class="page-shell">
+    <!-- Loading skeleton -->
+    <ng-container *ngIf="loading; else gridTpl">
+      <ion-grid>
+        <ion-row>
+          <ion-col size="6" *ngFor="let s of [1,2,3,4]">
+            <ion-card class="product-card skeleton">
+              <ion-skeleton-text animated style="width: 100%; height: 150px; border-radius: 12px;"></ion-skeleton-text>
+              <ion-card-content class="content">
+                <ion-skeleton-text animated style="width: 80%; height: 18px; margin-bottom: 8px;"></ion-skeleton-text>
+                <ion-skeleton-text animated style="width: 60%; height: 14px; margin-bottom: 6px;"></ion-skeleton-text>
+                <ion-skeleton-text animated style="width: 50%; height: 14px;"></ion-skeleton-text>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ng-container>
 
-  <!-- Grid de favoritos -->
-  <ng-template #gridTpl>
-    <ion-grid>
-      <ion-row>
-        <ion-col size="6" *ngFor="let p of products; trackBy: trackById">
-          <ion-card class="product-card" (click)="gotoProduct(p)">
-            <!-- Corazón -->
-            <div class="fav-btn" (click)="toggleFavorite(p, $event)" aria-label="Quitar de favoritos">
-              <ion-icon name="heart"></ion-icon>
-            </div>
-
-            <!-- Imagen -->
-            <div class="image-wrap">
-              <ion-img [src]="p.imageUrl || p.images[0]?.imageUrl || 'assets/1.png'" [alt]="p.name"></ion-img>
-            </div>
-
-            <!-- Contenido -->
-            <ion-card-content class="content">
-              <h3 class="title">{{ p.name }}</h3>
-
-              <div class="row muted">
-                <ion-icon name="person-outline"></ion-icon>
-                <span>{{ p.personName || p.producerCode || '—' }}</span>
+    <!-- Grid de favoritos -->
+    <ng-template #gridTpl>
+      <ion-grid>
+        <ion-row>
+          <ion-col size="6" *ngFor="let p of products; trackBy: trackById">
+            <ion-card class="product-card" (click)="gotoProduct(p)">
+              <!-- Corazón -->
+              <div class="fav-btn" (click)="toggleFavorite(p, $event)" aria-label="Quitar de favoritos">
+                <ion-icon name="heart"></ion-icon>
               </div>
 
-              <div class="row muted">
-                <ion-icon name="location-outline"></ion-icon>
-                <span>
-                  {{ p.cityName || '—' }}, {{ p.departmentName || '—' }}
-                </span>
+              <!-- Imagen -->
+              <div class="image-wrap">
+                <ion-img [src]="p.imageUrl || p.images[0]?.imageUrl || 'assets/1.png'" [alt]="p.name"></ion-img>
               </div>
 
-              <div class="price">
-                {{ p.price | currency:'COP':'symbol':'1.0-0' }}
-              </div>
-            </ion-card-content>
+              <!-- Contenido -->
+              <ion-card-content class="content">
+                <h3 class="title">{{ p.name }}</h3>
 
-            <!-- Barra inferior -->
-            <div class="accent-bar"></div>
-          </ion-card>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
+                <div class="row muted">
+                  <ion-icon name="person-outline"></ion-icon>
+                  <span>{{ p.personName || p.producerCode || '—' }}</span>
+                </div>
 
-    <!-- Estado vacío -->
-    <div *ngIf="!loading && products.length === 0" class="empty">
-      No tienes productos en favoritos todavía.
-    </div>
-  </ng-template>
+                <div class="row muted">
+                  <ion-icon name="location-outline"></ion-icon>
+                  <span>
+                    {{ p.cityName || '—' }}, {{ p.departmentName || '—' }}
+                  </span>
+                </div>
+
+                <div class="price">
+                  {{ p.price | currency:'COP':'symbol':'1.0-0' }}
+                </div>
+              </ion-card-content>
+
+              <!-- Barra inferior -->
+              <div class="accent-bar"></div>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+
+      <!-- Estado vacío -->
+      <div *ngIf="!loading && products.length === 0" class="empty">
+        No tienes productos en favoritos todavía.
+      </div>
+    </ng-template>
+  </div>
 </ion-content>
