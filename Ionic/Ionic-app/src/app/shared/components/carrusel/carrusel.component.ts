@@ -20,10 +20,10 @@ export class CarruselComponent implements OnInit, AfterViewInit {
   slides = [
     { image: 'assets/backgrounds/1.png', title: 'Conectando los Productores de nuestra tierra' },
     { image: 'assets/backgrounds/2.png', title: 'Del campo a tu mesa, productos frescos y de calidad' },
-    { image: 'assets/backgrounds/3.png', title: 'Apoyando a los agricultores locales' }
+    { image: 'assets/backgrounds/sandia.png', title: 'Apoyando a los agricultores locales' }
   ];
 
-  ngOnInit() {}
+  ngOnInit() {} 
 
   ngAfterViewInit(): void {
     // inicializa cuando el DOM ya tiene los slides

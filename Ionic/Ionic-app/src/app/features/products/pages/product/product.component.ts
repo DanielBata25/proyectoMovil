@@ -20,7 +20,7 @@ import { ContainerCardFlexComponent } from '../../../../shared/components/cards/
   templateUrl: './product.component.html',
   styleUrls: ['./product.component.scss'],
 })
-export class ProductPage implements OnInit {
+export class ProductComponent implements OnInit {
   private productService = inject(ProductService);
   private categoryService = inject(CategoryService);
 

@@ -7,14 +7,11 @@ import { of } from 'rxjs';
 
 import { IonicModule, LoadingController, ToastController } from '@ionic/angular';
 
-// ✅ USA SIEMPRE ESTAS RUTAS (todo en minúscula)
-
 import { AuthService } from 'src/app/core/services/auth/auth.service';
 import { LocationService } from 'src/app/shared/services/location/location.service';
 import { CityModel, DepartmentModel } from 'src/app/shared/models/location/location.model';
 import { PasswordPolicyService } from 'src/app/shared/services/passwordPolicy/password-policy.service';
 import { RegisterUserModel } from 'src/app/core/models/register.user.model';
-
 
 @Component({
   standalone: true,
@@ -38,8 +35,22 @@ export class RegisterComponent implements OnInit {
   // Paso 1: Credenciales
   public credentialsForm: FormGroup = this.fb.group(
     {
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [this.pass.validator()]], // ya incluye longitud y mayúscula
+      email: [
+        '',
+        [
+          Validators.required,
+          Validators.email,
+          Validators.maxLength(150),
+          Validators.pattern(/^\S.*$/), // no espacios en blanco iniciales
+        ],
+      ],
+      password: [
+        '',
+        [
+          this.pass.validator(),
+          Validators.pattern(/^\S*$/), // no espacios
+        ],
+      ],
       confirmPassword: ['', Validators.required],
     },
     { validators: this.pass.passwordsMatch('password', 'confirmPassword') }
@@ -47,15 +58,53 @@ export class RegisterComponent implements OnInit {
 
   // Paso 2: Datos básicos
   public basicForm: FormGroup = this.fb.group({
-    firstName: ['', Validators.required],
-    lastName: ['', Validators.required],
-    identification: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
+    firstName: [
+      '',
+      [
+        Validators.required,
+        Validators.minLength(2),
+        Validators.maxLength(50),
+        Validators.pattern(/^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ\s'-]+$/),
+      ],
+    ],
+    lastName: [
+      '',
+      [
+        Validators.required,
+        Validators.minLength(2),
+        Validators.maxLength(50),
+        Validators.pattern(/^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ\s'-]+$/),
+      ],
+    ],
+    identification: [
+      '',
+      [
+        Validators.required,
+        Validators.minLength(5),
+        Validators.maxLength(20),
+        Validators.pattern(/^[A-Za-z0-9.\-]+$/),
+      ],
+    ],
   });
 
   // Paso 3: Contacto y ubicación
   public contactForm: FormGroup = this.fb.group({
-    phoneNumber: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
-    address: ['', Validators.required],
+    phoneNumber: [
+      '',
+      [
+        Validators.required,
+        Validators.maxLength(25),
+        Validators.pattern(/^[0-9]{7,15}$/),
+      ],
+    ],
+    address: [
+      '',
+      [
+        Validators.required,
+        Validators.minLength(5),
+        Validators.maxLength(120),
+      ],
+    ],
     departmentId: ['', Validators.required],
     cityId: ['', Validators.required],
   });
@@ -93,16 +142,6 @@ export class RegisterComponent implements OnInit {
 
   private loadCities(id: number): void {
     this.locationSrv.getCity(id).subscribe((data) => this.cities = data);
-  }
-
-  getErrorMessage(form: FormGroup, field: string): string {
-    const ctrl = form.get(field);
-    if (ctrl?.hasError('required')) return 'Este campo es requerido';
-    if (ctrl?.hasError('email')) return 'Email no válido';
-    if (ctrl?.hasError('pattern')) return 'Solo números permitidos';
-    if (ctrl?.hasError('passwordPolicy')) return 'Mínimo 6 caracteres y al menos 1 mayúscula';
-    if (form.hasError('passwordMismatch')) return 'Las contraseñas no coinciden';
-    return '';
   }
 
   private async toast(message: string, color: 'success' | 'danger' | 'medium' = 'medium') {

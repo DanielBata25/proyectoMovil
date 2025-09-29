@@ -1,4 +1,3 @@
-// src/app/core/services/product/product.service.ts
 import { Injectable } from '@angular/core';
 import { from, Observable } from 'rxjs';
 import { ApiNative } from 'src/app/core/services/http/api.native';
@@ -16,9 +15,15 @@ export class ProductService {
   private readonly categoriesBase = '/categories';
 
   /** ----------------------------- Home / Favorites ----------------------------- */
-  // GET /Product/home
-  getAllHome(): Observable<ProductSelectModel[]> {
-    return from(ApiNative.get<ProductSelectModel[]>(`${this.base}/home`));
+  // GET /Product/home  (con soporte opcional de limit)
+  getAllHome(limit?: number): Observable<ProductSelectModel[]> {
+    const url = limit ? `${this.base}/home?limit=${limit}` : `${this.base}/home`;
+    return from(ApiNative.get<ProductSelectModel[]>(url));
+  }
+
+  // GET /Product/featured
+  getFeatured(): Observable<ProductSelectModel[]> {
+    return from(ApiNative.get<ProductSelectModel[]>(`${this.base}/featured`));
   }
 
   // GET /Product/favorites
@@ -29,10 +34,9 @@ export class ProductService {
   /** ----------------------------- Categorías ----------------------------------- */
   // GET /categories/{categoryId}/products
   getByCategory(categoryId: number): Observable<ProductSelectModel[]> {
+    if (!categoryId || categoryId <= 0) throw new Error('categoryId inválido');
     return from(
-      ApiNative.get<ProductSelectModel[]>(
-        `${this.categoriesBase}/${categoryId}/products`
-      )
+      ApiNative.get<ProductSelectModel[]>(`${this.categoriesBase}/${categoryId}/products`)
     );
   }
 
@@ -50,9 +54,7 @@ export class ProductService {
   // GET /Product/by-producerCode/{code}
   getProductByCodeProducer(codeProducer: string): Observable<ProductSelectModel[]> {
     const safe = encodeURIComponent(codeProducer ?? '');
-    return from(
-      ApiNative.get<ProductSelectModel[]>(`${this.base}/by-producerCode/${safe}`)
-    );
+    return from(ApiNative.get<ProductSelectModel[]>(`${this.base}/by-producerCode/${safe}`));
   }
 
   // GET /Product/{id}
@@ -74,6 +76,7 @@ export class ProductService {
 
   // PUT /Product/{id}                 (multipart/form-data)
   update(dto: ProductUpdateModel): Observable<ApiOk> {
+    if (!dto.id) throw new Error('ID del producto es obligatorio');
     const fd = this.buildFormData(dto);
     return from(ApiNative.put<ApiOk>(`${this.base}/${dto.id}`, fd));
   }
@@ -94,6 +97,11 @@ export class ProductService {
     data.append('stock', String(dto.stock));
     data.append('status', String(dto.status));
     data.append('categoryId', String(dto.categoryId));
+
+    // << NUEVO: soporte para shippingIncluded (si existe en el dto como en Web)
+    if ('shippingIncluded' in dto && dto.shippingIncluded !== undefined) {
+      data.append('shippingIncluded', String((dto as any).shippingIncluded));
+    }
 
     // Múltiples fincas
     (dto.farmIds ?? []).forEach((fid) => data.append('FarmIds', String(fid)));

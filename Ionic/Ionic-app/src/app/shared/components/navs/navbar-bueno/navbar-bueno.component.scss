@@ -22,26 +22,37 @@ $blanco: #ffffff;
   display: grid;
   grid-template-columns: auto 1fr auto; /* logo | espacio | iconos */
   align-items: center;
-  min-height: 56px;
-  // padding: 0 8px;
+  min-height: 72px; /* más alto para evitar superposición con la status bar */
+  padding: 0 12px;  /* espacio lateral general */
 }
 
 /* IZQUIERDA */
 .nb-left { display: flex; align-items: center; }
-.nb-logo { height: 22px; width: auto; display: block; }
+.nb-logo { height: 26px; width: auto; display: block; }
 
 /* CENTRO (sin nada, solo para centrar composición) */
 .nb-center { min-width: 0; }
 
 /* DERECHA */
-.nb-right { display: flex; align-items: center; gap: 2px; }
-.nb-right ion-button { --padding-start: 6px; --padding-end: 6px; }
+.nb-right { 
+  display: flex; 
+  align-items: center; 
+  gap: 8px;           /* más separación entre iconos */
+  padding-right: 4px; /* evita que queden pegados al borde */
+}
+
+.nb-right ion-button { 
+  --padding-start: 8px; 
+  --padding-end: 8px; 
+  --ion-button-min-width: 40px;
+  --ion-button-min-height: 40px;
+}
 
 /* Iconos blancos como en la captura */
 ion-button, ion-icon { color: $blanco !important; }
 
 /* Compacto en pantallas angostas */
 @media (max-width: 360px) {
-  .nb-logo { height: 18px; }
-  .nb-row { min-height: 50px; }
+  .nb-logo { height: 20px; }
+  .nb-row { min-height: 60px; }
 }

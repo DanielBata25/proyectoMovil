@@ -20,7 +20,7 @@
       (keyup.space)="$event.stopPropagation(); $event.preventDefault()"
       aria-label="Favorito"
     >
-      <ion-icon slot="icon-only" [name]="product.isFavorite ? 'star' : 'star-outline'"></ion-icon>
+      <ion-icon slot="icon-only" class="fav-icon" [name]="product.isFavorite ? 'star' : 'star-outline'" [class.fav-icon--active]="product.isFavorite"></ion-icon>
     </ion-button>
   </div>
 
