@@ -1,32 +1,20 @@
 .page-bg {
   --background: #f4f6f5;
-  --padding-top: 0;
-  --padding-bottom: 24px;
-  --padding-start: 0;
-  --padding-end: 0;
 }
 
-/* ðŸ”¹ Contenedor principal que llena la pantalla */
-.detail-body {
+.detail-shell {
   min-height: 100%;
   display: flex;
   flex-direction: column;
-  padding: 0;
+  gap: 24px;
 }
 
-/* ðŸ”¹ Ancho mÃ¡ximo centrado */
-.detail-inner {
-  width: 100%;
-  max-width: 920px;
-  margin: 0 auto;
-  padding: 0 16px 32px;
-  box-sizing: border-box;
-}
 
+/* Ã°Å¸â€Â¹ Ancho mÃƒÂ¡ximo centrado */
 .detail-card {
   background: transparent;
   border-radius: 0;
-  padding: 24px 0 0;
+  padding: 24px 0 32px;
   box-shadow: none;
 }
 
@@ -342,7 +330,8 @@
   }
 
   .detail-card {
-    padding: 24px 0 0;
+    padding: 24px 0 32px;
   }
 }
+
 

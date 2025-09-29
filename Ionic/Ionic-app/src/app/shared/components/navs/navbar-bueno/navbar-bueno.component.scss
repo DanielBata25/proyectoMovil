@@ -8,7 +8,7 @@
 $verde: #2e7d32;
 $blanco: #ffffff;
 
-/* Fuerza el color del toolbar, evitando overrides globales */
+/* Fuerza el color del toolbar */
 .nb-header,
 .nb-onebar,
 .nb-header ion-toolbar.nb-onebar {
@@ -17,42 +17,78 @@ $blanco: #ffffff;
   --border-color: transparent !important;
 }
 
+.nb-onebar {
+  --padding-start: 0;
+  --padding-end: 0;
+  --padding-top: calc(env(safe-area-inset-top) + 8px);
+  --padding-bottom: 12px;
+  --min-height: 0;
+}
+
 /* Estructura de una sola fila */
 .nb-row {
   display: grid;
-  grid-template-columns: auto 1fr auto; /* logo | espacio | iconos */
+  grid-template-columns: auto 1fr auto;
   align-items: center;
-  min-height: 72px; /* más alto para evitar superposición con la status bar */
-  padding: 0 12px;  /* espacio lateral general */
+  min-height: 70px;
+  margin-top: 8px;     /* ya baja el contenido */
+  margin-bottom: -20px;  /*aire después de la barra */
+  padding: 0 16px;
+  box-sizing: border-box;
 }
+
 
 /* IZQUIERDA */
-.nb-left { display: flex; align-items: center; }
-.nb-logo { height: 26px; width: auto; display: block; }
-
-/* CENTRO (sin nada, solo para centrar composición) */
-.nb-center { min-width: 0; }
-
-/* DERECHA */
-.nb-right { 
-  display: flex; 
-  align-items: center; 
-  gap: 8px;           /* más separación entre iconos */
-  padding-right: 4px; /* evita que queden pegados al borde */
+.nb-left {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* separación entre logo y título */
 }
 
-.nb-right ion-button { 
-  --padding-start: 8px; 
-  --padding-end: 8px; 
+.nb-logo {
+  height: 28px;
+  width: auto;
+  display: block;
+}
+
+.nb-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: $blanco;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px; /* evita que desborde en pantallas pequeñas */
+}
+
+/* CENTRO */
+.nb-center {
+  min-width: 0;
+}
+
+/* DERECHA */
+.nb-right {
+  display: flex;
+  align-items: center;
+  padding-right: 4px;
+}
+
+.nb-right ion-button {
+  --padding-start: 8px;
+  --padding-end: 8px;
   --ion-button-min-width: 40px;
   --ion-button-min-height: 40px;
 }
 
-/* Iconos blancos como en la captura */
-ion-button, ion-icon { color: $blanco !important; }
+/* Iconos blancos */
+ion-button,
+ion-icon {
+  color: $blanco !important;
+}
 
 /* Compacto en pantallas angostas */
 @media (max-width: 360px) {
-  .nb-logo { height: 20px; }
-  .nb-row { min-height: 60px; }
+  .nb-logo { height: 22px; }
+  .nb-title { font-size: 16px; max-width: 140px; }
+  .nb-row { min-height: 56px; }
 }
