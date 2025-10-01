@@ -24,7 +24,7 @@
             interface="popover"
             placeholder="Selecciona"
             [disabled]="isLoadingCategories || atLeaf"
-            [value]="categoryCtrl.value"
+            [formControl]="categoryCtrl"
             (ionChange)="onSelectCategory($event.detail.value)">
             <ion-select-option *ngFor="let c of categories; trackBy: trackById" [value]="c.id">
               <span class="option-text">{{ c.name }}</span>
@@ -91,6 +91,7 @@
     </section>
   </div>
 </ion-content>
+
 
 
 
