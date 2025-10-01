@@ -12,7 +12,7 @@ import {
 export class ProductService {
   /** Mantén la convención de Auth: bases relativas; ApiNative las resuelve contra environment.apiUrl */
   private readonly base = '/Product';
-  private readonly categoriesBase = '/categories';
+  private readonly categoriesBase = '/Product/categories';
 
   /** ----------------------------- Home / Favorites ----------------------------- */
   // GET /Product/home  (con soporte opcional de limit)
@@ -34,7 +34,7 @@ export class ProductService {
   /** ----------------------------- Categorías ----------------------------------- */
   // GET /categories/{categoryId}/products
   getByCategory(categoryId: number): Observable<ProductSelectModel[]> {
-    if (!categoryId || categoryId <= 0) throw new Error('categoryId inválido');
+    if (!categoryId || categoryId <= 0) throw new Error('categoryId invalido');
     return from(
       ApiNative.get<ProductSelectModel[]>(`${this.categoriesBase}/${categoryId}/products`)
     );
@@ -122,3 +122,5 @@ export class ProductService {
     return data;
   }
 }
+
+

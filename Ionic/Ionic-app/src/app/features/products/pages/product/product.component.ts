@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -43,10 +43,9 @@ export class ProductComponent implements OnInit {
   /** UI */
   showFilters = false;
 
-  /** Paginación front + infinite scroll */
+  /** Pagination (client side) */
   pageIndex = 0;
-  pageSize = 12;
-  canLoadMore = true;
+  readonly pageSize = 8;
 
   /** Computed filtrado y paginado */
   private normalize = (v: string) =>
@@ -65,14 +64,18 @@ export class ProductComponent implements OnInit {
     });
   }
 
+  get totalPages(): number {
+    const count = this.filteredProducts.length;
+    return count > 0 ? Math.ceil(count / this.pageSize) : 1;
+  }
+
   get pagedProducts(): ProductSelectModel[] {
-    const end = (this.pageIndex + 1) * this.pageSize;
-    const slice = this.filteredProducts.slice(0, end);
-    this.canLoadMore = slice.length < this.filteredProducts.length;
-    return slice;
+    const start = this.pageIndex * this.pageSize;
+    return this.filteredProducts.slice(start, start + this.pageSize);
   }
 
   ngOnInit(): void {
+    this.categoryCtrl.reset({ value: null, disabled: true }, { emitEvent: false });
     this.loadRootCategories();
     this.loadProductsHome();
 
@@ -123,6 +126,17 @@ export class ProductComponent implements OnInit {
   }
 
   /** Categorías */
+  private applyCategoryNodes(nodes: CategoryNodeModel[], resetSelection = false): void {
+    this.categories = nodes;
+    this.atLeaf = nodes.length === 0;
+
+    if (resetSelection || this.atLeaf) {
+      this.categoryCtrl.setValue(null, { emitEvent: false });
+    }
+
+    this.updateCategoryControlState();
+  }
+
   private updateCategoryControlState(): void {
     if (this.isLoadingCategories || this.atLeaf) {
       this.categoryCtrl.disable({ emitEvent: false });
@@ -134,13 +148,12 @@ export class ProductComponent implements OnInit {
   private loadRootCategories(): void {
     this.isLoadingCategories = true;
     this.updateCategoryControlState();
+    this.categoryCtrl.setValue(null, { emitEvent: false });
 
     this.categoryService.getNodes(null).subscribe({
       next: (nodes) => {
-        this.categories = nodes;
-        this.atLeaf = nodes.length === 0;
         this.isLoadingCategories = false;
-        this.updateCategoryControlState();
+        this.applyCategoryNodes(nodes, true);
       },
       error: (err) => {
         console.error(err);
@@ -153,13 +166,12 @@ export class ProductComponent implements OnInit {
   private loadChildren(parentId: number): void {
     this.isLoadingCategories = true;
     this.updateCategoryControlState();
+    this.categoryCtrl.setValue(null, { emitEvent: false });
 
     this.categoryService.getNodes(parentId).subscribe({
       next: (nodes) => {
-        this.categories = nodes;
-        this.atLeaf = nodes.length === 0;
         this.isLoadingCategories = false;
-        this.updateCategoryControlState();
+        this.applyCategoryNodes(nodes, true);
       },
       error: (err) => {
         console.error(err);
@@ -171,26 +183,27 @@ export class ProductComponent implements OnInit {
 
   /** Navegación categorías */
   onSelectCategory(categoryId: number): void {
+    if (categoryId === null || categoryId === undefined) {
+      return;
+    }
+
     const node = this.categories.find((c) => c.id === categoryId);
     if (!node) return;
 
     this.selectedCategoryId = categoryId;
     this.pushToBreadcrumb(categoryId, node.name);
     this.loadProductsByCategory(categoryId);
-    this.loadChildren(categoryId);
     this.resetPaging();
-
-    this.categoryCtrl.setValue(categoryId, { emitEvent: false });
+    this.loadChildren(categoryId);
   }
 
   onBreadcrumbClick(index: number): void {
     const target = this.breadcrumb[index];
     this.breadcrumb = this.breadcrumb.slice(0, index + 1);
     this.selectedCategoryId = target.id;
-    this.categoryCtrl.setValue(target.id, { emitEvent: false });
     this.loadProductsByCategory(target.id);
-    this.loadChildren(target.id);
     this.resetPaging();
+    this.loadChildren(target.id);
   }
 
   clearFilter(): void {
@@ -202,16 +215,30 @@ export class ProductComponent implements OnInit {
     this.loadProductsHome();
   }
 
-  /** Infinite scroll */
-  async loadMore(ev: CustomEvent) {
-    this.pageIndex++;
-    (ev.target as HTMLIonInfiniteScrollElement).complete();
+  /** Pagination */
+  get isFirstPage(): boolean {
+    return this.pageIndex === 0;
+  }
+
+  get isLastPage(): boolean {
+    return this.pageIndex >= this.totalPages - 1;
+  }
+
+  onPrevPage(): void {
+    if (!this.isFirstPage) {
+      this.pageIndex--;
+    }
+  }
+
+  onNextPage(): void {
+    if (!this.isLastPage) {
+      this.pageIndex++;
+    }
   }
 
   /** Util */
   private resetPaging(): void {
     this.pageIndex = 0;
-    // canLoadMore recalcula en getter pagedProducts
   }
 
   private pushToBreadcrumb(id: number, name: string): void {
@@ -222,3 +249,10 @@ export class ProductComponent implements OnInit {
 
   trackById = (_: number, item: { id: number }) => item.id;
 }
+
+
+
+
+
+
+

@@ -72,3 +72,20 @@
 
 /* Fondo: lo sigues poniendo desde el HTML; aquí solo evitamos que Ionic lo sobrescriba */
 .fondo-auth { --background: transparent; }
+
+/* Ajuste de columnas en el paso 3 */
+.dept-city-row {
+  display: flex;
+  gap: .5rem;
+  margin-top: 1rem;
+}
+
+.dept-col {
+  flex: 0.6; /* 60% ancho */
+  min-width: 0; /* evita que crezca más de la cuenta */
+}
+
+.city-col {
+  flex: 0.4; /* 40% ancho */
+  min-width: 0;
+}

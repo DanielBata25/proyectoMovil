@@ -1,5 +1,5 @@
-import { Routes } from "@angular/router";
-import { ProductComponent } from "../producer/pages/product/product.component";
+﻿import { Routes } from "@angular/router";
+import { ProductComponent } from "./pages/product/product.component";
 import { ProductDetailComponent } from "./pages/product-detail/product-detail.component";
 
 

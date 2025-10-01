@@ -130,27 +130,29 @@
           </ion-note>
 
           <!-- Departamento / Ciudad -->
-          <div style="display:flex;gap:.5rem;margin-top:1rem">
-            <div style="flex:1">
-              <label for="departmentId" class="label">Departamento</label>
-              <ion-item lines="none" class="input-custom">
-                <ion-select interface="popover" formControlName="departmentId" placeholder="Selecciona un departamento">
-                  <ion-select-option *ngFor="let dept of departments" [value]="dept.id">{{ dept.name }}</ion-select-option>
-                </ion-select>
-              </ion-item>
-            </div>
-            <div style="flex:1">
-              <label for="cityId" class="label">Ciudad</label>
-              <ion-item lines="none" class="input-custom">
-                <ion-select interface="popover" formControlName="cityId" placeholder="Selecciona una ciudad">
-                  <ion-select-option *ngFor="let city of cities" [value]="city.id">{{ city.name }}</ion-select-option>
-                </ion-select>
-              </ion-item>
-              <ion-note color="danger" *ngIf="contactForm.get('cityId')?.invalid && contactForm.get('cityId')?.touched" class="note">
-                Debe seleccionar una ciudad válida.
-              </ion-note>
-            </div>
-          </div>
+        <div class="dept-city-row">
+  <div class="dept-col">
+    <label for="departmentId" class="label">Departamento</label>
+    <ion-item lines="none" class="input-custom">
+      <ion-select interface="popover" formControlName="departmentId" placeholder="Selecciona un departamento">
+        <ion-select-option *ngFor="let dept of departments" [value]="dept.id">{{ dept.name }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+  </div>
+
+  <div class="city-col">
+    <label for="cityId" class="label">Ciudad</label>
+    <ion-item lines="none" class="input-custom">
+      <ion-select interface="popover" formControlName="cityId" placeholder="Selecciona una ciudad">
+        <ion-select-option *ngFor="let city of cities" [value]="city.id">{{ city.name }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-note color="danger" *ngIf="contactForm.get('cityId')?.invalid && contactForm.get('cityId')?.touched" class="note">
+      Debe seleccionar una ciudad válida.
+    </ion-note>
+  </div>
+</div>
+
 
           <div style="display:flex;gap:.5rem;margin-top:.75rem">
             <ion-button fill="outline" (click)="prevStep()">Volver</ion-button>

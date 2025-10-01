@@ -51,3 +51,4 @@ export class CategoryService extends GenericService<
     return this.cache.get(key)!;
   }
 }
+
