@@ -1,3 +1,15 @@
-<p>
-  management works!
-</p>
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Gestión</ion-title>
+  </ion-toolbar>
+
+  <ion-segment value="product">
+    <ion-segment-button *ngFor="let t of tabs" [value]="t.path" [routerLink]="t.path" routerLinkActive="segment-active">
+      {{ t.label }}
+    </ion-segment-button>
+  </ion-segment>
+</ion-header>
+
+<ion-content>
+  <router-outlet></router-outlet>
+</ion-content>

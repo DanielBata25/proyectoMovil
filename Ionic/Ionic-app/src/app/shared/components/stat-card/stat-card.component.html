@@ -1,3 +1,51 @@
-<p>
-  stat-card works!
-</p>
+<!-- Con routerLink -->
+<ion-card
+  *ngIf="isLink"
+  [routerLink]="to"
+  [queryParams]="queryParams"
+  [fragment]="fragment"
+  class="stat-card"
+  [class.clickable]="clickable"
+  [class.success]="color === 'success'"
+  [class.warning]="color === 'warning'"
+  [class.info]="color === 'info'"
+  [class.neutral]="color === 'neutral'">
+
+  <ion-card-content>
+    <ng-container *ngIf="!loading; else skeleton">
+      <ion-icon [name]="icon" class="icon"></ion-icon>
+      <div class="label">{{ text }}</div>
+      <div class="value">{{ formattedCount }}</div>
+    </ng-container>
+  </ion-card-content>
+</ion-card>
+
+<!-- Sin routerLink -->
+<ion-card
+  *ngIf="!isLink"
+  class="stat-card"
+  [class.clickable]="clickable"
+  [class.success]="color === 'success'"
+  [class.warning]="color === 'warning'"
+  [class.info]="color === 'info'"
+  [class.neutral]="color === 'neutral'"
+  role="button"
+  tabindex="0"
+  (click)="onActivateClick()"
+  (keydown)="onKeyDown($event)">
+
+  <ion-card-content>
+    <ng-container *ngIf="!loading; else skeleton">
+      <ion-icon [name]="icon" class="icon"></ion-icon>
+      <div class="label">{{ text }}</div>
+      <div class="value">{{ formattedCount }}</div>
+    </ng-container>
+  </ion-card-content>
+</ion-card>
+
+<!-- Skeleton -->
+<ng-template #skeleton>
+  <div class="skeleton-icon"></div>
+  <div class="skeleton-line w60"></div>
+  <div class="skeleton-line w40"></div>
+</ng-template>

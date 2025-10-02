@@ -1,0 +1,114 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ isEdit ? 'Editar producto' : 'Nuevo producto' }}</ion-title>
+  </ion-toolbar>
+
+  <ion-segment [formControl]="stepControl">
+    <ion-segment-button value="general">Generales</ion-segment-button>
+    <ion-segment-button value="detalles">Detalles</ion-segment-button>
+    <ion-segment-button value="imagenes">Imágenes</ion-segment-button>
+  </ion-segment>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <!-- Paso 1 -->
+  <div *ngIf="stepControl.value === 'general'" class="form-step">
+    <form [formGroup]="generalGroup">
+      <ion-item>
+        <ion-label position="stacked">Nombre</ion-label>
+        <ion-input formControlName="name"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Precio</ion-label>
+        <ion-input type="number" formControlName="price"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Unidad</ion-label>
+        <ion-input formControlName="unit"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Producción</ion-label>
+        <ion-input formControlName="production"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Descripción</ion-label>
+        <ion-textarea rows="3" formControlName="description"></ion-textarea>
+      </ion-item>
+    </form>
+  </div>
+
+  <!-- Paso 2 -->
+  <div *ngIf="stepControl.value === 'detalles'" class="form-step">
+    <form [formGroup]="detallesGroup">
+      <ion-item>
+        <ion-label position="stacked">Stock</ion-label>
+        <ion-input type="number" formControlName="stock"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>Estado</ion-label>
+        <ion-select formControlName="status">
+          <ion-select-option [value]="true">Activo</ion-select-option>
+          <ion-select-option [value]="false">Inactivo</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>Envío incluido</ion-label>
+        <ion-select formControlName="shippingIncluded">
+          <ion-select-option [value]="true">Sí</ion-select-option>
+          <ion-select-option [value]="false">No</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>Categoría</ion-label>
+        <ion-select formControlName="categoryId">
+          <ion-select-option *ngFor="let c of categories" [value]="c.id">{{c.name}}</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>Fincas</ion-label>
+        <ion-select multiple formControlName="farmIds">
+          <ion-select-option *ngFor="let f of farms" [value]="f.id">{{f.name}}</ion-select-option>
+        </ion-select>
+      </ion-item>
+    </form>
+  </div>
+
+  <!-- Paso 3 -->
+  <div *ngIf="stepControl.value === 'imagenes'" class="form-step">
+    <ion-text>Máximo {{MAX_IMAGES}} imágenes ({{MAX_FILE_SIZE_MB}} MB c/u)</ion-text>
+
+    <ion-button expand="block">
+      <input type="file" accept="image/*" multiple (change)="onFileChange($event)" />
+      Subir imágenes
+    </ion-button>
+
+    <div class="images-preview">
+      <div class="img-container" *ngFor="let img of imagesPreview; let i = index">
+        <img [src]="img" />
+        <ion-button size="small" color="danger" (click)="removeImage(i)">Quitar</ion-button>
+      </div>
+
+      <div class="img-container" *ngFor="let img of existingImages; let i = index">
+        <img [src]="img.imageUrl" />
+        <ion-button size="small" color="danger" (click)="removeImage(i,true)">Eliminar</ion-button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Acciones -->
+  <div class="actions">
+  <ion-button color="medium" (click)="goBack()">
+  Cancelar
+</ion-button>
+
+    <ion-button color="success" (click)="submit()" [disabled]="isLoading"> {{ isEdit ? 'Actualizar' : 'Crear' }} </ion-button>
+  </div>
+</ion-content>

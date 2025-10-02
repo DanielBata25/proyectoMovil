@@ -1,0 +1,34 @@
+.form-step {
+  padding: 16px;
+}
+
+ion-item {
+  margin-bottom: 12px;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin: 16px;
+}
+
+.images-preview {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.img-container {
+  position: relative;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.img-container img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+}

@@ -1,3 +1,82 @@
-<p>
-  summary works!
-</p>
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Resumen</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+
+  <p class="subtext">
+    Vista general de tu desempeño como productor. Usa las tarjetas para navegar a la lista filtrada.
+  </p>
+
+  <!-- Botones -->
+  <div class="btns">
+    <ion-button expand="block" (click)="goProfile()">
+      Ver mi perfil
+    </ion-button>
+    <ion-button expand="block" color="success" (click)="updateProfile()">
+      Actualizar mi perfil
+    </ion-button>
+  </div>
+
+  <!-- Estado de pedidos -->
+  <section class="section">
+    <ion-item lines="none">
+      <ion-label>
+        <h2 class="subtitle">Estado de los pedidos</h2>
+      </ion-label>
+      <ion-buttons slot="end">
+        <ion-button fill="clear" [routerLink]="['/account/producer/orders']" [queryParams]="{ status: 'pending' }">
+          Ver pendientes
+        </ion-button>
+        <ion-button fill="clear" [routerLink]="['/account/producer/orders']" [queryParams]="{ status: 'all' }">
+          Ver todos
+        </ion-button>
+      </ion-buttons>
+    </ion-item>
+
+    <p class="text">Resumen rápido de pedidos totales y pendientes.</p>
+
+    <div class="cont-stat-card">
+      <app-stat-card
+        icon="inventory_2"
+        text="Total pedidos"
+        [count]="totalOrders"
+        color="info"
+        [loading]="loading"
+        [clickable]="true"
+        [to]="['/account/producer/orders']"
+        [queryParams]="{ status: 'all' }"
+      ></app-stat-card>
+
+      <app-stat-card
+        icon="hourglass_empty"
+        text="Pendientes"
+        [count]="pendingOrders"
+        color="warning"
+        [loading]="loading"
+        [clickable]="true"
+        [to]="['/account/producer/orders']"
+        [queryParams]="{ status: 'pending' }"
+      ></app-stat-card>
+    </div>
+  </section>
+
+  <!-- Productos más vendidos -->
+  <section class="section">
+    <h2 class="subtitle">Productos más vendidos</h2>
+    <p class="text">
+      Productos con mayor número de pedidos completados. Útil para priorizar inventario y promoción.
+    </p>
+
+    <div class="chart-container">
+      <canvas
+        baseChart
+        [data]="barChartData"
+        [options]="barChartOptions"
+        [type]="'bar'">
+      </canvas>
+    </div>
+  </section>
+</ion-content>

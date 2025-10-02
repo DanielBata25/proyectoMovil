@@ -1,3 +1,20 @@
-<p>
-  producer-layout works!
-</p>
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Productor</ion-title>
+  </ion-toolbar>
+
+  <!-- Tabs con ion-segment -->
+  <ion-segment [value]="currentTab" (ionChange)="onTabChange($event)">
+    <ion-segment-button value="summary">
+      <ion-label>Resumen</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="management">
+      <ion-label>Gestión</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+</ion-header>
+
+<ion-content>
+  <!-- Aquí cargamos el router-outlet -->
+  <router-outlet></router-outlet>
+</ion-content>

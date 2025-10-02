@@ -1,3 +1,43 @@
-<p>
-  onboarding works!
-</p>
+<ion-content class="ob-wrap" [fullscreen]="true">
+  <div class="ob-hero">
+    <h2 class="ob-title">Conviértete en Productor</h2>
+    <h4 class="ob-subtitle">
+      Crea tu perfil, registra tu finca y comienza a publicar tus productos.
+    </h4>
+
+    <div class="ob-cta">
+      <ion-button expand="block" color="success" routerLink="/account/register-producer">
+        <ion-icon name="leaf" slot="start"></ion-icon>
+        Convertirme en productor
+      </ion-button>
+    </div>
+  </div>
+
+  <div class="ob-features">
+    <ion-card class="ob-card">
+      <ion-icon name="storefront-outline"></ion-icon>
+      <h3>Ofrece con facilidad</h3>
+      <p class="text">Publica productos con imágenes, precios y disponibilidad.</p>
+    </ion-card>
+
+    <ion-card class="ob-card">
+      <ion-icon name="shield-checkmark-outline"></ion-icon>
+      <h3>Genera confianza</h3>
+      <p class="text">Completa tu perfil y el de tu finca para verificación.</p>
+    </ion-card>
+
+    <ion-card class="ob-card">
+      <ion-icon name="stats-chart-outline"></ion-icon>
+      <h3>Gestiona y crece</h3>
+      <p class="text">Panel con inventario, pedidos y métricas básicas.</p>
+    </ion-card>
+  </div>
+
+  <ion-card class="ob-req">
+    <h3>Requisitos mínimos</h3>
+    <ul>
+      <li class="text">Datos de la finca: nombre, ciudad y dirección.</li>
+      <li class="text">Coordenadas (lat/long) y hasta 5 imágenes.</li>
+    </ul>
+  </ion-card>
+</ion-content>
