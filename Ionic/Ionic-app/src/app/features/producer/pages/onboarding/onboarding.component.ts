@@ -10,4 +10,4 @@ import { RouterModule } from '@angular/router';
   templateUrl: './onboarding.component.html',
   styleUrls: ['./onboarding.component.scss'],
 })
-export class OnboardingPage {}
+export class OnboardingComponent {}

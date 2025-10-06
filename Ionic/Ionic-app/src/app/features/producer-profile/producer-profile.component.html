@@ -1,3 +1,77 @@
-<p>
-  producer-profile works!
-</p>
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      <ion-icon name="person-circle-outline" slot="start"></ion-icon>
+      Actualizar perfil
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="close()">Cancelar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <form [formGroup]="form" (ngSubmit)="submit()" class="ion-padding">
+
+    <!-- Descripción -->
+    <ion-item>
+      <ion-label position="stacked">Descripción</ion-label>
+      <ion-textarea
+        formControlName="description"
+        maxlength="500"
+        autoGrow="true">
+      </ion-textarea>
+    </ion-item>
+    <ion-note slot="end">
+      {{ form.get('description')?.value?.length || 0 }}/500
+    </ion-note>
+
+    <ion-item-divider>
+      <ion-label>Redes sociales (opcional)</ion-label>
+      <ion-button slot="end" fill="outline" size="small" (click)="addSocialLink()">
+        <ion-icon slot="start" name="add-outline"></ion-icon>
+        Añadir red
+      </ion-button>
+    </ion-item-divider>
+
+    <!-- Lista de redes -->
+    <div class="social-list">
+      <div *ngFor="let sl of socialLinksControls; let i = index" [formGroup]="sl" class="social-item">
+
+        <ion-item>
+          <ion-label position="stacked">Red</ion-label>
+          <ion-select formControlName="network">
+            <ion-select-option [value]="SocialNetwork.Website">🌐 Sitio web</ion-select-option>
+            <ion-select-option [value]="SocialNetwork.Facebook">📘 Facebook</ion-select-option>
+            <ion-select-option [value]="SocialNetwork.Instagram">📸 Instagram</ion-select-option>
+            <ion-select-option [value]="SocialNetwork.Whatsapp">💬 WhatsApp</ion-select-option>
+            <ion-select-option [value]="SocialNetwork.X">@ X</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">URL o usuario</ion-label>
+          <ion-input formControlName="url" maxlength="512" placeholder="https://"></ion-input>
+        </ion-item>
+
+        <ion-button color="danger" fill="clear" (click)="removeSocialLink(i)">
+          <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+
+    <ion-note color="danger" *ngIf="socialLinksFA.hasError('duplicateNetwork')">
+      No puedes repetir el mismo tipo de red social.
+    </ion-note>
+
+    <!-- Botones -->
+    <ion-footer>
+      <ion-toolbar>
+        <ion-buttons slot="end">
+          <ion-button type="button" (click)="close()">Cancelar</ion-button>
+          <ion-button type="submit" color="primary" [disabled]="form.invalid">Guardar</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-footer>
+  </form>
+</ion-content>

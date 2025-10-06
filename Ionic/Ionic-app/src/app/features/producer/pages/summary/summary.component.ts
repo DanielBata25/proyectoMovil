@@ -1,11 +1,9 @@
 import { Component, OnInit, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule, ToastController, AlertController } from '@ionic/angular';
-import { RouterLink } from '@angular/router';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartOptions } from 'chart.js';
 
-import { StatCardComponent } from 'src/app/shared/components/stat-card/stat-card.component';
 import { AnalyticService } from 'src/app/shared/services/analytics/analytic.service';
 import { ProducerService } from 'src/app/shared/services/producer/producer.service';
 import { OrderService } from 'src/app/features/products/services/order/order.service';
@@ -15,7 +13,7 @@ import { forkJoin, catchError, finalize, of } from 'rxjs';
 @Component({
   selector: 'app-summary',
   standalone: true,
-  imports: [IonicModule, CommonModule, RouterLink, BaseChartDirective, StatCardComponent],
+  imports: [IonicModule, CommonModule, BaseChartDirective],
   templateUrl: './summary.component.html',
   styleUrls: ['./summary.component.scss'],
 })
@@ -30,9 +28,22 @@ export class SummaryPage implements OnInit {
 
   totalOrders = 0;
   pendingOrders = 0;
+  publishedProducts = 0;
   loading = true;
   chartLoading = true;
   codeProducer?: string;
+
+  range: 'day' | 'week' | 'month' = 'month';
+  get rangeLabel(): string {
+    switch (this.range) {
+      case 'day':
+        return 'dia';
+      case 'week':
+        return 'semana';
+      default:
+        return 'mes';
+    }
+  }
 
   barChartData: ChartConfiguration<'bar'>['data'] = {
     labels: [],
@@ -40,7 +51,7 @@ export class SummaryPage implements OnInit {
       {
         label: 'Pedidos completados',
         data: [],
-        backgroundColor: ['#42A5F5', '#66BB6A', '#FFA726', '#AB47BC', '#29B6F6'],
+        backgroundColor: ['#42A5F5', '#66BB6A', '#FFA726', '#AB47BC', '#29B6F6', '#4DD0E1'],
       },
     ],
   };
@@ -48,7 +59,7 @@ export class SummaryPage implements OnInit {
   barChartOptions: ChartOptions<'bar'> = {
     responsive: true,
     plugins: {
-      legend: { display: true, position: 'top', align: 'start' },
+      legend: { display: false },
       tooltip: { enabled: true },
     },
     scales: {
@@ -56,34 +67,35 @@ export class SummaryPage implements OnInit {
     },
   };
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.loadProducer();
     this.loadSummary();
     this.loadTopProductsChart();
   }
 
-  private loadProducer() {
-    // ⚠️ Ajusta según tu servicio real (getCodeProducer o getByCodeProducer)
+  private loadProducer(): void {
     this.producerService.getByCodeProducer('someCode').subscribe((data) => {
       this.codeProducer = data.code;
     });
   }
 
-  private loadSummary() {
+  private loadSummary(): void {
     this.loading = true;
     forkJoin({
       all: this.orderService.getProducerOrders().pipe(catchError(() => of([]))),
       pending: this.orderService.getProducerPendingOrders().pipe(catchError(() => of([]))),
     })
       .pipe(finalize(() => (this.loading = false)))
-      .subscribe(({ all, pending }) => {
+      .subscribe(({ all, pending }: { all: any[]; pending: any[] }) => {
         this.totalOrders = all.length;
         this.pendingOrders = pending.length;
+        this.publishedProducts = all.filter((order) => order?.product?.status === true).length;
       });
   }
 
-  private loadTopProductsChart(limit = 5) {
+  private loadTopProductsChart(): void {
     this.chartLoading = true;
+    const limit = this.range === 'day' ? 5 : this.range === 'week' ? 7 : 6;
     this.analyticService.getTopProducts(limit).subscribe({
       next: ({ items }) => {
         if (!items || items.length === 0) {
@@ -105,7 +117,15 @@ export class SummaryPage implements OnInit {
     });
   }
 
-  async goProfile() {
+  onRangeChange(event: CustomEvent): void {
+    const value = (event.detail.value as 'day' | 'week' | 'month') ?? 'month';
+    if (value !== this.range) {
+      this.range = value;
+      this.loadTopProductsChart();
+    }
+  }
+
+  async goProfile(): Promise<void> {
     if (!this.codeProducer) {
       this.showToast('No se pudo cargar tu perfil.');
       return;
@@ -113,8 +133,8 @@ export class SummaryPage implements OnInit {
     window.location.href = `/home/product/profile/${this.codeProducer}`;
   }
 
-  async updateProfile() {
-    this.showAlert('Actualizar perfil', 'Aquí abrirías un modal o flujo de edición en Ionic.');
+  async updateProfile(): Promise<void> {
+    this.showAlert('Actualizar perfil', 'Aqu� abrir�as un flujo de edici�n en Ionic.');
   }
 
   private async showToast(message: string) {
@@ -127,3 +147,4 @@ export class SummaryPage implements OnInit {
     await a.present();
   }
 }
+

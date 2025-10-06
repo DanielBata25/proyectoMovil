@@ -11,7 +11,7 @@ import { RouterOutlet } from '@angular/router';
   templateUrl: './producer-layout.component.html',
   styleUrls: ['./producer-layout.component.scss']
 })
-export class ProducerLayoutPage {
+export class ProducerLayoutComponent {
   currentTab: string = 'summary';
 
   constructor(private router: Router) {}

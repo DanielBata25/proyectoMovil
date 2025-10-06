@@ -1,4 +1,4 @@
-<ion-content [fullscreen]="true" class="page-bg">
+﻿<ion-content [fullscreen]="true" class="page-bg">
   <div class="page-shell">
 
     <!-- Loader -->
@@ -84,16 +84,25 @@
       <h2 class="group-title">Productor</h2>
       <div class="row-btn">
         <div class="pill-icon"><ion-icon name="nutrition-outline"></ion-icon></div>
-        <button class="flat-btn" (click)="goto('/producer/options')">
-          <span>Opciones de Productor</span>
+        <button class="flat-btn" (click)="goto('/account/producer/summary')">
+          <span>Resumen</span>
           <ion-icon name="chevron-forward"></ion-icon>
         </button>
       </div>
 
       <div class="row-btn">
         <div class="pill-icon"><ion-icon name="reader-outline"></ion-icon></div>
-        <button class="flat-btn" (click)="goto('/producer/summary')">
-          <span>Resumen</span>
+        <button class="flat-btn" (click)="goto('/account/producer/management/farm')">
+          <span>Gestion Fincas</span>
+          <ion-icon name="chevron-forward"></ion-icon>
+        </button>
+      </div>
+
+
+      <div class="row-btn">
+        <div class="pill-icon"><ion-icon name="reader-outline"></ion-icon></div>
+        <button class="flat-btn" (click)="goto('/account/producer/management/product')">
+          <span>Gestion Productos</span>
           <ion-icon name="chevron-forward"></ion-icon>
         </button>
       </div>
@@ -121,3 +130,7 @@
 
   </div>
 </ion-content>
+
+
+
+

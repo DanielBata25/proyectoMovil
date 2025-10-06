@@ -1,0 +1,78 @@
+/* ===== Título del modal ===== */
+.dlg-title {
+  display: flex;
+  align-items: center;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+/* ===== Contenido scrollable ===== */
+.dlg-content {
+  padding: 16px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+/* ===== Footer (acciones) ===== */
+.dlg-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 12px;
+  border-top: 1px solid #eee;
+  background: #fff;
+}
+
+/* ===== Sección de redes sociales ===== */
+.section-title {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  font-size: 1rem;
+  margin: 12px 0;
+}
+
+.muted {
+  color: #6b7280;
+  font-weight: 400;
+  font-size: 0.9rem;
+  margin-left: 6px;
+}
+
+/* ===== Tarjeta ligera de cada red social ===== */
+.social-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.social-item {
+  background: #fafafa;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.social-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr auto;
+  gap: 12px;
+  align-items: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .social-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Errores */
+.error {
+  color: #b00020;
+  font-size: 12px;
+  margin-top: 4px;
+}

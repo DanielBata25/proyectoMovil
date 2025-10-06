@@ -1,34 +1,131 @@
-.cont-stat-card {
+ion-header {
+  --background: #ffffff;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+}
+
+.summary-content {
+  --background: #f8f9fb;
+  padding: 0 16px 24px;
   display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
+  flex-direction: column;
+  gap: 18px;
 }
 
-.chart-container {
-  position: relative;
-  height: 45vh;
-  width: 100%;
+.summary-section {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 6px 24px rgba(15, 23, 42, 0.05);
 }
 
-.subtext {
-  margin-top: 0.25rem;
-  color: var(--ion-color-medium);
+.section-title {
+  margin: 0 0 14px;
+  font-weight: 700;
+  font-size: 18px;
+  color: #1f2937;
 }
 
-.section {
-  margin-top: 1.5rem;
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
 }
 
-.section-header {
+.metric-card {
+  background: #f3f5ff;
+  border-radius: 16px;
+  padding: 14px 12px;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  text-align: left;
+  color: #1f2937;
+}
+
+.metric-card--wide {
+  grid-column: span 2;
+  background: #e8f7f0;
+}
+
+.metric-value {
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.metric-label {
+  font-size: 13px;
+  color: #5b6475;
+}
+
+ion-segment {
+  --background: #eef1ff;
+  border-radius: 16px;
+}
+
+ion-segment-button {
+  --color-checked: #ffffff;
+  --indicator-height: 0px;
+  --background: transparent;
+  border-radius: 12px;
+}
+
+ion-segment-button.ion-activated {
+  --background: #3b82f6;
+  color: #ffffff;
+}
+
+.orders-header {
+  display: flex;
   justify-content: space-between;
-  flex-wrap: wrap;
+  align-items: flex-end;
+  margin-bottom: 16px;
 }
 
-.btns {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin: 1rem 0;
+.orders-caption {
+  margin: 0;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.orders-total {
+  margin: 2px 0;
+  font-size: 32px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.orders-delta {
+  margin: 0;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.orders-delta .positive {
+  color: #16a34a;
+  font-weight: 600;
+}
+
+.chart-card {
+  background: #f3f5ff;
+  border-radius: 18px;
+  padding: 12px;
+}
+
+.chart-card--loading {
+  padding: 0;
+}
+
+@media (min-width: 600px) {
+  .summary-content {
+    padding: 12px 24px 32px;
+  }
+
+  .metrics-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .metric-card--wide {
+    grid-column: span 1;
+  }
 }

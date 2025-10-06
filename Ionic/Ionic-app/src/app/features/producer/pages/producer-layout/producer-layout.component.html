@@ -1,20 +1,19 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar color="light">
     <ion-title>Productor</ion-title>
   </ion-toolbar>
 
-  <!-- Tabs con ion-segment -->
-  <ion-segment [value]="currentTab" (ionChange)="onTabChange($event)">
+  <ion-segment [value]="currentTab" (ionChange)="onTabChange($event)" class="producer-segment">
     <ion-segment-button value="summary">
       <ion-label>Resumen</ion-label>
     </ion-segment-button>
     <ion-segment-button value="management">
-      <ion-label>Gestión</ion-label>
+      <ion-label>Gesti�n</ion-label>
     </ion-segment-button>
   </ion-segment>
 </ion-header>
 
-<ion-content>
-  <!-- Aquí cargamos el router-outlet -->
+<ion-content fullscreen class="producer-content">
   <router-outlet></router-outlet>
 </ion-content>
+
