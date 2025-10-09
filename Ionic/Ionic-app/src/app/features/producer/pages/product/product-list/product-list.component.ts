@@ -18,6 +18,9 @@ export class ProductListComponent implements OnInit {
   private alertCtrl = inject(AlertController);
 
   products: ProductSelectModel[] = [];
+  page = 1;
+  pageSize = 6;
+  totalPages = 1;
 
   ngOnInit(): void {
     this.loadProduct();
@@ -25,17 +28,27 @@ export class ProductListComponent implements OnInit {
 
   trackById = (_: number, p: ProductSelectModel) => p.id;
 
-  loadProduct() {
-    this.productService.getByProducerId().subscribe((data) => {
+  loadProduct(): void {
+    this.productService.getAllHome().subscribe((data) => {
       this.products = data;
+      this.page = 1;
+      this.updatePagination();
     });
   }
 
-  onEdit(p: ProductSelectModel) {
+  createProduct(): void {
+    this.router.navigate(['/account/producer/management/product/create']);
+  }
+
+  onEdit(p: ProductSelectModel): void {
     this.router.navigate(['/account/producer/management/product/update', p.id]);
   }
 
-  async onDelete(p: ProductSelectModel) {
+  viewProduct(p: ProductSelectModel): void {
+    this.router.navigate(['/products', p.id]);
+  }
+
+  async onDelete(p: ProductSelectModel): Promise<void> {
     const alert = await this.alertCtrl.create({
       header: '¿Eliminar producto?',
       message: `Se eliminará "${p.name}". Esta acción no se puede deshacer.`,
@@ -47,11 +60,40 @@ export class ProductListComponent implements OnInit {
           handler: () => {
             this.productService.delete(p.id).subscribe(() => {
               this.products = this.products.filter(x => x.id !== p.id);
+              this.updatePagination();
             });
           }
         }
       ]
     });
     await alert.present();
+  }
+
+  getCover(product: ProductSelectModel): string | null {
+    return product.images?.[0]?.imageUrl || product.imageUrl || null;
+  }
+
+  get paginatedProducts(): ProductSelectModel[] {
+    const start = (this.page - 1) * this.pageSize;
+    return this.products.slice(start, start + this.pageSize);
+  }
+
+  nextPage(): void {
+    if (this.page < this.totalPages) {
+      this.page++;
+    }
+  }
+
+  prevPage(): void {
+    if (this.page > 1) {
+      this.page--;
+    }
+  }
+
+  private updatePagination(): void {
+    this.totalPages = Math.max(1, Math.ceil(this.products.length / this.pageSize));
+    if (this.page > this.totalPages) {
+      this.page = this.totalPages;
+    }
   }
 }

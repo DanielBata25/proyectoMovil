@@ -1,37 +1,76 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>Productos</ion-title>
-    <ion-buttons slot="end">
-      <ion-button routerLink="/account/producer/management/product/create">
-        <ion-icon name="add-circle-outline"></ion-icon>
+<ion-content class="product-content" fullscreen>
+  <div class="page-shell">
+    <section class="product-actions">
+      <ion-button expand="block" color="success" fill="solid" (click)="createProduct()">
+        <ion-icon slot="start" name="add-circle-outline"></ion-icon>
         Crear Producto
       </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
+    </section>
 
-<ion-content>
-  <div class="product-container">
-    <ion-card *ngFor="let product of products; trackBy: trackById">
-      <ion-card-header>
-        <ion-card-title>{{ product.name }}</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <p>{{ product.description }}</p>
-        <p><strong>Precio:</strong> {{ product.price | currency:'COP' }}</p>
-      </ion-card-content>
-      <ion-row class="ion-justify-content-between ion-padding">
-        <ion-button size="small" color="warning" (click)="onEdit(product)">
-          Editar
-        </ion-button>
-        <ion-button size="small" color="danger" (click)="onDelete(product)">
-          Eliminar
-        </ion-button>
-      </ion-row>
-    </ion-card>
-  </div>
+    <ng-container *ngIf="products.length; else emptyState">
+      <ion-grid class="product-grid">
+        <ion-row>
+          <ion-col size="6" *ngFor="let product of paginatedProducts; trackBy: trackById">
+            <ion-card class="product-card" (click)="viewProduct(product)">
+              <div class="image-wrap">
+                <ion-img [src]="getCover(product) || 'assets/1.png'" [alt]="product.name"></ion-img>
+              </div>
 
-  <div *ngIf="products.length === 0" class="empty">
-    No tienes productos todavía.
+              <ion-card-content class="content">
+                <h3 class="title">{{ product.name }}</h3>
+
+                <div class="row muted">
+                  <ion-icon name="person-outline"></ion-icon>
+                  <span>{{ product.personName || product.producerCode || '--' }}</span>
+                </div>
+
+                <div class="row muted">
+                  <ion-icon name="location-outline"></ion-icon>
+                  <span>{{ product.cityName || '--' }}, {{ product.departmentName || '--' }}</span>
+                </div>
+
+                <div class="price">
+                  {{ product.price | currency:'COP':'symbol':'1.0-0':'es-CO' }}
+                </div>
+              </ion-card-content>
+
+              <div class="card-actions" (click)="$event.stopPropagation()">
+                <ion-button fill="clear" color="success" aria-label="Editar" (click)="onEdit(product)">
+                  <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+                </ion-button>
+                <ion-button fill="clear" color="primary" aria-label="Ver" (click)="viewProduct(product)">
+                  <ion-icon slot="icon-only" name="cube-outline"></ion-icon>
+                </ion-button>
+                <ion-button fill="clear" color="danger" aria-label="Eliminar" (click)="onDelete(product)">
+                  <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+                </ion-button>
+              </div>
+
+              <div class="accent-bar"></div>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+
+      <div class="pagination" *ngIf="totalPages > 1">
+        <ion-button fill="clear" size="small" (click)="prevPage()" [disabled]="page === 1">
+          <ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
+        </ion-button>
+        <span>{{ page }} / {{ totalPages }}</span>
+        <ion-button fill="clear" size="small" (click)="nextPage()" [disabled]="page === totalPages">
+          <ion-icon slot="icon-only" name="chevron-forward-outline"></ion-icon>
+        </ion-button>
+      </div>
+    </ng-container>
+
+    <ng-template #emptyState>
+      <div class="empty">
+        <ion-icon name="layers-outline"></ion-icon>
+        <p>No tienes productos todavía.</p>
+        <ion-button fill="clear" size="small" (click)="createProduct()">
+          Crear el primero
+        </ion-button>
+      </div>
+    </ng-template>
   </div>
 </ion-content>
