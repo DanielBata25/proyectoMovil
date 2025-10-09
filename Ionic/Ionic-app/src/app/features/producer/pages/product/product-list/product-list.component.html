@@ -58,15 +58,17 @@
         </ion-row>
       </ion-grid>
 
-      <!-- Controles de paginación -->
-      <div class="pagination" *ngIf="totalPages > 1">
-        <ion-button fill="clear" size="small" (click)="prevPage()" [disabled]="page === 1">
-          <ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
-        </ion-button>
-        <span>{{ page }} / {{ totalPages }}</span>
-        <ion-button fill="clear" size="small" (click)="nextPage()" [disabled]="page === totalPages">
-          <ion-icon slot="icon-only" name="chevron-forward-outline"></ion-icon>
-        </ion-button>
+      <!-- Controles de paginación (fijos abajo) -->
+      <div class="pagination-container" *ngIf="totalPages > 1">
+        <div class="pagination">
+          <ion-button fill="clear" size="small" (click)="prevPage()" [disabled]="page === 1">
+            <ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
+          </ion-button>
+          <span>{{ page }} / {{ totalPages }}</span>
+          <ion-button fill="clear" size="small" (click)="nextPage()" [disabled]="page === totalPages">
+            <ion-icon slot="icon-only" name="chevron-forward-outline"></ion-icon>
+          </ion-button>
+        </div>
       </div>
     </ng-container>
 

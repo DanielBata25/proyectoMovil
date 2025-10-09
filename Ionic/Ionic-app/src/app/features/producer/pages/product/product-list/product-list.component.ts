@@ -26,7 +26,7 @@ export class ProductListComponent implements OnInit {
 
   // 🔹 Paginación (solo front)
   page = 1;
-  pageSize = 2;
+  pageSize = 6;
   totalPages = 1;
 
   ngOnInit(): void {

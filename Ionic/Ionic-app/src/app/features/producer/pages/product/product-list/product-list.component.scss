@@ -7,10 +7,12 @@
 }
 
 .page-shell {
+  position: relative;
   padding: 16px;
   display: flex;
   flex-direction: column;
   gap: 16px;
+  margin-bottom: 60px; /* 🔹 deja espacio para la paginación fija */
 }
 
 .product-actions {
@@ -132,6 +134,19 @@
   }
 }
 
+/* 🔹 Paginación fija visible siempre */
+.pagination-container {
+  position: sticky;
+  bottom: 0;
+  background: #f6f7fb;
+  padding: 8px 0;
+  z-index: 20;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.05);
+}
+
 .pagination {
   display: flex;
   justify-content: center;
@@ -142,6 +157,16 @@
     font-size: 14px;
     font-weight: 600;
     color: #1f2937;
+  }
+
+  ion-button {
+    --padding-start: 4px;
+    --padding-end: 4px;
+    --border-radius: 10px;
+  }
+
+  ion-icon {
+    font-size: 18px;
   }
 }
 
