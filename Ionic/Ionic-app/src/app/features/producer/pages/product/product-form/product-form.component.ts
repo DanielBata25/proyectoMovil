@@ -221,7 +221,7 @@ export class ProductFormComponent implements OnInit {
     ).subscribe(resp => {
       if (!resp) return;
       this.showToast(this.isEdit ? 'Producto actualizado' : 'Producto creado');
-      this.router.navigateByUrl('/account/producer/management/product');
+      this.router.navigateByUrl('/account/producer/product');
     });
   }
 
@@ -235,6 +235,6 @@ export class ProductFormComponent implements OnInit {
     await a.present();
   }
   goBack() {
-  this.router.navigateByUrl('/account/producer/management/product');
+  this.router.navigateByUrl('/account/producer/product');
 }
 }

@@ -17,37 +17,80 @@ export class ProductListComponent implements OnInit {
   private router = inject(Router);
   private alertCtrl = inject(AlertController);
 
+  // 🔹 Variables de datos
   products: ProductSelectModel[] = [];
+  paginatedProducts: ProductSelectModel[] = [];
+
+  // 🔹 Estado
+  loading = true;
+
+  // 🔹 Paginación (solo front)
   page = 1;
-  pageSize = 6;
+  pageSize = 2;
   totalPages = 1;
 
   ngOnInit(): void {
-    this.loadProduct();
+    this.loadProducts();
   }
 
   trackById = (_: number, p: ProductSelectModel) => p.id;
 
-  loadProduct(): void {
-    this.productService.getAllHome().subscribe((data) => {
-      this.products = data;
-      this.page = 1;
-      this.updatePagination();
+  /** 🔹 Cargar todos los productos del servicio */
+  loadProducts(): void {
+    this.loading = true;
+
+    this.productService.getAllHome().subscribe({
+      next: (data) => {
+        this.products = data || [];
+        this.totalPages = Math.max(1, Math.ceil(this.products.length / this.pageSize));
+        this.updatePage();
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+      }
     });
   }
 
+  /** 🔹 Actualizar el listado visible según la página actual */
+  updatePage(): void {
+    const start = (this.page - 1) * this.pageSize;
+    const end = start + this.pageSize;
+    this.paginatedProducts = this.products.slice(start, end);
+  }
+
+  /** 🔹 Navegar a la siguiente página */
+  nextPage(): void {
+    if (this.page < this.totalPages) {
+      this.page++;
+      this.updatePage();
+    }
+  }
+
+  /** 🔹 Navegar a la página anterior */
+  prevPage(): void {
+    if (this.page > 1) {
+      this.page--;
+      this.updatePage();
+    }
+  }
+
+  /** 🔹 Crear producto nuevo */
   createProduct(): void {
     this.router.navigate(['/account/producer/management/product/create']);
   }
 
+  /** 🔹 Editar */
   onEdit(p: ProductSelectModel): void {
     this.router.navigate(['/account/producer/management/product/update', p.id]);
   }
 
+  /** 🔹 Ver detalle */
   viewProduct(p: ProductSelectModel): void {
     this.router.navigate(['/products', p.id]);
   }
 
+  /** 🔹 Eliminar producto */
   async onDelete(p: ProductSelectModel): Promise<void> {
     const alert = await this.alertCtrl.create({
       header: '¿Eliminar producto?',
@@ -60,7 +103,9 @@ export class ProductListComponent implements OnInit {
           handler: () => {
             this.productService.delete(p.id).subscribe(() => {
               this.products = this.products.filter(x => x.id !== p.id);
-              this.updatePagination();
+              this.totalPages = Math.max(1, Math.ceil(this.products.length / this.pageSize));
+              if (this.page > this.totalPages) this.page = this.totalPages;
+              this.updatePage();
             });
           }
         }
@@ -69,31 +114,8 @@ export class ProductListComponent implements OnInit {
     await alert.present();
   }
 
+  /** 🔹 Obtener imagen principal */
   getCover(product: ProductSelectModel): string | null {
     return product.images?.[0]?.imageUrl || product.imageUrl || null;
-  }
-
-  get paginatedProducts(): ProductSelectModel[] {
-    const start = (this.page - 1) * this.pageSize;
-    return this.products.slice(start, start + this.pageSize);
-  }
-
-  nextPage(): void {
-    if (this.page < this.totalPages) {
-      this.page++;
-    }
-  }
-
-  prevPage(): void {
-    if (this.page > 1) {
-      this.page--;
-    }
-  }
-
-  private updatePagination(): void {
-    this.totalPages = Math.max(1, Math.ceil(this.products.length / this.pageSize));
-    if (this.page > this.totalPages) {
-      this.page = this.totalPages;
-    }
   }
 }

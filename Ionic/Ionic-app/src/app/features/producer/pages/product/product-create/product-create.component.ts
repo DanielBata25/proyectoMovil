@@ -68,6 +68,6 @@ export class ProductCreateComponent implements OnInit {
     const toast = await this.toastCtrl.create({ message: 'Producto creado (simulado)', duration: 2000, color: 'success' });
     await toast.present();
 
-    this.router.navigate(['/account/producer/management/product']);
+    this.router.navigate(['/account/producer/product']);
   }
 }

@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { ManagementPage } from './pages/management/management.component';
 
 export const PRODUCER_ROUTES: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'summary' },
@@ -9,43 +8,36 @@ export const PRODUCER_ROUTES: Routes = [
       import('./pages/summary/summary.component').then((m) => m.SummaryPage),
   },
   {
-    path: 'management',
-    component: ManagementPage,
+    path: 'product',
     children: [
-      { path: '', pathMatch: 'full', redirectTo: 'product' },
       {
-        path: 'product',
-        children: [
-          {
-            path: '',
-            loadComponent: () =>
-              import('./pages/product/product-list/product-list.component').then(
-                (m) => m.ProductListComponent,
-              ),
-          },
-          {
-            path: 'create',
-            loadComponent: () =>
-              import('./pages/product/product-create/product-create.component').then(
-                (m) => m.ProductCreateComponent,
-              ),
-          },
-          {
-            path: 'update/:id',
-            loadComponent: () =>
-              import('./pages/product/product-form/product-form.component').then(
-                (m) => m.ProductFormComponent,
-              ),
-          },
-        ],
+        path: '',
+        loadComponent: () =>
+          import('./pages/product/product-list/product-list.component').then(
+            (m) => m.ProductListComponent,
+          ),
       },
       {
-        path: 'farm',
+        path: 'create',
         loadComponent: () =>
-          import('./pages/farm/farm-list/farm-list.component').then(
-            (m) => m.FarmListComponent,
+          import('./pages/product/product-create/product-create.component').then(
+            (m) => m.ProductCreateComponent,
+          ),
+      },
+      {
+        path: 'update/:id',
+        loadComponent: () =>
+          import('./pages/product/product-form/product-form.component').then(
+            (m) => m.ProductFormComponent,
           ),
       },
     ],
+  },
+  {
+    path: 'farm',
+    loadComponent: () =>
+      import('./pages/farm/farm-list/farm-list.component').then(
+        (m) => m.FarmListComponent,
+      ),
   },
 ];
