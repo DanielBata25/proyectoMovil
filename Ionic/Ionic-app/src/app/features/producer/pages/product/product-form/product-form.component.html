@@ -1,68 +1,11 @@
-<ion-header>
-  <ion-toolbar color="success">
-    <ion-title>{{ isEdit ? 'Editar Producto' : 'Nuevo Producto' }}</ion-title>
-  </ion-toolbar>
-
-  <ion-segment [formControl]="stepControl" mode="md" class="segment-bar">
-    <ion-segment-button value="general">
-      <ion-label>Generales</ion-label>
-    </ion-segment-button>
-    <ion-segment-button value="detalles">
-      <ion-label>Detalles</ion-label>
-    </ion-segment-button>
-    <ion-segment-button value="imagenes">
-      <ion-label>Imágenes</ion-label>
-    </ion-segment-button>
-  </ion-segment>
-</ion-header>
-
 <ion-content [fullscreen]="true" class="form-content">
-  <!-- Paso 1: Generales -->
-  <section *ngIf="stepControl.value === 'general'" class="section-card">
-    <h2 class="section-title">Datos Generales</h2>
 
-    <form [formGroup]="generalGroup">
-      <ion-input label="Nombre" labelPlacement="floating" formControlName="name" fill="outline"></ion-input>
+  <form [formGroup]="generalGroup" class="section-card">
 
-      <ion-input label="Precio" labelPlacement="floating" type="number" formControlName="price" fill="outline"></ion-input>
+    <h2 class="section-title">Datos del Producto</h2>
 
-      <ion-input label="Unidad" labelPlacement="floating" formControlName="unit" fill="outline"></ion-input>
-
-      <ion-input label="Producción" labelPlacement="floating" formControlName="production" fill="outline"></ion-input>
-
-      <ion-textarea label="Descripción" labelPlacement="floating" rows="3" formControlName="description" fill="outline"></ion-textarea>
-    </form>
-  </section>
-
-  <!-- Paso 2: Detalles -->
-  <section *ngIf="stepControl.value === 'detalles'" class="section-card">
-    <h2 class="section-title">Detalles del Producto</h2>
-
-    <form [formGroup]="detallesGroup">
-      <ion-input label="Stock Disponible" labelPlacement="floating" type="number" formControlName="stock" fill="outline"></ion-input>
-
-      <ion-select label="Estado" labelPlacement="floating" formControlName="status" fill="outline">
-        <ion-select-option [value]="true">Activo</ion-select-option>
-        <ion-select-option [value]="false">Inactivo</ion-select-option>
-      </ion-select>
-
-      <ion-select label="Envío incluido" labelPlacement="floating" formControlName="shippingIncluded" fill="outline">
-        <ion-select-option [value]="true">Sí</ion-select-option>
-        <ion-select-option [value]="false">No</ion-select-option>
-      </ion-select>
-
-      <ion-select label="Categoría" labelPlacement="floating" formControlName="categoryId" fill="outline">
-        <ion-select-option *ngFor="let c of categories" [value]="c.id">{{ c.name }}</ion-select-option>
-      </ion-select>
-
-      <ion-select label="Fincas" labelPlacement="floating" multiple formControlName="farmIds" fill="outline">
-        <ion-select-option *ngFor="let f of farms" [value]="f.id">{{ f.name }}</ion-select-option>
-      </ion-select>
-    </form>
-  </section>
-
-  <!-- Paso 3: Imágenes -->
-  <section *ngIf="stepControl.value === 'imagenes'" class="section-card">
+      <!-- === IMÁGENES === -->
+  <div class="section-card">
     <h2 class="section-title">Imágenes del Producto</h2>
 
     <div class="upload-box" (click)="fileInput.click()">
@@ -90,9 +33,48 @@
         </ion-button>
       </div>
     </div>
-  </section>
+  </div>
 
-  <!-- Acciones -->
+    <!-- === DATOS GENERALES === -->
+     <h2 class="section-title">Detalles del Producto</h2>
+
+    <ion-input label="Nombre" labelPlacement="floating" formControlName="name" fill="outline"></ion-input>
+
+    <ion-input label="Precio" labelPlacement="floating" type="number" formControlName="price" fill="outline"></ion-input>
+
+    <ion-input label="Unidad" labelPlacement="floating" formControlName="unit" fill="outline"></ion-input>
+
+    <ion-input label="Producción" labelPlacement="floating" formControlName="production" fill="outline"></ion-input>
+
+    <ion-textarea label="Descripción" labelPlacement="floating" rows="3" formControlName="description" fill="outline"></ion-textarea>
+  </form>
+
+  <!-- === DETALLES DEL PRODUCTO === -->
+  <form [formGroup]="detallesGroup" class="section-card">
+    <ion-input label="Stock Disponible" labelPlacement="floating" type="number" formControlName="stock" fill="outline"></ion-input>
+
+    <ion-select label="Estado" labelPlacement="floating" formControlName="status" fill="outline">
+      <ion-select-option [value]="true">Activo</ion-select-option>
+      <ion-select-option [value]="false">Inactivo</ion-select-option>
+    </ion-select>
+
+    <ion-select label="Envío incluido" labelPlacement="floating" formControlName="shippingIncluded" fill="outline">
+      <ion-select-option [value]="true">Sí</ion-select-option>
+      <ion-select-option [value]="false">No</ion-select-option>
+    </ion-select>
+
+    <ion-select label="Categoría" labelPlacement="floating" formControlName="categoryId" fill="outline">
+      <ion-select-option *ngFor="let c of categories" [value]="c.id">{{ c.name }}</ion-select-option>
+    </ion-select>
+
+    <ion-select label="Fincas" labelPlacement="floating" multiple formControlName="farmIds" fill="outline">
+      <ion-select-option *ngFor="let f of farms" [value]="f.id">{{ f.name }}</ion-select-option>
+    </ion-select>
+  </form>
+
+
+
+  <!-- === BOTONES DE ACCIÓN === -->
   <div class="actions">
     <ion-button color="medium" (click)="goBack()">Cancelar</ion-button>
     <ion-button color="success" (click)="submit()" [disabled]="isLoading">
