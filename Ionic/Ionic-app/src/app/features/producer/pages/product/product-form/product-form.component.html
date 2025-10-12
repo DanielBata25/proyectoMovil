@@ -1,114 +1,102 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>{{ isEdit ? 'Editar producto' : 'Nuevo producto' }}</ion-title>
+  <ion-toolbar color="success">
+    <ion-title>{{ isEdit ? 'Editar Producto' : 'Nuevo Producto' }}</ion-title>
   </ion-toolbar>
 
-  <ion-segment [formControl]="stepControl">
-    <ion-segment-button value="general">Generales</ion-segment-button>
-    <ion-segment-button value="detalles">Detalles</ion-segment-button>
-    <ion-segment-button value="imagenes">Imágenes</ion-segment-button>
+  <ion-segment [formControl]="stepControl" mode="md" class="segment-bar">
+    <ion-segment-button value="general">
+      <ion-label>Generales</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="detalles">
+      <ion-label>Detalles</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="imagenes">
+      <ion-label>Imágenes</ion-label>
+    </ion-segment-button>
   </ion-segment>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <!-- Paso 1 -->
-  <div *ngIf="stepControl.value === 'general'" class="form-step">
+<ion-content [fullscreen]="true" class="form-content">
+  <!-- Paso 1: Generales -->
+  <section *ngIf="stepControl.value === 'general'" class="section-card">
+    <h2 class="section-title">Datos Generales</h2>
+
     <form [formGroup]="generalGroup">
-      <ion-item>
-        <ion-label position="stacked">Nombre</ion-label>
-        <ion-input formControlName="name"></ion-input>
-      </ion-item>
+      <ion-input label="Nombre" labelPlacement="floating" formControlName="name" fill="outline"></ion-input>
 
-      <ion-item>
-        <ion-label position="stacked">Precio</ion-label>
-        <ion-input type="number" formControlName="price"></ion-input>
-      </ion-item>
+      <ion-input label="Precio" labelPlacement="floating" type="number" formControlName="price" fill="outline"></ion-input>
 
-      <ion-item>
-        <ion-label position="stacked">Unidad</ion-label>
-        <ion-input formControlName="unit"></ion-input>
-      </ion-item>
+      <ion-input label="Unidad" labelPlacement="floating" formControlName="unit" fill="outline"></ion-input>
 
-      <ion-item>
-        <ion-label position="stacked">Producción</ion-label>
-        <ion-input formControlName="production"></ion-input>
-      </ion-item>
+      <ion-input label="Producción" labelPlacement="floating" formControlName="production" fill="outline"></ion-input>
 
-      <ion-item>
-        <ion-label position="stacked">Descripción</ion-label>
-        <ion-textarea rows="3" formControlName="description"></ion-textarea>
-      </ion-item>
+      <ion-textarea label="Descripción" labelPlacement="floating" rows="3" formControlName="description" fill="outline"></ion-textarea>
     </form>
-  </div>
+  </section>
 
-  <!-- Paso 2 -->
-  <div *ngIf="stepControl.value === 'detalles'" class="form-step">
+  <!-- Paso 2: Detalles -->
+  <section *ngIf="stepControl.value === 'detalles'" class="section-card">
+    <h2 class="section-title">Detalles del Producto</h2>
+
     <form [formGroup]="detallesGroup">
-      <ion-item>
-        <ion-label position="stacked">Stock</ion-label>
-        <ion-input type="number" formControlName="stock"></ion-input>
-      </ion-item>
+      <ion-input label="Stock Disponible" labelPlacement="floating" type="number" formControlName="stock" fill="outline"></ion-input>
 
-      <ion-item>
-        <ion-label>Estado</ion-label>
-        <ion-select formControlName="status">
-          <ion-select-option [value]="true">Activo</ion-select-option>
-          <ion-select-option [value]="false">Inactivo</ion-select-option>
-        </ion-select>
-      </ion-item>
+      <ion-select label="Estado" labelPlacement="floating" formControlName="status" fill="outline">
+        <ion-select-option [value]="true">Activo</ion-select-option>
+        <ion-select-option [value]="false">Inactivo</ion-select-option>
+      </ion-select>
 
-      <ion-item>
-        <ion-label>Envío incluido</ion-label>
-        <ion-select formControlName="shippingIncluded">
-          <ion-select-option [value]="true">Sí</ion-select-option>
-          <ion-select-option [value]="false">No</ion-select-option>
-        </ion-select>
-      </ion-item>
+      <ion-select label="Envío incluido" labelPlacement="floating" formControlName="shippingIncluded" fill="outline">
+        <ion-select-option [value]="true">Sí</ion-select-option>
+        <ion-select-option [value]="false">No</ion-select-option>
+      </ion-select>
 
-      <ion-item>
-        <ion-label>Categoría</ion-label>
-        <ion-select formControlName="categoryId">
-          <ion-select-option *ngFor="let c of categories" [value]="c.id">{{c.name}}</ion-select-option>
-        </ion-select>
-      </ion-item>
+      <ion-select label="Categoría" labelPlacement="floating" formControlName="categoryId" fill="outline">
+        <ion-select-option *ngFor="let c of categories" [value]="c.id">{{ c.name }}</ion-select-option>
+      </ion-select>
 
-      <ion-item>
-        <ion-label>Fincas</ion-label>
-        <ion-select multiple formControlName="farmIds">
-          <ion-select-option *ngFor="let f of farms" [value]="f.id">{{f.name}}</ion-select-option>
-        </ion-select>
-      </ion-item>
+      <ion-select label="Fincas" labelPlacement="floating" multiple formControlName="farmIds" fill="outline">
+        <ion-select-option *ngFor="let f of farms" [value]="f.id">{{ f.name }}</ion-select-option>
+      </ion-select>
     </form>
-  </div>
+  </section>
 
-  <!-- Paso 3 -->
-  <div *ngIf="stepControl.value === 'imagenes'" class="form-step">
-    <ion-text>Máximo {{MAX_IMAGES}} imágenes ({{MAX_FILE_SIZE_MB}} MB c/u)</ion-text>
+  <!-- Paso 3: Imágenes -->
+  <section *ngIf="stepControl.value === 'imagenes'" class="section-card">
+    <h2 class="section-title">Imágenes del Producto</h2>
 
-    <ion-button expand="block">
-      <input type="file" accept="image/*" multiple (change)="onFileChange($event)" />
-      Subir imágenes
-    </ion-button>
+    <div class="upload-box" (click)="fileInput.click()">
+      <input type="file" #fileInput accept="image/*" multiple hidden (change)="onFileChange($event)" />
+      <div class="upload-inner">
+        <ion-icon name="cloud-upload-outline" class="upload-icon"></ion-icon>
+        <h3>Subir imagen</h3>
+        <p>Presiona para poder subir una imagen</p>
+        <ion-button color="medium" fill="solid" size="small">Subir</ion-button>
+      </div>
+    </div>
 
-    <div class="images-preview">
+    <div class="images-preview" *ngIf="imagesPreview.length || existingImages.length">
       <div class="img-container" *ngFor="let img of imagesPreview; let i = index">
         <img [src]="img" />
-        <ion-button size="small" color="danger" (click)="removeImage(i)">Quitar</ion-button>
+        <ion-button fill="clear" color="danger" (click)="removeImage(i)">
+          <ion-icon name="trash-outline"></ion-icon>
+        </ion-button>
       </div>
 
       <div class="img-container" *ngFor="let img of existingImages; let i = index">
         <img [src]="img.imageUrl" />
-        <ion-button size="small" color="danger" (click)="removeImage(i,true)">Eliminar</ion-button>
+        <ion-button fill="clear" color="danger" (click)="removeImage(i, true)">
+          <ion-icon name="trash-outline"></ion-icon>
+        </ion-button>
       </div>
     </div>
-  </div>
+  </section>
 
   <!-- Acciones -->
   <div class="actions">
-  <ion-button color="medium" (click)="goBack()">
-  Cancelar
-</ion-button>
-
-    <ion-button color="success" (click)="submit()" [disabled]="isLoading"> {{ isEdit ? 'Actualizar' : 'Crear' }} </ion-button>
+    <ion-button color="medium" (click)="goBack()">Cancelar</ion-button>
+    <ion-button color="success" (click)="submit()" [disabled]="isLoading">
+      {{ isEdit ? 'Actualizar' : 'Crear' }}
+    </ion-button>
   </div>
 </ion-content>

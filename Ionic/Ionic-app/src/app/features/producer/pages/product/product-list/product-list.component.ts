@@ -77,12 +77,12 @@ export class ProductListComponent implements OnInit {
 
   /** 🔹 Crear producto nuevo */
   createProduct(): void {
-    this.router.navigate(['/account/producer/management/product/create']);
+    this.router.navigate(['/account/producer/product/create']);
   }
 
   /** 🔹 Editar */
   onEdit(p: ProductSelectModel): void {
-    this.router.navigate(['/account/producer/management/product/update', p.id]);
+    this.router.navigate(['/account/producer/product/update', p.id]);
   }
 
   /** 🔹 Ver detalle */
