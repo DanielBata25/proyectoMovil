@@ -1,29 +1,28 @@
-import { HttpClient } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { environment } from '../../../../environments/environment';
+import { Injectable } from '@angular/core';
+import { from, Observable } from 'rxjs';
+import { ApiNative } from 'src/app/core/services/http/api.native';
 import { ProductImageSelectModel } from '../../models/product/product.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ProductImageService {
-  private http = inject(HttpClient);
-  private urlBase = environment.apiUrl + 'ProductImage'
-  constructor() { }
+  /** Mantiene rutas relativas; ApiNative arma la URL completa */
+  private readonly base = '/ProductImage';
 
-  /** Obtener imágenes de un producto */
+  /** Obtener imagenes de un producto */
   getImagesByProductId(id: number): Observable<ProductImageSelectModel[]> {
-    return this.http.get<ProductImageSelectModel[]>(`${this.urlBase}/${id}`);
+    return from(ApiNative.get<ProductImageSelectModel[]>(`${this.base}/${id}`));
   }
 
-  /** Eliminar varias imágenes a la vez mediante sus publicId */
+  /** Eliminar varias imagenes mediante sus publicId */
   deleteImagesByPublicIds(publicIds: string[]): Observable<void> {
-    return this.http.delete<void>(`${this.urlBase}/multiple`, { body: publicIds });
+    return from(ApiNative.request<void>('DELETE', `${this.base}/multiple`, publicIds));
   }
 
-  /** Eliminar lógicamente una imagen por su publicId */
+  /** Eliminar logicamente una imagen por su publicId */
   logicalDeleteImage(publicId: string): Observable<void> {
-    return this.http.patch<void>(`${this.urlBase}/logical-delete`, null, { params: { publicId } });
+    const safe = encodeURIComponent(publicId ?? '');
+    return from(ApiNative.patch<void>(`${this.base}/logical-delete?publicId=${safe}`, null));
   }
 }

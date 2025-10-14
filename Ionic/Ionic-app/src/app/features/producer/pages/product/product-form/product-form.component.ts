@@ -1,7 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-  Component, OnInit, inject, signal
-} from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import {
   AbstractControl, FormBuilder, FormControl, FormGroup,
   ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators
@@ -13,9 +11,8 @@ import {
 } from '@ionic/angular';
 
 import {
-  ProductSelectModel, ProductImageSelectModel,
-  ProductRegisterModel, ProductUpdateModel, ApiOk
-
+  ProductImageSelectModel,
+  ProductUpdateModel,
 } from 'src/app/shared/models/product/product.model';
 import { ProductService } from 'src/app/shared/services/product/product.service';
 import { ProductImageService } from 'src/app/shared/services/productImage/product-image.service';
@@ -78,7 +75,6 @@ export class ProductFormComponent implements OnInit {
   generalGroup!: FormGroup;
   detallesGroup!: FormGroup;
 
-  isEdit = false;
   isLoading = false;
   isDeletingImage = false;
 
@@ -106,11 +102,12 @@ export class ProductFormComponent implements OnInit {
 
     this.route.paramMap.subscribe((params) => {
       const idParam = params.get('id');
-      if (idParam) {
-        this.isEdit = true;
-        this.productId = Number(idParam);
-        this.loadProduct(this.productId);
+      if (!idParam) {
+        console.warn('No se proporciono id de producto para editar');
+        return;
       }
+      this.productId = Number(idParam);
+      this.loadProduct(this.productId);
     });
   }
 
@@ -136,8 +133,32 @@ export class ProductFormComponent implements OnInit {
     this.isLoading = true;
     this.productSrv.getById(id).subscribe({
       next: (p) => {
-        this.generalGroup.patchValue(p);
-        this.detallesGroup.patchValue(p);
+        this.generalGroup.patchValue({
+          name: p.name,
+          description: p.description,
+          price: p.price,
+          unit: p.unit,
+          production: p.production,
+        });
+
+        const farmIds = Array.isArray((p as any).farmIds) && (p as any).farmIds.length
+          ? (p as any).farmIds
+          : ((p as any).farmId ? [(p as any).farmId] : []);
+
+        this.detallesGroup.patchValue({
+          stock: p.stock,
+          status: p.status,
+          categoryId: p.categoryId,
+          farmIds,
+          shippingIncluded: (p as any).shippingIncluded ?? false,
+        });
+
+        this.generalGroup.markAsPristine();
+        this.detallesGroup.markAsPristine();
+        this.generalGroup.markAsUntouched();
+        this.detallesGroup.markAsUntouched();
+        this.generalGroup.updateValueAndValidity({ emitEvent: false });
+        this.detallesGroup.updateValueAndValidity({ emitEvent: false });
         this.imageSrv.getImagesByProductId(p.id).subscribe(imgs => this.existingImages = imgs ?? []);
       },
       complete: () => this.isLoading = false,
@@ -189,12 +210,12 @@ export class ProductFormComponent implements OnInit {
       this.showToast('Completa los campos obligatorios');
       return;
     }
-    if (!this.isEdit && this.totalImages === 0) {
-      this.showToast('Debes agregar al menos una imagen');
+    if (!this.productId) {
+      this.showAlert('Error', 'No se encontro el producto a actualizar');
       return;
     }
 
-    const loading = await this.loadingCtrl.create({ message: this.isEdit ? 'Actualizando...' : 'Creando...' });
+    const loading = await this.loadingCtrl.create({ message: 'Actualizando...' });
     await loading.present();
 
     const g = this.generalGroup.value;
@@ -205,22 +226,24 @@ export class ProductFormComponent implements OnInit {
       farmIds: d.farmIds ?? []
     };
 
-    const dto: ProductUpdateModel | ProductRegisterModel = this.isEdit
-      ? { id: this.productId!, ...base, images: this.selectedFiles }
-      : { ...base, images: this.selectedFiles };
+    const dto: ProductUpdateModel = {
+      id: this.productId,
+      ...base,
+      images: this.selectedFiles
+    };
 
-    const req$ = this.isEdit ? this.productSrv.update(dto as ProductUpdateModel) : this.productSrv.create(dto as ProductRegisterModel);
+    const req$ = this.productSrv.update(dto);
 
     req$.pipe(
       take(1),
       catchError(() => {
-        this.showAlert('Error', this.isEdit ? 'No se pudo actualizar' : 'No se pudo crear');
+        this.showAlert('Error', 'No se pudo actualizar');
         return of(null);
       }),
       finalize(() => loading.dismiss())
     ).subscribe(resp => {
       if (!resp) return;
-      this.showToast(this.isEdit ? 'Producto actualizado' : 'Producto creado');
+      this.showToast('Producto actualizado');
       this.router.navigateByUrl('/account/producer/product');
     });
   }
@@ -235,6 +258,6 @@ export class ProductFormComponent implements OnInit {
     await a.present();
   }
   goBack() {
-  this.router.navigateByUrl('/account/producer/product');
-}
+    this.router.navigateByUrl('/account/producer/product');
+  }
 }

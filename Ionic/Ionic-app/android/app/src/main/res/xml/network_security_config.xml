@@ -3,7 +3,7 @@
   <!-- Permite HTTP a tu host de backend en DEV -->
   <domain-config cleartextTrafficPermitted="true">
     <!-- ⇩⇩ Cambia por TU IP LAN del PC ⇩⇩ -->
-    <domain includeSubdomains="true">192.168.20.28</domain>
+    <domain includeSubdomains="true">172.30.4.189</domain>
   </domain-config>
 </network-security-config>
 
