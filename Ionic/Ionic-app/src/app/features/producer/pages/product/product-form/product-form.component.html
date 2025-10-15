@@ -1,8 +1,7 @@
 <ion-content [fullscreen]="true" class="form-content">
-
   <div class="form-wrapper">
-    <form [formGroup]="generalGroup" class="section-card">
 
+    <form [formGroup]="generalGroup" class="section-card">
       <h2 class="section-title">Datos del Producto</h2>
 
       <!-- === IMÁGENES === -->
@@ -48,9 +47,7 @@
       <ion-input label="Producción" labelPlacement="floating" formControlName="production" fill="outline"></ion-input>
 
       <ion-textarea label="Descripción" labelPlacement="floating" rows="3" formControlName="description" fill="outline"></ion-textarea>
-    </form>
 
-    <form [formGroup]="detallesGroup" class="section-card">
       <ion-input label="Stock Disponible" labelPlacement="floating" type="number" formControlName="stock" fill="outline"></ion-input>
 
       <ion-select label="Estado" labelPlacement="floating" formControlName="status" fill="outline">
@@ -71,12 +68,12 @@
         <ion-select-option *ngFor="let f of farms" [value]="f.id">{{ f.name }}</ion-select-option>
       </ion-select>
 
+      <!-- === BOTONES === -->
       <div class="inline-actions">
         <ion-button type="button" color="medium" expand="block" fill="outline" (click)="goBack()">Cancelar</ion-button>
         <ion-button type="button" color="success" expand="block" (click)="submit()">Actualizar</ion-button>
       </div>
+
     </form>
   </div>
-
 </ion-content>
-1

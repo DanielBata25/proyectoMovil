@@ -1,28 +1,29 @@
 .form-content {
   --background: #f6f7fb;
-  padding-bottom: 80px;
+  --padding-bottom: calc(env(safe-area-inset-bottom) + 160px);
 }
 
-/* === Segmento superior === */
-.segment-bar {
-  --background: #ffffff;
-  border-bottom: 1px solid #e0e0e0;
-
-  ion-segment-button {
-    --indicator-color: #2d6a4f;
-    --color-checked: #2d6a4f;
-    text-transform: capitalize;
-    font-weight: 600;
-  }
+.form-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  padding-bottom: calc(env(safe-area-inset-bottom) + 160px);
 }
 
-/* === Tarjetas de formulario === */
 .section-card {
   background: #ffffff;
   border-radius: 16px;
   padding: 20px;
-  margin: 16px;
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
+}
+
+.inner-card {
+  margin-top: 8px;
+  padding: 16px;
+  border: 1px dashed #d1d5db;
+  border-radius: 14px;
+  box-shadow: none;
 }
 
 .section-title {
@@ -32,7 +33,6 @@
   margin-bottom: 16px;
 }
 
-/* === Inputs === */
 ion-input,
 ion-select,
 ion-textarea {
@@ -43,7 +43,25 @@ ion-textarea {
   font-size: 14px;
 }
 
-/* === Caja de subida === */
+.inline-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 24px;
+  margin-bottom: calc(env(safe-area-inset-bottom) + 40px);
+}
+
+.inline-actions ion-button[color='medium'],
+.inline-actions ion-button[color='success'] {
+  --border-radius: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.inline-actions ion-button[color='success'] {
+  --background: #2d6a4f;
+}
+
 .upload-box {
   border: 2px dashed #bcbcbc;
   border-radius: 12px;
@@ -84,7 +102,6 @@ ion-textarea {
   }
 }
 
-/* === Imágenes === */
 .images-preview {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
@@ -120,25 +137,14 @@ ion-textarea {
   }
 }
 
-/* === Botones inferiores === */
-.actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  padding: 16px;
-}
-
-ion-button[color="success"] {
-  --border-radius: 10px;
-  --background: #2d6a4f;
-  font-weight: 600;
-  text-transform: uppercase;
-}
-
-/* === Responsive === */
 @media (max-width: 480px) {
+  .form-wrapper {
+    padding: 12px;
+    gap: 12px;
+    padding-bottom: calc(env(safe-area-inset-bottom) + 140px);
+  }
+
   .section-card {
-    margin: 12px;
     padding: 16px;
   }
 
@@ -148,16 +154,7 @@ ion-button[color="success"] {
     font-size: 13px;
   }
 
-  .upload-box {
-    padding: 18px;
-  }
-
-  .upload-icon {
-    font-size: 34px;
-  }
-
-  .actions {
-    flex-direction: column;
-    align-items: stretch;
+  .inline-actions {
+    gap: 10px;
   }
 }
