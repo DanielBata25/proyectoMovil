@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import {
-  AbstractControl, FormBuilder, FormControl, FormGroup,
+  AbstractControl, FormBuilder, FormControl,
   ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators
 } from '@angular/forms';
 
@@ -72,8 +72,58 @@ export class ProductFormComponent implements OnInit {
   farms: any[] = [];
   categories: any[] = [];
 
-  generalGroup!: FormGroup;
-  detallesGroup!: FormGroup;
+  generalGroup = this.fb.group({
+    name: this.fb.nonNullable.control('', [
+      Validators.required,
+      Validators.minLength(2),
+      Validators.maxLength(100),
+      notWhiteSpaceValidator('Nombre'),
+    ]),
+    description: this.fb.nonNullable.control('', [
+      Validators.required,
+      Validators.minLength(5),
+      Validators.maxLength(500),
+      notWhiteSpaceValidator('Descripcion'),
+    ]),
+    price: this.fb.control<number | null>(null, {
+      validators: [
+        Validators.required,
+        Validators.min(0),
+        Validators.max(100_000_000),
+        Validators.pattern(/^\d+$/),
+      ],
+    }),
+    unit: this.fb.nonNullable.control('', [
+      Validators.required,
+      Validators.maxLength(20),
+      notWhiteSpaceValidator('Unidad'),
+    ]),
+    production: this.fb.nonNullable.control('', [
+      Validators.required,
+      Validators.maxLength(150),
+      notWhiteSpaceValidator('Produccion'),
+    ]),
+  });
+
+  detallesGroup = this.fb.group({
+    stock: this.fb.control(0, {
+      validators: [
+        Validators.required,
+        Validators.pattern(/^[0-9]+$/),
+        Validators.max(100_000),
+      ],
+      nonNullable: true,
+    }),
+    status: this.fb.nonNullable.control(true, [Validators.required]),
+    categoryId: this.fb.control<number | null>(null, [
+      Validators.required,
+      positiveIntValidator('Categoria'),
+    ]),
+    farmIds: this.fb.nonNullable.control<number[]>([], {
+      validators: [arrayMinLen(1)],
+    }),
+    shippingIncluded: this.fb.nonNullable.control(false),
+  });
 
   isLoading = false;
   isDeletingImage = false;
@@ -96,7 +146,6 @@ export class ProductFormComponent implements OnInit {
   get canAddMore(): boolean { return this.totalImages < this.MAX_IMAGES; }
 
   ngOnInit(): void {
-    this.initForms();
     this.loadCategories();
     this.loadFarm();
 
@@ -108,24 +157,6 @@ export class ProductFormComponent implements OnInit {
       }
       this.productId = Number(idParam);
       this.loadProduct(this.productId);
-    });
-  }
-
-  private initForms(): void {
-    this.generalGroup = this.fb.group({
-      name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100), notWhiteSpaceValidator('Nombre')]],
-      description: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(500), notWhiteSpaceValidator('Descripción')]],
-      price: [null, [Validators.required, Validators.min(0), Validators.max(100_000_000), Validators.pattern(/^\d+$/)]],
-      unit: ['', [Validators.required, Validators.maxLength(20), notWhiteSpaceValidator('Unidad')]],
-      production: ['', [Validators.required, Validators.maxLength(150), notWhiteSpaceValidator('Producción')]],
-    });
-
-    this.detallesGroup = this.fb.group({
-      stock: [0, [Validators.required, Validators.pattern(/^[0-9]+$/), Validators.max(100_000)]],
-      status: [true, Validators.required],
-      categoryId: [null, [Validators.required, positiveIntValidator('Categoría')]],
-      farmIds: new FormControl<number[]>([], { nonNullable: true, validators: [arrayMinLen(1)] }),
-      shippingIncluded: [false],
     });
   }
 
@@ -218,18 +249,28 @@ export class ProductFormComponent implements OnInit {
     const loading = await this.loadingCtrl.create({ message: 'Actualizando...' });
     await loading.present();
 
-    const g = this.generalGroup.value;
-    const d = this.detallesGroup.value;
-    const base = {
-      ...g,
-      ...d,
-      farmIds: d.farmIds ?? []
-    };
+    const g = this.generalGroup.getRawValue();
+    const d = this.detallesGroup.getRawValue();
+
+    if (g.price == null || d.categoryId == null) {
+      await loading.dismiss();
+      this.showToast('Completa los campos obligatorios');
+      return;
+    }
 
     const dto: ProductUpdateModel = {
       id: this.productId,
-      ...base,
-      images: this.selectedFiles
+      name: g.name,
+      description: g.description,
+      price: g.price,
+      unit: g.unit,
+      production: g.production,
+      stock: d.stock,
+      status: d.status,
+      categoryId: d.categoryId,
+      shippingIncluded: d.shippingIncluded,
+      farmIds: d.farmIds,
+      images: this.selectedFiles,
     };
 
     const req$ = this.productSrv.update(dto);
