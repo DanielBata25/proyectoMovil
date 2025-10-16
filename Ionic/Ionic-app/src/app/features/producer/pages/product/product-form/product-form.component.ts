@@ -513,7 +513,8 @@ export class ProductFormComponent implements OnInit {
 
     req$.pipe(
       take(1),
-      catchError(() => {
+      catchError((err) => {
+        console.error('Error actualizando producto', err, err?.data ?? (err as any)?.error);
         this.showAlert('Error', 'No se pudo actualizar');
         return of(null);
       }),

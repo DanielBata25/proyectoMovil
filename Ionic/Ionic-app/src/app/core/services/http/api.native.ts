@@ -41,16 +41,25 @@ export class ApiNative {
       ...extraHeaders,
     };
 
+    const isFormData =
+      typeof FormData !== 'undefined' && body instanceof FormData;
+    console.log('[API][FormData check]', { isFormData, body });
+    if (isFormData) {
+      delete headers['Content-Type'];
+    }
+
     const url = path.startsWith('http') ? path : `${API}${path}`;
     // const resp = await CapacitorHttp.request({ method, url, data: body, headers });
     console.log('[API][REQ]', { method, url, headers, body });
 
-    const resp = await CapacitorHttp.request({
-      method,
-      url,
-      data: body,
-      headers,
-    });
+    const resp = isFormData
+      ? await this.requestWithFetch(method, url, body, headers)
+      : await CapacitorHttp.request({
+          method,
+          url,
+          data: body,
+          headers,
+        });
 
     console.log('[API][RESP]', {
       url,
@@ -89,6 +98,48 @@ export class ApiNative {
   }
   static delete<T>(path: string, headers?: Record<string, string>) {
     return this.request<T>('DELETE', path, undefined, headers);
+  }
+
+  private static async requestWithFetch(
+    method: Method,
+    url: string,
+    body: FormData,
+    headers: Record<string, string>
+  ): Promise<{ data: any; status: number; headers: Record<string, string>; url: string }> {
+    // Permitir que fetch genere el boundary automáticamente
+    const fetchHeaders = { ...headers };
+    delete fetchHeaders['Content-Length'];
+    delete fetchHeaders['content-length'];
+    delete fetchHeaders['content-type'];
+    const response = await fetch(url, {
+      method,
+      body,
+      headers: fetchHeaders,
+      credentials: 'include',
+    });
+
+    const resultHeaders: Record<string, string> = {};
+    response.headers.forEach((value, key) => {
+      resultHeaders[key] = value;
+    });
+
+    const contentType = response.headers.get('content-type') ?? '';
+    let data: any = null;
+    try {
+      if (contentType.includes('application/json')) data = await response.json();
+      else if (contentType.includes('text/')) data = await response.text();
+      else if (contentType.includes('application/octet-stream')) data = await response.arrayBuffer();
+      else data = await response.text();
+    } catch {
+      data = null;
+    }
+
+    return {
+      data,
+      status: response.status,
+      headers: resultHeaders,
+      url: response.url,
+    };
   }
 
   static async refresh(): Promise<void> {
