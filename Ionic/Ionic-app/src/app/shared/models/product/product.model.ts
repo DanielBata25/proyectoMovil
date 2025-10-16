@@ -53,7 +53,7 @@ export interface ProductRegisterModel {
   status: boolean;
   categoryId: number;
   images?: File[];
-  farmIds: number[];           
+  farmIds: (number | string)[];
 }
 
 export interface ProductUpdateModel {
@@ -68,7 +68,7 @@ export interface ProductUpdateModel {
   status: boolean;
   categoryId: number;
   images?: File[];
-  farmIds: number[];               
+  farmIds: (number | string)[];
   imagesToDelete?: string[];
 }
 

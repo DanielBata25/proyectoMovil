@@ -45,7 +45,7 @@ const positiveIntValidator = (label: string): ValidatorFn =>
 
 const arrayMinLen = (min: number): ValidatorFn =>
   (c: AbstractControl): ValidationErrors | null => {
-    const v = c.value as number[] | null | undefined;
+    const v = c.value as unknown;
     return Array.isArray(v) && v.length >= min ? null : { arrayMinLen: true };
   };
 
@@ -119,7 +119,7 @@ export class ProductFormComponent implements OnInit {
       Validators.required,
       positiveIntValidator('Categoria'),
     ]),
-    farmIds: this.fb.nonNullable.control<number[]>([], {
+    farmIds: this.fb.nonNullable.control<(number | string)[]>([], {
       validators: [arrayMinLen(1)],
     }),
     shippingIncluded: this.fb.nonNullable.control(false),
@@ -138,6 +138,15 @@ export class ProductFormComponent implements OnInit {
   imagesToDelete: string[] = [];
 
   productId?: number;
+  private pendingFarmIds: (number | string)[] | null = null;
+  private pendingFarmNames: string[] | null = null;
+
+  compareWithIds = (option: any, selected: any): boolean => {
+    const a = this.normalizeId(option);
+    const b = this.normalizeId(selected);
+    if (a === null || b === null) return false;
+    return String(a) === String(b);
+  };
 
   stepControl = new FormControl<'general' | 'detalles' | 'imagenes'>('general', { nonNullable: true });
 
@@ -172,17 +181,13 @@ export class ProductFormComponent implements OnInit {
           production: p.production,
         });
 
-        const farmIds = Array.isArray((p as any).farmIds) && (p as any).farmIds.length
-          ? (p as any).farmIds
-          : ((p as any).farmId ? [(p as any).farmId] : []);
-
         this.detallesGroup.patchValue({
           stock: p.stock,
           status: p.status,
           categoryId: p.categoryId,
-          farmIds,
           shippingIncluded: (p as any).shippingIncluded ?? false,
         });
+        this.syncFarmSelection(this.extractFarmIds(p), this.extractFarmNames(p));
 
         this.generalGroup.markAsPristine();
         this.detallesGroup.markAsPristine();
@@ -196,13 +201,231 @@ export class ProductFormComponent implements OnInit {
       error: () => this.isLoading = false
     });
   }
-
   loadFarm() {
-    this.farmService.getByProducer().subscribe((d) => this.farms = d ?? []);
+    this.farmService.getByProducer().subscribe({
+      next: (d: any) => { // Forzamos tipado generico
+        console.log('Respuesta fincas:', d);
+
+        // Detecta si viene dentro de un objeto con propiedad data
+        const raw = Array.isArray(d)
+          ? d
+          : Array.isArray(d?.data)
+            ? d.data
+            : [];
+
+        this.farms = this.normalizeFarmList(raw);
+        this.tryApplyPendingFarmSelection();
+
+        console.log('Fincas procesadas:', this.farms);
+      },
+      error: (e) => console.error('Error al obtener fincas', e)
+    });
   }
 
   loadCategories() {
     this.categoryService.getAll().subscribe((d) => this.categories = d ?? []);
+  }
+
+  private applyFarmIds(ids: (number | string)[]): void {
+    const value = Array.isArray(ids) ? [...ids] : [];
+    this.detallesGroup.controls.farmIds.setValue(value, { emitEvent: false });
+    this.detallesGroup.controls.farmIds.markAsPristine();
+    this.detallesGroup.controls.farmIds.markAsUntouched();
+    this.detallesGroup.controls.farmIds.updateValueAndValidity({ emitEvent: false });
+  }
+
+  private syncFarmSelection(farmIds: (number | string)[], farmNames: string[]): void {
+    if (this.hasFarmsLoaded()) {
+      if (farmIds.length) {
+        this.applyFarmIds(farmIds);
+      } else if (farmNames.length) {
+        const resolved = this.resolveFarmIdsFromNames(farmNames);
+        this.applyFarmIds(resolved);
+      } else {
+        this.applyFarmIds([]);
+      }
+      this.pendingFarmIds = null;
+      this.pendingFarmNames = null;
+      return;
+    }
+
+    this.pendingFarmIds = farmIds.length ? [...farmIds] : null;
+    this.pendingFarmNames = !farmIds.length && farmNames.length ? [...farmNames] : null;
+  }
+
+  private hasFarmsLoaded(): boolean {
+    return Array.isArray(this.farms) && this.farms.length > 0;
+  }
+
+  private tryApplyPendingFarmSelection(): void {
+    if (!this.hasFarmsLoaded()) return;
+
+    if (this.pendingFarmIds?.length) {
+      this.applyFarmIds(this.pendingFarmIds);
+      this.pendingFarmIds = null;
+      this.pendingFarmNames = null;
+      return;
+    }
+
+    if (this.pendingFarmNames?.length) {
+      const resolved = this.resolveFarmIdsFromNames(this.pendingFarmNames);
+      this.applyFarmIds(resolved);
+      this.pendingFarmIds = null;
+      this.pendingFarmNames = null;
+    }
+  }
+
+  private normalizeFarmList(items: any[]): any[] {
+    if (!Array.isArray(items)) return [];
+    return items
+      .map((item) => {
+        const normalizedId = this.normalizeId(item);
+        const id = this.coerceId(normalizedId);
+        const name = this.extractFarmDisplayName(item);
+        return {
+          ...item,
+          id: id ?? item?.id ?? item?.farmId ?? item?.farmID ?? item?.FarmId,
+          name: name ?? item?.name ?? item?.farmName ?? item?.FarmName ?? item?.nombre,
+        };
+      })
+      .filter((item) =>
+        item.id !== null &&
+        item.id !== undefined &&
+        typeof item.name === 'string' &&
+        item.name.trim().length
+      );
+  }
+
+  private extractFarmNames(product: any): string[] {
+    const names = new Set<string>();
+    const push = (value: unknown) => {
+      if (typeof value === 'string') {
+        const normalized = value.trim();
+        if (normalized.length) names.add(normalized);
+      }
+    };
+
+    push(product?.farmName);
+    push((product as any)?.FarmName);
+
+    const farmNames = (product as any)?.farmNames ?? (product as any)?.FarmNames;
+    if (Array.isArray(farmNames)) {
+      farmNames.forEach(push);
+    } else if (typeof farmNames === 'string') {
+      farmNames.split(',').forEach(push);
+    }
+
+    const farmsCollection = (product as any)?.farms ?? (product as any)?.Farms;
+    if (Array.isArray(farmsCollection)) {
+      farmsCollection.forEach((f: any) => {
+        push(f?.name);
+        push(f?.farmName);
+        push(f?.nombre);
+      });
+    }
+
+    return Array.from(names);
+  }
+
+  private extractFarmDisplayName(value: any): string | null {
+    if (!value || typeof value !== 'object') return null;
+    const candidates = ['name', 'farmName', 'FarmName', 'nombre', 'Nombre'];
+    for (const key of candidates) {
+      const val = (value as any)[key];
+      if (typeof val === 'string' && val.trim().length) {
+        return val.trim();
+      }
+    }
+    return null;
+  }
+
+  private resolveFarmIdsFromNames(names: string[]): (number | string)[] {
+    if (!this.hasFarmsLoaded() || !Array.isArray(names) || !names.length) return [];
+    const target = names
+      .map((name) => (typeof name === 'string' ? name.trim().toLowerCase() : ''))
+      .filter(Boolean);
+    if (!target.length) return [];
+
+    const matched = this.farms
+      .filter((farm) => {
+        const farmName = typeof farm?.name === 'string' ? farm.name.trim().toLowerCase() : '';
+        return farmName && target.includes(farmName);
+      })
+      .map((farm) => farm.id)
+      .filter((id) => id !== null && id !== undefined);
+    return Array.from(new Set(matched));
+  }
+
+  private coerceId(value: number | string | null): number | string | null {
+    if (value === null || value === undefined) return null;
+    if (typeof value === 'number') return Number.isFinite(value) ? value : null;
+    const trimmed = value.trim();
+    if (!trimmed.length) return null;
+    const numeric = Number(trimmed);
+    return Number.isFinite(numeric) ? numeric : trimmed;
+  }
+
+  private extractFarmIds(product: any): (number | string)[] {
+    if (!product) return [];
+
+    let raw: any[] = [];
+    const responseFarmIds =
+      product.farmIds ??
+      product.FarmIds ??
+      (product as any)?.farmIDs ??
+      (product as any)?.FarmIDs ??
+      (product as any)?.farm_ids ??
+      null;
+
+    if (Array.isArray(responseFarmIds) && responseFarmIds.length) {
+      raw = responseFarmIds;
+    } else if (typeof responseFarmIds === 'string' && responseFarmIds.trim().length) {
+      const trimmed = responseFarmIds.trim();
+      try {
+        const parsed = JSON.parse(trimmed);
+        raw = Array.isArray(parsed) ? parsed : [parsed];
+      } catch {
+        const normalized = trimmed.replace(/^\[|\]$/g, '');
+        raw = normalized.split(',').map((x: string) => x.trim()).filter(Boolean);
+      }
+    } else if (responseFarmIds && typeof responseFarmIds === 'object') {
+      if ('id' in responseFarmIds) {
+        raw = [(responseFarmIds as any).id];
+      } else if (Array.isArray((responseFarmIds as any).items)) {
+        raw = (responseFarmIds as any).items;
+      } else {
+        const values = Object.values(responseFarmIds);
+        if (values.every((v) => ['string', 'number'].includes(typeof v))) {
+          raw = values;
+        }
+      }
+    } else if (product.farmId !== undefined && product.farmId !== null) {
+      raw = [product.farmId];
+    } else if (Array.isArray(product.farms) && product.farms.length) {
+      raw = product.farms;
+    }
+
+    return raw
+      .map((item: any) => this.normalizeId(item))
+      .filter((val): val is number | string => val !== null);
+  }
+
+  private normalizeId(value: any): number | string | null {
+    if (value === null || value === undefined) return null;
+    if (typeof value === 'number' && Number.isFinite(value)) return value;
+    if (typeof value === 'string') {
+      const trimmed = value.trim();
+      return trimmed.length ? trimmed : null;
+    }
+    if (typeof value === 'object') {
+      const candidateKeys = ['id', 'value', 'farmId', 'FarmId', 'farmID', 'FarmID', 'idFarm', 'IdFarm', 'IDFarm', 'farm_id'];
+      for (const key of candidateKeys) {
+        if (Object.prototype.hasOwnProperty.call(value, key)) {
+          return this.normalizeId((value as any)[key]);
+        }
+      }
+    }
+    return null;
   }
 
   onFileChange(event: any) {
@@ -258,18 +481,31 @@ export class ProductFormComponent implements OnInit {
       return;
     }
 
+    const price = Number(g.price);
+    const stock = Number(d.stock);
+    const categoryId = Number(d.categoryId);
+    const farmIds = (d.farmIds ?? [])
+      .map(fid => this.normalizeId(fid))
+      .filter((fid): fid is number | string => fid !== null);
+
+    if (!Number.isFinite(price) || !Number.isFinite(stock) || !Number.isFinite(categoryId) || !farmIds.length) {
+      await loading.dismiss();
+      this.showToast('Completa los campos obligatorios');
+      return;
+    }
+
     const dto: ProductUpdateModel = {
       id: this.productId,
       name: g.name,
       description: g.description,
-      price: g.price,
+      price,
       unit: g.unit,
       production: g.production,
-      stock: d.stock,
+      stock,
       status: d.status,
-      categoryId: d.categoryId,
+      categoryId,
       shippingIncluded: d.shippingIncluded,
-      farmIds: d.farmIds,
+      farmIds,
       images: this.selectedFiles,
     };
 
