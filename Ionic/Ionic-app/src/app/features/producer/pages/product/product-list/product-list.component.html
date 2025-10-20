@@ -1,13 +1,5 @@
 <ion-content class="product-content" fullscreen>
   <div class="page-shell">
-    <!-- Botón Crear Producto -->
-    <section class="product-actions">
-      <ion-button expand="block" color="success" fill="solid" (click)="createProduct()">
-        <ion-icon slot="start" name="add-circle-outline"></ion-icon>
-        Crear Producto
-      </ion-button>
-    </section>
-
     <!-- Listado de productos -->
     <ng-container *ngIf="!loading && paginatedProducts.length; else emptyState">
       <ion-grid class="product-grid">
@@ -20,7 +12,6 @@
                   [alt]="product.name">
                 </ion-img>
               </div>
-
               <ion-card-content class="content">
                 <h3 class="title">{{ product.name }}</h3>
 
@@ -72,7 +63,6 @@
       </div>
     </ng-container>
 
-    <!-- Estado vacío o cargando -->
     <ng-template #emptyState>
       <div class="empty">
         <ion-icon name="layers-outline"></ion-icon>
@@ -83,5 +73,13 @@
         </ion-button>
       </div>
     </ng-template>
+    
   </div>
+
+  <section class="product-actions" slot="fixed">
+    <ion-button expand="block" color="success" fill="solid" (click)="createProduct()">
+      <ion-icon slot="start" name="add-circle-outline"></ion-icon>
+      Crear Producto
+    </ion-button>
+  </section>
 </ion-content>

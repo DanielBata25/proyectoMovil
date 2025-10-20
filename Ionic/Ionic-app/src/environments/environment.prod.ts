@@ -1,5 +1,5 @@
 // Prod (backend público con HTTPS válido)
 export const environment = {
   production: true,
-  apiUrl: 'http:/172.30.5.44/:5253/api/v1/'
+  apiUrl: 'http:/10.239.80.189/:5253/api/v1/'
 };

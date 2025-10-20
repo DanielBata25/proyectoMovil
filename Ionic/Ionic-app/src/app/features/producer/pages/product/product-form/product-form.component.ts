@@ -13,6 +13,7 @@ import {
 import {
   ProductImageSelectModel,
   ProductUpdateModel,
+  ProductRegisterModel,
 } from 'src/app/shared/models/product/product.model';
 import { ProductService } from 'src/app/shared/services/product/product.service';
 import { ProductImageService } from 'src/app/shared/services/productImage/product-image.service';
@@ -138,6 +139,7 @@ export class ProductFormComponent implements OnInit {
   imagesToDelete: string[] = [];
 
   productId?: number;
+  isEdit = false;
   private pendingFarmIds: (number | string)[] | null = null;
   private pendingFarmNames: string[] | null = null;
 
@@ -160,13 +162,46 @@ export class ProductFormComponent implements OnInit {
 
     this.route.paramMap.subscribe((params) => {
       const idParam = params.get('id');
-      if (!idParam) {
-        console.warn('No se proporciono id de producto para editar');
-        return;
+      if (idParam) {
+        this.isEdit = true;
+        this.productId = Number(idParam);
+        this.loadProduct(this.productId);
+      } else {
+        this.isEdit = false;
+        this.productId = undefined;
+        this.resetFormForCreate();
       }
-      this.productId = Number(idParam);
-      this.loadProduct(this.productId);
     });
+  }
+
+  private resetFormForCreate(): void {
+    this.generalGroup.reset({
+      name: '',
+      description: '',
+      price: null,
+      unit: '',
+      production: '',
+    });
+
+    this.detallesGroup.reset({
+      stock: 0,
+      status: true,
+      categoryId: null,
+      farmIds: [],
+      shippingIncluded: false,
+    });
+
+    this.selectedFiles = [];
+    this.imagesPreview = [];
+    this.existingImages = [];
+    this.imagesToDelete = [];
+    this.pendingFarmIds = null;
+    this.pendingFarmNames = null;
+    this.stepControl.setValue('general', { emitEvent: false });
+    this.generalGroup.markAsPristine();
+    this.detallesGroup.markAsPristine();
+    this.generalGroup.markAsUntouched();
+    this.detallesGroup.markAsUntouched();
   }
 
   private loadProduct(id: number) {
@@ -464,12 +499,8 @@ export class ProductFormComponent implements OnInit {
       this.showToast('Completa los campos obligatorios');
       return;
     }
-    if (!this.productId) {
-      this.showAlert('Error', 'No se encontro el producto a actualizar');
-      return;
-    }
-
-    const loading = await this.loadingCtrl.create({ message: 'Actualizando...' });
+    const creating = !this.isEdit;
+    const loading = await this.loadingCtrl.create({ message: creating ? 'Creando...' : 'Actualizando...' });
     await loading.present();
 
     const g = this.generalGroup.getRawValue();
@@ -491,6 +522,52 @@ export class ProductFormComponent implements OnInit {
     if (!Number.isFinite(price) || !Number.isFinite(stock) || !Number.isFinite(categoryId) || !farmIds.length) {
       await loading.dismiss();
       this.showToast('Completa los campos obligatorios');
+      return;
+    }
+
+    if (creating && this.selectedFiles.length === 0 && this.existingImages.length === 0) {
+      await loading.dismiss();
+      this.showToast('Agrega al menos una imagen');
+      return;
+    }
+
+    if (creating) {
+      const dto: ProductRegisterModel = {
+        name: g.name,
+        description: g.description,
+        price,
+        unit: g.unit,
+        production: g.production,
+        stock,
+        status: d.status,
+        categoryId,
+        shippingIncluded: d.shippingIncluded,
+        farmIds,
+        images: this.selectedFiles,
+      };
+
+      const req$ = this.productSrv.create(dto);
+
+      req$.pipe(
+        take(1),
+        catchError((err) => {
+          console.error('Error creando producto', err, err?.data ?? (err as any)?.error);
+          this.showAlert('Error', 'No se pudo crear el producto');
+          return of(null);
+        }),
+        finalize(() => loading.dismiss())
+      ).subscribe(resp => {
+        if (!resp) return;
+        this.showToast('Producto creado');
+        this.resetFormForCreate();
+        this.router.navigateByUrl('/account/producer/product');
+      });
+      return;
+    }
+
+    if (!this.productId) {
+      await loading.dismiss();
+      this.showAlert('Error', 'No se encontró el producto a actualizar');
       return;
     }
 

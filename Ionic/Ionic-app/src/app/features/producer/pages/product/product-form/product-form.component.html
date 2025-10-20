@@ -75,7 +75,9 @@
       <!-- === BOTONES === -->
       <div class="inline-actions">
         <ion-button type="button" color="medium" expand="block" fill="outline" (click)="goBack()">Cancelar</ion-button>
-        <ion-button type="button" color="success" expand="block" (click)="submit()">Actualizar</ion-button>
+        <ion-button type="button" color="success" expand="block" (click)="submit()">
+          {{ isEdit ? 'Actualizar' : 'Crear' }}
+        </ion-button>
       </div>
 
     </form>
