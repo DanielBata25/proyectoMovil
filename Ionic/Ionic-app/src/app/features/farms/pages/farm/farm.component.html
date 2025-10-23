@@ -1,0 +1,97 @@
+<ion-content [fullscreen]="true" class="page-bg">
+  <div class="page-shell farm-shell">
+    <section class="filters-card">
+      <div class="filters-header">
+        <h2>Fincas</h2>
+        <ion-button fill="clear" size="small" (click)="toggleFilters()">
+          <ion-icon slot="start" [name]="showFilters ? 'chevron-up-outline' : 'chevron-down-outline'"></ion-icon>
+          Filtros
+        </ion-button>
+      </div>
+
+      <ion-searchbar
+        class="search-input"
+        placeholder="Buscar fincas o productores"
+        [value]="searchCtrl.value"
+        (ionInput)="onSearch($event)"
+        show-clear-button="always"
+        debounce="250">
+      </ion-searchbar>
+
+      <div class="filters-body" [class.filters-body--collapsed]="!showFilters">
+        <div class="filter-field">
+          <label class="filter-label">Departamento</label>
+          <ion-item lines="none">
+            <ion-select
+              interface="popover"
+              placeholder="Selecciona"
+              [disabled]="isLoadingDepartments"
+              [formControl]="departmentCtrl"
+              (ionChange)="onDepartmentSelect($event)">
+              <ion-select-option *ngFor="let d of departments" [value]="d.id">
+                {{ d.name }}
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
+        </div>
+
+        <div class="filter-field">
+          <label class="filter-label">Ciudad</label>
+          <ion-item lines="none">
+            <ion-select
+              interface="popover"
+              placeholder="Selecciona"
+              [disabled]="isLoadingCities || cityCtrl.disabled"
+              [formControl]="cityCtrl"
+              (ionChange)="onCitySelect($event)">
+              <ion-select-option *ngFor="let c of cities" [value]="c.id">
+                {{ c.name }}
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
+        </div>
+
+        <ion-button
+          class="clear-btn"
+          size="small"
+          fill="clear"
+          (click)="clearFilters()"
+          [disabled]="!searchCtrl.value && !departmentCtrl.value && !cityCtrl.value">
+          <ion-icon slot="start" name="refresh"></ion-icon>
+          Limpiar
+        </ion-button>
+      </div>
+    </section>
+
+    <section class="results-card">
+      <ion-progress-bar *ngIf="isLoadingFarms" type="indeterminate"></ion-progress-bar>
+
+      <ng-container *ngIf="pagedFarms.length > 0; else emptyState">
+        <app-container-card-flex
+          [type]="'farm'"
+          [items]="pagedFarms">
+        </app-container-card-flex>
+      </ng-container>
+
+      <ng-template #emptyState>
+        <div *ngIf="!isLoadingFarms" class="empty-state">
+          <ion-icon name="home-outline"></ion-icon>
+          <p>Sin fincas que coincidan con los filtros.</p>
+        </div>
+      </ng-template>
+
+      <div class="pager" *ngIf="totalPages >= 1">
+        <ion-button fill="clear" size="small" (click)="onPrevPage()" [disabled]="isFirstPage || isLoadingFarms">
+          <ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
+        </ion-button>
+        <div class="pager__label">
+          <ion-icon name="swap-horizontal-outline" class="pager__hint-icon"></ion-icon>
+          <span>{{ pageIndex + 1 }} / {{ totalPages }}</span>
+        </div>
+        <ion-button fill="clear" size="small" (click)="onNextPage()" [disabled]="isLastPage || isLoadingFarms">
+          <ion-icon slot="icon-only" name="chevron-forward-outline"></ion-icon>
+        </ion-button>
+      </div>
+    </section>
+  </div>
+</ion-content>

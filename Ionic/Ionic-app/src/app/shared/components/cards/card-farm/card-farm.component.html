@@ -1,4 +1,11 @@
-<ion-card class="product-card">
+<ion-card
+  class="product-card"
+  role="button"
+  tabindex="0"
+  (click)="onDetail()"
+  (keyup.enter)="onDetail()"
+  (keyup.space)="onDetail(); $event.preventDefault()"
+  aria-label="Abrir detalle de la finca">
   <div class="image-wrap">
     <img
       class="card-image"
@@ -23,10 +30,10 @@
 
     <!-- Botones de acción si está habilitado -->
     <div *ngIf="showActions" class="actions">
-      <ion-button fill="clear" (click)="edit.emit(farm)" aria-label="Editar finca">
+      <ion-button fill="clear" (click)="onEditClick($event)" aria-label="Editar finca">
         <ion-icon class="icon-edit" name="create"></ion-icon>
       </ion-button>
-      <ion-button fill="clear" (click)="delete.emit(farm)" aria-label="Eliminar finca">
+      <ion-button fill="clear" (click)="onDeleteClick($event)" aria-label="Eliminar finca">
         <ion-icon class="icon-delete" name="trash"></ion-icon>
       </ion-button>
     </div>

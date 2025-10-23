@@ -37,6 +37,11 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./features/products/product.routes').then(m => m.PRODUCTS_ROUTES),
       },
+      {
+        path: 'farms',
+        loadChildren: () =>
+          import('./features/farms/farm.routes').then(m => m.FARMS_ROUTES),
+      },
 
       /** Páginas de sistema que SÍ deben verse con barras (si aplica) */
       { path: 'forbidden', component: ForbiddenComponent },

@@ -8,4 +8,5 @@ export const HOME_ROUTES: Routes = [
   { path: 'inicio', component: HomeComponent },
   //{ path: 'pedidos', component: OrdersPage }, // <- ya existe /home/pedidos
   { path: 'product', loadChildren: () => import('../products/product.routes').then(m => m.PRODUCTS_ROUTES) },
+  { path: 'farm', loadChildren: () => import('../farms/farm.routes').then(m => m.FARMS_ROUTES) },
 ];

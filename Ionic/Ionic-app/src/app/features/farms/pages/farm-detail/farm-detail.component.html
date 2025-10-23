@@ -1,0 +1,90 @@
+<ion-content [fullscreen]="true" class="farm-detail-bg">
+  <ion-header class="farm-header">
+    <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-back-button defaultHref="/home/farm"></ion-back-button>
+      </ion-buttons>
+      <ion-title>Detalle de finca</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ng-container *ngIf="loading; else detailContent">
+    <div class="loading-state">
+      <ion-spinner name="dots"></ion-spinner>
+      <p>Cargando finca...</p>
+    </div>
+  </ng-container>
+
+  <ng-template #detailContent>
+    <div class="farm-detail-shell" *ngIf="!error && farm; else errorState">
+      <section class="hero-card">
+        <img
+          class="hero-image"
+          [src]="heroImage"
+          alt="Imagen principal de la finca"
+          (error)="onImgError($event)" />
+
+        <div class="thumbs" *ngIf="galleryImages.length > 1">
+          <button
+            type="button"
+            class="thumb"
+            *ngFor="let url of galleryImages"
+            [class.thumb--active]="url === selectedImage"
+            (click)="onSelectImage(url)">
+            <img [src]="url" alt="Miniatura" (error)="onImgError($event)" />
+          </button>
+        </div>
+      </section>
+
+      <section class="info-card">
+        <header class="info-header">
+          <h1>{{ farm?.name }}</h1>
+          <p class="info-subtitle">
+            <ion-icon name="location-outline"></ion-icon>
+            {{ farm?.cityName }}, {{ farm?.departmentName }}
+          </p>
+        </header>
+
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label">Productor</span>
+            <span class="info-value">{{ farm?.producerName }}</span>
+          </div>
+
+          <div class="info-item">
+            <span class="info-label">Hectáreas</span>
+            <span class="info-value">{{ farm?.hectares | number:'1.0-2' }}</span>
+          </div>
+
+          <div class="info-item">
+            <span class="info-label">Altitud (msnm)</span>
+            <span class="info-value">{{ farm?.altitude | number:'1.0-0' }}</span>
+          </div>
+
+          <div class="info-item">
+            <span class="info-label">Coordenadas</span>
+            <span class="info-value">
+              {{ farm?.latitude | number:'1.4-4' }},
+              {{ farm?.longitude | number:'1.4-4' }}
+            </span>
+          </div>
+        </div>
+
+        <div class="info-actions" *ngIf="googleMapsLink">
+          <ion-button fill="outline" color="primary" [href]="googleMapsLink" target="_blank">
+            <ion-icon slot="start" name="navigate-outline"></ion-icon>
+            Abrir en Maps
+          </ion-button>
+        </div>
+      </section>
+    </div>
+  </ng-template>
+
+  <ng-template #errorState>
+    <div class="error-state">
+      <ion-icon name="alert-circle-outline"></ion-icon>
+      <p>No se pudo cargar la finca.</p>
+      <ion-button fill="clear" (click)="navigateBack()">Volver</ion-button>
+    </div>
+  </ng-template>
+</ion-content>

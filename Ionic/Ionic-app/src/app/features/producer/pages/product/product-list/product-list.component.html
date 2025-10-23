@@ -1,85 +1,142 @@
-<ion-content class="product-content" fullscreen>
-  <div class="page-shell">
-    <!-- Listado de productos -->
-    <ng-container *ngIf="!loading && paginatedProducts.length; else emptyState">
-      <ion-grid class="product-grid">
-        <ion-row>
-          <ion-col size="6" *ngFor="let product of paginatedProducts; trackBy: trackById">
-            <ion-card class="product-card" (click)="viewProduct(product)">
-              <div class="image-wrap">
-                <ion-img
-                  [src]="getCover(product) || 'assets/1.png'"
-                  [alt]="product.name">
-                </ion-img>
-              </div>
-              <ion-card-content class="content">
-                <h3 class="title">{{ product.name }}</h3>
+<ion-content [fullscreen]="true" class="page-bg product-content">
+  <div class="page-shell product-shell">
+    <section class="filters-card">
+      <ion-searchbar
+        class="search-input"
+        placeholder="Buscar productos"
+        [value]="searchCtrl.value"
+        (ionInput)="onSearch($event)"
+        show-clear-button="always"
+        debounce="300">
+      </ion-searchbar>
 
-                <div class="row muted">
-                  <ion-icon name="person-outline"></ion-icon>
-                  <span>{{ product.personName || product.producerCode || '--' }}</span>
-                </div>
-
-                <div class="row muted">
-                  <ion-icon name="location-outline"></ion-icon>
-                  <span>{{ product.cityName || '--' }}, {{ product.departmentName || '--' }}</span>
-                </div>
-
-                <div class="price">
-                  {{ product.price | currency:'COP':'symbol':'1.0-0':'es-CO' }}
-                </div>
-              </ion-card-content>
-
-              <!-- Acciones -->
-              <div class="card-actions" (click)="$event.stopPropagation()">
-                <ion-button fill="clear" color="success" aria-label="Editar" (click)="onEdit(product)">
-                  <ion-icon slot="icon-only" name="create-outline"></ion-icon>
-                </ion-button>
-                <ion-button fill="clear" color="primary" aria-label="Ver" (click)="viewProduct(product)">
-                  <ion-icon slot="icon-only" name="cube-outline"></ion-icon>
-                </ion-button>
-                <ion-button fill="clear" color="danger" aria-label="Eliminar" (click)="onDelete(product)">
-                  <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
-                </ion-button>
-              </div>
-
-              <div class="accent-bar"></div>
-            </ion-card>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
-
-      <!-- Controles de paginación (fijos abajo) -->
-      <div class="pagination-container" *ngIf="totalPages > 1">
-        <div class="pagination">
-          <ion-button fill="clear" size="small" (click)="prevPage()" [disabled]="page === 1">
-            <ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
-          </ion-button>
-          <span>{{ page }} / {{ totalPages }}</span>
-          <ion-button fill="clear" size="small" (click)="nextPage()" [disabled]="page === totalPages">
-            <ion-icon slot="icon-only" name="chevron-forward-outline"></ion-icon>
+      <div class="category-block">
+        <div class="category-header">
+          <span class="category-label">Categoria</span>
+          <ion-button
+            fill="clear"
+            size="small"
+            (click)="clearFilter()"
+            [disabled]="!breadcrumb.length && !searchCtrl.value"
+            aria-label="Limpiar filtros">
+            <ion-icon slot="icon-only" name="refresh"></ion-icon>
           </ion-button>
         </div>
-      </div>
-    </ng-container>
 
-    <ng-template #emptyState>
-      <div class="empty">
-        <ion-icon name="layers-outline"></ion-icon>
-        <p *ngIf="!loading">No tienes productos todavía.</p>
-        <p *ngIf="loading">Cargando productos...</p>
-        <ion-button fill="clear" size="small" (click)="createProduct()">
-          Crear el primero
-        </ion-button>
+        <ion-item lines="none" class="category-item">
+          <ion-select
+            class="category-select"
+            interface="popover"
+            placeholder="Selecciona"
+            [disabled]="isLoadingCategories || atLeaf"
+            [formControl]="categoryCtrl"
+            (ionChange)="onSelectCategory($event.detail.value)">
+            <ion-select-option
+              *ngFor="let c of categories; trackBy: trackByCategory"
+              [value]="c.id">
+              <span class="option-text">{{ c.name }}</span>
+              <ion-icon *ngIf="c.hasChildren" name="chevron-forward-outline"></ion-icon>
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
       </div>
-    </ng-template>
-    
+
+      <div class="breadcrumb-track">
+        <ion-chip color="primary" outline [disabled]="!breadcrumb.length" (click)="clearFilter()">
+          <ion-label>Todas</ion-label>
+        </ion-chip>
+
+        <ng-container *ngFor="let crumb of breadcrumb; let i = index; trackBy: trackByBreadcrumb">
+          <ion-chip
+            [color]="i === breadcrumb.length - 1 ? 'primary' : 'light'"
+            [outline]="i !== breadcrumb.length - 1"
+            (click)="i === breadcrumb.length - 1 ? undefined : onBreadcrumbClick(i)">
+            <ion-label>{{ crumb.name }}</ion-label>
+          </ion-chip>
+        </ng-container>
+      </div>
+    </section>
+
+    <section class="results-card">
+      <ion-progress-bar *ngIf="loading" type="indeterminate"></ion-progress-bar>
+
+      <ng-container *ngIf="!loading && paginatedProducts.length; else emptyState">
+        <ion-grid class="product-grid">
+          <ion-row>
+            <ion-col size="6" *ngFor="let product of paginatedProducts; trackBy: trackByProduct">
+              <ion-card class="product-card" (click)="viewProduct(product)">
+                <div class="image-wrap">
+                  <ion-img
+                    [src]="getCover(product) || 'assets/1.png'"
+                    [alt]="product.name">
+                  </ion-img>
+                </div>
+
+                <ion-card-content class="content">
+                  <h3 class="title">{{ product.name }}</h3>
+
+                  <div class="row muted">
+                    <ion-icon name="person-outline"></ion-icon>
+                    <span>{{ product.personName || product.producerCode || '--' }}</span>
+                  </div>
+
+                  <div class="row muted">
+                    <ion-icon name="location-outline"></ion-icon>
+                    <span>{{ product.cityName || '--' }}, {{ product.departmentName || '--' }}</span>
+                  </div>
+
+                  <div class="price">
+                    {{ product.price | currency:'COP':'symbol':'1.0-0':'es-CO' }}
+                  </div>
+                </ion-card-content>
+
+                <div class="card-actions" (click)="$event.stopPropagation()">
+                  <ion-button fill="clear" color="success" aria-label="Editar" (click)="onEdit(product)">
+                    <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+                  </ion-button>
+                  <ion-button fill="clear" color="primary" aria-label="Ver" (click)="viewProduct(product)">
+                    <ion-icon slot="icon-only" name="cube-outline"></ion-icon>
+                  </ion-button>
+                  <ion-button fill="clear" color="danger" aria-label="Eliminar" (click)="onDelete(product)">
+                    <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+                  </ion-button>
+                </div>
+
+                <div class="accent-bar"></div>
+              </ion-card>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+
+        <div class="pagination-container" *ngIf="totalPages > 1">
+          <div class="pagination">
+            <ion-button fill="clear" size="small" (click)="prevPage()" [disabled]="page === 1">
+              <ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
+            </ion-button>
+            <span>{{ page }} / {{ totalPages }}</span>
+            <ion-button fill="clear" size="small" (click)="nextPage()" [disabled]="page === totalPages">
+              <ion-icon slot="icon-only" name="chevron-forward-outline"></ion-icon>
+            </ion-button>
+          </div>
+        </div>
+      </ng-container>
+    </section>
   </div>
 
-  <section class="product-actions" slot="fixed">
-    <ion-button expand="block" color="success" fill="solid" (click)="createProduct()">
-      <ion-icon slot="start" name="add-circle-outline"></ion-icon>
-      Crear Producto
-    </ion-button>
-  </section>
+  <ng-template #emptyState>
+    <div class="empty">
+      <ion-icon name="layers-outline"></ion-icon>
+      <p *ngIf="!loading">No tienes productos todavia.</p>
+      <p *ngIf="loading">Cargando productos...</p>
+      <ion-button fill="clear" size="small" (click)="createProduct()">
+        Crear el primero
+      </ion-button>
+    </div>
+  </ng-template>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button color="success" (click)="createProduct()">
+      <ion-icon name="add-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>
