@@ -35,9 +35,28 @@ export const PRODUCER_ROUTES: Routes = [
   },
   {
     path: 'farm',
-    loadComponent: () =>
-      import('./pages/farm/farm-list/farm-list.component').then(
-        (m) => m.FarmListComponent,
-      ),
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./pages/farm/farm-list/farm-list.component').then(
+            (m) => m.FarmListComponent,
+          ),
+      },
+      {
+        path: 'create',
+        loadComponent: () =>
+          import('./pages/farm/farm-form/farm-form.component').then(
+            (m) => m.FarmFormComponent,
+          ),
+      },
+      {
+        path: 'update/:id',
+        loadComponent: () =>
+          import('./pages/farm/farm-form/farm-form.component').then(
+            (m) => m.FarmFormComponent,
+          ),
+      },
+    ],
   },
 ];

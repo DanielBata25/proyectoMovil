@@ -10,6 +10,11 @@
   justify-items: center;
 }
 
+.card-grid--farm {
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 18px;
+}
+
 .card-grid__item {
   display: flex;
   justify-content: center;
@@ -27,3 +32,4 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+

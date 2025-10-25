@@ -153,14 +153,24 @@ export class FarmListComponent implements OnInit {
     if (!this.isLastPage) this.pageIndex++;
   }
 
-  onDetail(farm: FarmSelectModel): void {
+  onCreate(): void {
+    this.router.navigate(['/account/producer/farm/create']);
+  }
+
+  onView(farm: FarmSelectModel): void {
+    if (!farm?.id) return;
     this.router.navigate(['/home/farm', farm.id]);
+  }
+
+  onEdit(farm: FarmSelectModel): void {
+    if (!farm?.id) return;
+    this.router.navigate(['/account/producer/farm/update', farm.id]);
   }
 
   async onDelete(farm: FarmSelectModel): Promise<void> {
     const alert = await this.alertCtrl.create({
       header: 'Eliminar finca',
-      message: `¿Eliminar "${farm.name}"? Esta acción no se puede deshacer.`,
+      message: `Eliminar "${farm.name}"? Esta accion no se puede deshacer.`,
       buttons: [
         { text: 'Cancelar', role: 'cancel' },
         {
@@ -237,3 +247,7 @@ export class FarmListComponent implements OnInit {
     this.pageIndex = 0;
   }
 }
+
+
+
+

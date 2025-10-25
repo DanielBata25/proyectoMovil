@@ -1,0 +1,115 @@
+<ion-content [fullscreen]="true" class="form-content">
+  <ion-progress-bar *ngIf="isLoadingFarm" type="indeterminate"></ion-progress-bar>
+
+  <div class="form-wrapper">
+    <form class="section-card" [formGroup]="form" (ngSubmit)="onSubmit()">
+      <h2 class="section-title">Datos de la Finca</h2>
+
+      <div class="section-card inner-card upload-card">
+        <h2 class="section-title">Imagenes de la finca</h2>
+
+        <div class="upload-box" (click)="fileInput.click()">
+          <input
+            #fileInput
+            type="file"
+            multiple
+            accept="image/*"
+            hidden
+            (change)="onFilesSelected($event)" />
+          <div class="upload-inner">
+            <ion-icon name="cloud-upload-outline" class="upload-icon"></ion-icon>
+            <h3>Subir imagen</h3>
+            <p>Presiona para poder subir una imagen</p>
+            <ion-button color="medium" fill="solid" size="small">Subir</ion-button>
+          </div>
+        </div>
+
+        <div class="images-preview" *ngIf="selectedPreviews.length || existingImages.length">
+          <div class="img-container" *ngFor="let img of selectedPreviews; let i = index">
+            <img [src]="img" alt="Nueva imagen seleccionada" />
+            <ion-button fill="clear" color="danger" (click)="removeSelectedFile(i)">
+              <ion-icon name="trash-outline"></ion-icon>
+            </ion-button>
+          </div>
+
+          <div class="img-container" *ngFor="let img of existingImages">
+            <img [src]="img.url" [alt]="img.name" />
+          </div>
+        </div>
+      </div>
+
+      <h2 class="section-title">Detalles</h2>
+      <div class="form-section">
+        <ion-input
+          label="Nombre"
+          labelPlacement="floating"
+          fill="outline"
+          formControlName="name"></ion-input>
+
+        <ion-input
+          label="Hectareas"
+          labelPlacement="floating"
+          type="number"
+          min="0"
+          step="0.01"
+          fill="outline"
+          formControlName="hectares"></ion-input>
+
+        <ion-input
+          label="Altitud (msnm)"
+          labelPlacement="floating"
+          type="number"
+          fill="outline"
+          formControlName="altitude"></ion-input>
+
+        <ion-input
+          label="Latitud"
+          labelPlacement="floating"
+          type="number"
+          step="0.0001"
+          fill="outline"
+          formControlName="latitude"></ion-input>
+
+        <ion-input
+          label="Longitud"
+          labelPlacement="floating"
+          type="number"
+          step="0.0001"
+          fill="outline"
+          formControlName="longitude"></ion-input>
+      </div>
+
+      <h2 class="section-title">Ubicacion</h2>
+      <div class="form-section">
+        <ion-select
+          label="Departamento"
+          labelPlacement="floating"
+          fill="outline"
+          formControlName="departmentId">
+          <ion-select-option *ngFor="let dept of departments; trackBy: trackById" [value]="dept.id">
+            {{ dept.name }}
+          </ion-select-option>
+        </ion-select>
+
+        <ion-select
+          label="Ciudad"
+          labelPlacement="floating"
+          fill="outline"
+          formControlName="cityId">
+          <ion-select-option *ngFor="let city of cities; trackBy: trackById" [value]="city.id">
+            {{ city.name }}
+          </ion-select-option>
+        </ion-select>
+      </div>
+
+      <div class="inline-actions">
+        <ion-button type="button" color="medium" fill="outline" expand="block" (click)="onCancel()">
+          Cancelar
+        </ion-button>
+        <ion-button type="submit" color="success" expand="block" [disabled]="form.invalid || isSaving">
+          {{ isEdit ? 'Actualizar' : 'Crear' }}
+        </ion-button>
+      </div>
+    </form>
+  </div>
+</ion-content>

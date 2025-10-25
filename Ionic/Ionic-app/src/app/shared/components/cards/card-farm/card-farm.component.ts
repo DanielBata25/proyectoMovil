@@ -19,6 +19,7 @@ export class CardFarmComponent {
 
   @Output() edit = new EventEmitter<FarmSelectModel>();
   @Output() delete = new EventEmitter<FarmSelectModel>();
+  @Output() view = new EventEmitter<FarmSelectModel>();
 
   private readonly placeholder = 'assets/img/cargaImagen.png';
 
@@ -33,12 +34,23 @@ export class CardFarmComponent {
 
   onDetail(): void {
     if (!this.farm?.id) return;
-    this.router.navigate(['/home/farm', this.farm.id]);
+    this.view.emit(this.farm);
+    if (!this.showActions) {
+      this.router.navigate(['/home/farm', this.farm.id]);
+    }
   }
 
   onEditClick(ev: Event): void {
     ev.stopPropagation();
     this.edit.emit(this.farm);
+  }
+
+  onViewClick(ev: Event): void {
+    ev.stopPropagation();
+    this.view.emit(this.farm);
+    if (!this.showActions) {
+      this.router.navigate(['/home/farm', this.farm.id]);
+    }
   }
 
   onDeleteClick(ev: Event): void {

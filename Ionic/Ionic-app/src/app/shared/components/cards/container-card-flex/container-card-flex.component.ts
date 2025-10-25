@@ -37,6 +37,7 @@ export class ContainerCardFlexComponent {
   @Output() deleteProduct = new EventEmitter<ProductSelectModel>();
   @Output() editFarm = new EventEmitter<FarmSelectModel>();
   @Output() deleteFarm = new EventEmitter<FarmSelectModel>();
+  @Output() viewFarm = new EventEmitter<FarmSelectModel>();
   @Output() toggleFavorite = new EventEmitter<ProductSelectModel>(); // solo product
 
   trackById = (_: number, it: Item) => (it as any).id;
@@ -48,5 +49,11 @@ export class ContainerCardFlexComponent {
 
   isFarm(it: Item): it is FarmSelectModel {
     return (it as FarmSelectModel).hectares !== undefined;
+  }
+
+  get gridClasses(): string[] {
+    return this.type === 'farm'
+      ? ['card-grid', 'card-grid--farm']
+      : ['card-grid', 'card-grid--product'];
   }
 }

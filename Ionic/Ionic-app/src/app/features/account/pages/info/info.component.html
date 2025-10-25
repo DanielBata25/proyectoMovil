@@ -1,4 +1,4 @@
-﻿<ion-content [fullscreen]="true" class="page-bg">
+<ion-content [fullscreen]="true" class="page-bg">
   <div class="page-shell">
 
     <!-- Loader -->
@@ -6,7 +6,7 @@
       <ion-spinner name="crescent"></ion-spinner>
     </div>
 
-    <!-- Contenedor único -->
+    <!-- Contenedor �nico -->
     <ion-card class="info-card" *ngIf="person">
       <ion-card-content>
 
@@ -26,18 +26,18 @@
         </button>
       </div>
 
-      <!-- Información Básica -->
-      <h2 class="group-title">Información Básica</h2>
+      <!-- Informaci�n B�sica -->
+      <h2 class="group-title">Informaci�n B�sica</h2>
       <div class="row">
         <div class="pill-icon"><ion-icon name="call-outline"></ion-icon></div>
         <div class="info-line">
-          <span class="primary">Número de teléfono</span>
+          <span class="primary">N�mero de tel�fono</span>
           <span class="secondary">{{ person?.phoneNumber || '+57 300 0000000' }}</span>
         </div>
       </div>
 
-      <!-- Información Adicional -->
-      <h2 class="group-title">Información Adicional</h2>
+      <!-- Informaci�n Adicional -->
+      <h2 class="group-title">Informaci�n Adicional</h2>
       <div class="row">
         <div class="pill-icon"><ion-icon name="id-card-outline"></ion-icon></div>
         <div class="info-line">
@@ -49,7 +49,7 @@
       <div class="row">
         <div class="pill-icon"><ion-icon name="location-outline"></ion-icon></div>
         <div class="info-line">
-          <span class="primary">Dirección</span>
+          <span class="primary">Direcci�n</span>
           <span class="secondary">{{ person?.address || '123 Main Street, Anytown, USA' }}</span>
         </div>
       </div>
@@ -59,7 +59,7 @@
       <div class="row-btn">
         <div class="pill-icon"><ion-icon name="create-outline"></ion-icon></div>
         <button class="flat-btn" (click)="goto('/account/info/update-person')">
-          <span>Actualizar Información</span>
+          <span>Actualizar Informaci�n</span>
           <ion-icon name="chevron-forward"></ion-icon>
         </button>
       </div>
@@ -67,7 +67,7 @@
       <div class="row-btn">
         <div class="pill-icon"><ion-icon name="lock-closed-outline"></ion-icon></div>
         <button class="flat-btn" (click)="goto('/account/info/form-change-password')">
-          <span>Cambiar Contraseña</span>
+          <span>Cambiar Contrase�a</span>
           <ion-icon name="chevron-forward"></ion-icon>
         </button>
       </div>
@@ -75,7 +75,7 @@
       <div class="row-btn">
         <div class="pill-icon"><ion-icon name="log-out-outline"></ion-icon></div>
         <button class="flat-btn" (click)="logout()" [disabled]="loggingOut">
-          <span>Cerrar Sesión</span>
+          <span>Cerrar Sesi�n</span>
           <ion-icon name="chevron-forward"></ion-icon>
         </button>
       </div>
@@ -92,7 +92,7 @@
 
       <div class="row-btn">
         <div class="pill-icon"><ion-icon name="reader-outline"></ion-icon></div>
-        <button class="flat-btn" (click)="goto('/home/farm')">
+        <button class="flat-btn" (click)="goto('/account/producer/farm')">
           <span>Gestion Fincas</span>
           <ion-icon name="chevron-forward"></ion-icon>
         </button>
@@ -120,7 +120,7 @@
       <div class="row-btn">
         <div class="pill-icon"><ion-icon name="mail-outline"></ion-icon></div>
         <button class="flat-btn" (click)="goto('account/support')">
-          <span>Contáctanos</span>
+          <span>Cont�ctanos</span>
           <ion-icon name="chevron-forward"></ion-icon>
         </button>
       </div>
