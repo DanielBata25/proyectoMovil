@@ -54,8 +54,8 @@ export class FarmListComponent implements OnInit {
 
   get filteredFarms(): FarmSelectModel[] {
     const query = this.normalize(this.searchCtrl.value);
-    const deptId = this.departmentCtrl.value;
-    const cityId = this.cityCtrl.value;
+    const deptId = this.toNumber(this.departmentCtrl.value);
+    const cityId = this.toNumber(this.cityCtrl.value);
 
     return this.farms.filter(farm => {
       const matchesDept = deptId ? farm.departmentId === deptId : true;
@@ -107,15 +107,17 @@ export class FarmListComponent implements OnInit {
   }
 
   onDepartmentSelect(ev: CustomEvent): void {
-    const value = (ev.detail as any)?.value ?? null;
+    const rawValue = (ev.detail as any)?.value ?? null;
+    const value = this.toNumber(rawValue);
     this.departmentCtrl.setValue(value, { emitEvent: true });
-    if (!value) {
+    if (value == null) {
       this.cityCtrl.reset({ value: null, disabled: true }, { emitEvent: false });
     }
   }
 
   onCitySelect(ev: CustomEvent): void {
-    const value = (ev.detail as any)?.value ?? null;
+    const rawValue = (ev.detail as any)?.value ?? null;
+    const value = this.toNumber(rawValue);
     this.cityCtrl.setValue(value, { emitEvent: true });
   }
 
@@ -176,7 +178,7 @@ export class FarmListComponent implements OnInit {
         {
           text: 'Eliminar',
           role: 'destructive',
-          handler: () => this.confirmDelete(farm.id),
+      handler: () => this.confirmDelete(farm.id),
         },
       ],
     });
@@ -245,6 +247,12 @@ export class FarmListComponent implements OnInit {
 
   private resetPaging(): void {
     this.pageIndex = 0;
+  }
+
+  private toNumber(value: any): number | null {
+    if (value === null || value === undefined || value === '') return null;
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : null;
   }
 }
 
