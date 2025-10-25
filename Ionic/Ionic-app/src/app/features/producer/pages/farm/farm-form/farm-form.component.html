@@ -32,8 +32,11 @@
             </ion-button>
           </div>
 
-          <div class="img-container" *ngFor="let img of existingImages">
-            <img [src]="img.url" [alt]="img.name" />
+          <div class="img-container" *ngFor="let img of existingImages; let i = index">
+            <img [src]="img.url" alt="Imagen existente" />
+            <ion-button fill="clear" color="danger" (click)="removeExistingImage(i)">
+              <ion-icon name="trash-outline"></ion-icon>
+            </ion-button>
           </div>
         </div>
       </div>
@@ -113,3 +116,4 @@
     </form>
   </div>
 </ion-content>
+

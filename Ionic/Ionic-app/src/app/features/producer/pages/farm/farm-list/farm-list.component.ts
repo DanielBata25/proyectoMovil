@@ -88,17 +88,25 @@ export class FarmListComponent implements OnInit {
       .subscribe(() => this.resetPaging());
 
     this.departmentCtrl.valueChanges.subscribe(deptId => {
-      if (!deptId) {
+      const numericId = this.toNumber(deptId);
+      if (numericId === null) {
         this.cities = [];
         this.cityCtrl.reset({ value: null, disabled: true }, { emitEvent: false });
         this.resetPaging();
         return;
       }
-      this.loadCities(deptId);
+
+      this.loadCities(numericId);
       this.resetPaging();
     });
 
-    this.cityCtrl.valueChanges.subscribe(() => this.resetPaging());
+    this.cityCtrl.valueChanges.subscribe(value => {
+      const numeric = this.toNumber(value);
+      if (numeric !== value) {
+        this.cityCtrl.setValue(numeric, { emitEvent: false });
+      }
+      this.resetPaging();
+    });
   }
 
   onSearch(ev: CustomEvent): void {
@@ -178,7 +186,7 @@ export class FarmListComponent implements OnInit {
         {
           text: 'Eliminar',
           role: 'destructive',
-      handler: () => this.confirmDelete(farm.id),
+          handler: () => this.confirmDelete(farm.id),
         },
       ],
     });
@@ -232,7 +240,7 @@ export class FarmListComponent implements OnInit {
     this.cityCtrl.disable({ emitEvent: false });
     this.cityCtrl.setValue(null, { emitEvent: false });
 
-    this.locationService.getCity(departmentId).subscribe({
+    this.locationService.getCity(Number(departmentId)).subscribe({
       next: cities => {
         this.cities = cities ?? [];
         this.isLoadingCities = false;
@@ -255,6 +263,11 @@ export class FarmListComponent implements OnInit {
     return Number.isFinite(parsed) ? parsed : null;
   }
 }
+
+
+
+
+
 
 
 

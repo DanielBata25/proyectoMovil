@@ -9,6 +9,7 @@ import {
 import { IonicModule, LoadingController, ToastController } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
 import { finalize } from 'rxjs/operators';
+import { firstValueFrom } from 'rxjs';
 
 import { FarmService } from 'src/app/shared/services/farm/farm.service';
 import { LocationService } from 'src/app/shared/services/location/location.service';
@@ -49,9 +50,10 @@ export class FarmFormComponent implements OnInit {
   departments: DepartmentModel[] = [];
   cities: CityModel[] = [];
 
-  existingImages: { url: string; name: string }[] = [];
+  existingImages: { url: string; id: string }[] = [];
   selectedFiles: File[] = [];
   selectedPreviews: string[] = [];
+  imagesToDelete: string[] = [];
 
   isSaving = false;
   isLoadingFarm = false;
@@ -78,14 +80,27 @@ export class FarmFormComponent implements OnInit {
     }
 
     this.form.get('departmentId')?.valueChanges.subscribe((deptId) => {
-      if (!deptId) {
+      const numericId = this.toNumber(deptId);
+      if (numericId === null) {
         this.cities = [];
         this.pendingCityId = null;
         this.form.get('cityId')?.reset();
         this.form.get('cityId')?.disable({ emitEvent: false });
         return;
       }
-      this.loadCities(deptId, this.pendingCityId ?? undefined);
+
+      if (numericId !== deptId) {
+        this.form.get('departmentId')?.setValue(numericId, { emitEvent: false });
+      }
+
+      this.loadCities(numericId, this.pendingCityId ?? undefined);
+    });
+
+    this.form.get('cityId')?.valueChanges.subscribe((cityId) => {
+      const numericCity = this.toNumber(cityId);
+      if (numericCity !== cityId) {
+        this.form.get('cityId')?.setValue(numericCity, { emitEvent: false });
+      }
     });
 
     this.loadDepartments().then(() => {
@@ -124,6 +139,15 @@ export class FarmFormComponent implements OnInit {
     this.selectedPreviews = this.selectedPreviews.filter((_, i) => i !== index);
   }
 
+  removeExistingImage(index: number): void {
+    const img = this.existingImages[index];
+    if (!img) return;
+    this.existingImages = this.existingImages.filter((_, i) => i !== index);
+    if (img.id) {
+      this.imagesToDelete.push(img.id);
+    }
+  }
+
   async onSubmit(): Promise<void> {
     if (this.form.invalid || this.isSaving) {
       this.form.markAllAsTouched();
@@ -137,13 +161,21 @@ export class FarmFormComponent implements OnInit {
     this.isSaving = true;
 
     const value = this.form.getRawValue();
+    const cityId = this.toNumber(value.cityId);
+    if (cityId === null) {
+      await loading.dismiss();
+      this.isSaving = false;
+      void this.presentToast('Selecciona ciudad');
+      return;
+    }
+
     const core = {
       name: value.name.trim(),
       hectares: Number(value.hectares),
       altitude: Number(value.altitude),
       latitude: Number(value.latitude),
       longitude: Number(value.longitude),
-      cityId: Number(value.cityId),
+      cityId,
     };
 
     const createPayload: FarmRegisterModel = {
@@ -155,6 +187,7 @@ export class FarmFormComponent implements OnInit {
       ...core,
       id: this.farmId!,
       images: this.selectedFiles.length ? this.selectedFiles : undefined,
+      imagesToDelete: this.imagesToDelete.length ? this.imagesToDelete : undefined,
     };
 
     const request$ = this.isEdit
@@ -216,12 +249,12 @@ export class FarmFormComponent implements OnInit {
   ): void {
     this.form.get('cityId')?.disable({ emitEvent: false });
     this.form.get('cityId')?.reset();
-    this.locationService.getCity(departmentId).subscribe({
+    this.locationService.getCity(Number(departmentId)).subscribe({
       next: (cities) => {
         this.cities = cities ?? [];
         this.form.get('cityId')?.enable({ emitEvent: false });
         if (selectedCityId) {
-          this.form.get('cityId')?.setValue(selectedCityId, {
+          this.form.get('cityId')?.setValue(Number(selectedCityId), {
             emitEvent: false,
           });
         }
@@ -250,7 +283,9 @@ export class FarmFormComponent implements OnInit {
   }
 
   private applyFarm(farm: FarmSelectModel): void {
-    this.pendingCityId = farm.cityId ?? null;
+    const departmentId = this.toNumber(farm.departmentId);
+    const cityId = this.toNumber(farm.cityId);
+
     this.form.patchValue(
       {
         name: farm.name,
@@ -258,34 +293,64 @@ export class FarmFormComponent implements OnInit {
         altitude: farm.altitude,
         latitude: farm.latitude,
         longitude: farm.longitude,
-        departmentId: farm.departmentId,
+        departmentId,
       },
       { emitEvent: false },
     );
 
-    if (farm.departmentId) {
-      this.form.get('departmentId')?.setValue(farm.departmentId, {
-        emitEvent: true,
-      });
-    }
-
     this.selectedFiles = [];
     this.selectedPreviews = [];
+    this.imagesToDelete = [];
 
-    if (farm.cityId) {
-      this.pendingCityId = farm.cityId;
-      this.loadCities(farm.departmentId, farm.cityId);
+    if (departmentId && departmentId > 0) {
+      this.form.get('departmentId')?.setValue(departmentId, { emitEvent: false });
+      this.loadCities(departmentId, cityId ?? undefined);
+    } else if (cityId && cityId > 0) {
+      this.resolveDepartmentForCity(cityId).then((resolved) => {
+        if (resolved) {
+          this.form.get('departmentId')?.setValue(resolved, { emitEvent: false });
+          this.loadCities(resolved, cityId);
+        } else {
+          this.clearCityControl();
+        }
+      });
+    } else {
+      this.clearCityControl();
+    }
+
+    if (cityId && cityId > 0) {
+      this.form.get('cityId')?.setValue(cityId, { emitEvent: false });
     }
 
     this.existingImages = (farm.images ?? []).map((img) => ({
       url: img.imageUrl,
-      name: img.fileName,
+      id: img.publicId ?? String(img.id ?? ''),
     }));
+  }
+
+  private clearCityControl(): void {
+    this.cities = [];
+    this.form.get("cityId")?.reset(null, { emitEvent: false });
+    this.form.get("cityId")?.disable({ emitEvent: false });
+  }
+
+  private async resolveDepartmentForCity(cityId: number): Promise<number | null> {
+    for (const dept of this.departments) {
+      try {
+        const cities = await firstValueFrom(this.locationService.getCity(dept.id));
+        if (cities?.some(city => city.id === cityId)) {
+          return dept.id;
+        }
+      } catch (err) {
+        console.error("[FarmForm] resolveDepartmentForCity", err);
+      }
+    }
+    return null;
   }
 
   private async presentToast(
     message: string,
-    color: 'success' | 'danger' | 'warning' = 'success',
+    color: 'success' | 'danger' | 'warning' = 'success'
   ): Promise<void> {
     const toast = await this.toastCtrl.create({
       message,
@@ -294,5 +359,11 @@ export class FarmFormComponent implements OnInit {
       position: 'top',
     });
     await toast.present();
+  }
+
+  private toNumber(value: any): number | null {
+    if (value === null || value === undefined || value === '') return null;
+    const num = Number(value);
+    return Number.isFinite(num) ? num : null;
   }
 }
