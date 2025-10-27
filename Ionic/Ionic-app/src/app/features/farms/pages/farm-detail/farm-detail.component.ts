@@ -1,6 +1,7 @@
 import {
   AfterViewInit,
   Component,
+  CUSTOM_ELEMENTS_SCHEMA,
   ElementRef,
   OnDestroy,
   OnInit,
@@ -10,6 +11,8 @@ import {
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
+
+import { register } from 'swiper/element/bundle';
 
 import { FarmService } from '../../../../shared/services/farm/farm.service';
 import { FarmSelectModel } from '../../../../shared/models/farm/farm.model';
@@ -21,6 +24,7 @@ import * as L from 'leaflet';
   imports: [CommonModule, IonicModule],
   templateUrl: './farm-detail.component.html',
   styleUrls: ['./farm-detail.component.scss'],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class FarmDetailComponent implements OnInit, AfterViewInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
@@ -28,6 +32,7 @@ export class FarmDetailComponent implements OnInit, AfterViewInit, OnDestroy {
   private readonly farmService = inject(FarmService);
 
   @ViewChild('mapContainer', { static: false }) mapContainer?: ElementRef<HTMLDivElement>;
+  @ViewChild('swiperRef', { static: false }) swiperRef?: ElementRef<HTMLElement>;
 
   farmId!: number;
   farm?: FarmSelectModel;
@@ -35,13 +40,16 @@ export class FarmDetailComponent implements OnInit, AfterViewInit, OnDestroy {
   loading = true;
   error = false;
 
-  selectedImage: string | null = null;
-  private readonly placeholder = 'assets/img/cargaImagen.png';
+  readonly slidesOpts = { slidesPerView: 1, spaceBetween: 12, pagination: true };
 
   private viewReady = false;
   private map?: L.Map;
   private marker?: L.CircleMarker;
   private tileLayer?: L.TileLayer;
+
+  constructor() {
+    register();
+  }
 
   ngOnInit(): void {
     this.farmId = Number(this.route.snapshot.paramMap.get('id'));
@@ -56,6 +64,7 @@ export class FarmDetailComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     this.viewReady = true;
     this.renderMap();
+    this.initSwiperAutoplay();
   }
 
   ngOnDestroy(): void {
@@ -66,11 +75,6 @@ export class FarmDetailComponent implements OnInit, AfterViewInit, OnDestroy {
     return (this.farm?.images ?? [])
       .map(img => img.imageUrl)
       .filter(url => !!url);
-  }
-
-  get heroImage(): string {
-    const primary = this.selectedImage || this.galleryImages[0];
-    return primary && primary.trim().length > 0 ? primary : this.placeholder;
   }
 
   get hasValidCoordinates(): boolean {
@@ -87,14 +91,6 @@ export class FarmDetailComponent implements OnInit, AfterViewInit, OnDestroy {
     return `https://www.google.com/maps?q=${lat},${lon}`;
   }
 
-  onSelectImage(url: string): void {
-    this.selectedImage = url;
-  }
-
-  onImgError(event: Event): void {
-    (event.target as HTMLImageElement).src = this.placeholder;
-  }
-
   navigateBack(): void {
     this.router.navigate(['/home/farm']);
   }
@@ -107,16 +103,39 @@ export class FarmDetailComponent implements OnInit, AfterViewInit, OnDestroy {
       next: farm => {
         this.farm = farm;
         this.loading = false;
-        if (this.galleryImages.length) {
-          this.selectedImage = this.galleryImages[0];
-        }
         this.renderMap();
+        this.initSwiperAutoplay();
       },
       error: err => {
         console.error('[Farm Detail] getById', err);
         this.loading = false;
         this.error = true;
       },
+    });
+  }
+
+  private initSwiperAutoplay(): void {
+    if (!this.viewReady) return;
+    if (this.galleryImages.length <= 1) return;
+
+    requestAnimationFrame(() => {
+      const swiperEl: any = this.swiperRef?.nativeElement;
+      if (!swiperEl) return;
+
+      if (typeof swiperEl.initialize === 'function' && !swiperEl.classList.contains('swiper-initialized')) {
+        swiperEl.initialize();
+      } else if (swiperEl.swiper?.update) {
+        swiperEl.swiper.update();
+      }
+
+      const swiper = swiperEl.swiper;
+      if (swiper?.autoplay) {
+        swiper.params.autoplay = swiper.params.autoplay || {};
+        swiper.params.autoplay.delay = 4000;
+        swiper.params.autoplay.disableOnInteraction = false;
+        swiper.autoplay.stop();
+        swiper.autoplay.start();
+      }
     });
   }
 

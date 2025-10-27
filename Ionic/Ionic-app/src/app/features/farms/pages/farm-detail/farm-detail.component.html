@@ -1,99 +1,91 @@
-<ion-content [fullscreen]="true" class="farm-detail-bg">
-  <ion-header class="farm-header">
-    <ion-toolbar>
-      <ion-buttons slot="start">
-        <ion-back-button defaultHref="/home/farm"></ion-back-button>
-      </ion-buttons>
-      <ion-title>Detalle de finca</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
-  <ng-container *ngIf="loading; else detailContent">
-    <div class="loading-state">
-      <ion-spinner name="dots"></ion-spinner>
-      <p>Cargando finca...</p>
+<ion-content [fullscreen]="true" class="page-bg" forceOverscroll="false">
+  <div class="page-shell detail-shell">
+    <div class="center" *ngIf="loading">
+      <ion-spinner name="crescent"></ion-spinner>
     </div>
-  </ng-container>
 
-  <ng-template #detailContent>
-    <div class="farm-detail-shell" *ngIf="!error && farm as farmDetail; else errorState">
-      <section class="hero-card">
-        <img
-          class="hero-image"
-          [src]="heroImage"
-          alt="Imagen principal de la finca"
-          (error)="onImgError($event)" />
+    <section class="detail-card" *ngIf="!loading && !error && farm as farmDetail; else errorState">
+      <h1 class="page-title">Detalle de la finca</h1>
 
-        <div class="thumbs" *ngIf="galleryImages.length > 1">
-          <button
-            type="button"
-            class="thumb"
-            *ngFor="let url of galleryImages"
-            [class.thumb--active]="url === selectedImage"
-            (click)="onSelectImage(url)">
-            <img [src]="url" alt="Miniatura" (error)="onImgError($event)" />
-          </button>
-        </div>
-      </section>
+      <div class="hero-swiper">
+        <ng-container *ngIf="galleryImages.length; else noImg">
+          <swiper-container
+            #swiperRef
+            init="false"
+            *ngIf="galleryImages.length > 1; else singleImage"
+            [attr.slides-per-view]="slidesOpts.slidesPerView"
+            [attr.space-between]="slidesOpts.spaceBetween"
+            [attr.pagination]="slidesOpts.pagination"
+            [attr.autoplay]="'true'"
+            [attr.autoplay-delay]="'4000'"
+            [attr.autoplay-disable-on-interaction]="'false'">
+            <swiper-slide *ngFor="let url of galleryImages">
+              <img
+                [src]="url"
+                alt="Imagen de la finca"
+                class="hero-img" />
+            </swiper-slide>
+          </swiper-container>
 
-      <section class="info-card">
-        <header class="info-header">
-          <h1>{{ farmDetail.name }}</h1>
-          <p class="info-subtitle">
-            <ion-icon name="location-outline"></ion-icon>
-            {{ farmDetail.cityName }}, {{ farmDetail.departmentName }}
-          </p>
-        </header>
+          <ng-template #singleImage>
+            <img
+              [src]="galleryImages[0]"
+              alt="Imagen de la finca"
+              class="hero-img hero-img--static" />
+          </ng-template>
+        </ng-container>
+      </div>
 
-        <div class="info-grid">
-          <div class="info-item">
-            <span class="info-label">Productor</span>
-            <span class="info-value">{{ farmDetail.producerName }}</span>
-          </div>
+      <ng-template #noImg>
+        <div class="no-img">Sin fotografías registradas</div>
+      </ng-template>
 
-          <div class="info-item">
-            <span class="info-label">Hectáreas</span>
-            <span class="info-value">{{ farmDetail.hectares | number:'1.0-2' }}</span>
-          </div>
-
-          <div class="info-item">
-            <span class="info-label">Altitud (msnm)</span>
-            <span class="info-value">{{ farmDetail.altitude | number:'1.0-0' }}</span>
-          </div>
-
-          <div class="info-item">
-            <span class="info-label">Coordenadas</span>
-            <span class="info-value">
-              {{ farmDetail.latitude | number:'1.4-4' }},
-              {{ farmDetail.longitude | number:'1.4-4' }}
-            </span>
-          </div>
-        </div>
-
-        <div class="info-actions" *ngIf="googleMapsLink">
-          <ion-button fill="outline" color="primary" [href]="googleMapsLink" target="_blank">
-            <ion-icon slot="start" name="navigate-outline"></ion-icon>
-            Abrir en Maps
-          </ion-button>
-        </div>
-      </section>
-
-      <section class="map-card" *ngIf="hasValidCoordinates">
-        <header class="map-card__header">
-          <h2>Ubicación</h2>
-          <p>Mira la finca dentro del mapa sin salir de la app.</p>
-        </header>
-
-        <div class="map-card__container">
-          <div #mapContainer class="map-card__map"></div>
-        </div>
-
-        <p class="map-card__note">
-          Marcador centrado con las coordenadas suministradas para esta finca.
+      <div class="block">
+        <h2 class="title">{{ farmDetail.name }}</h2>
+        <p class="location">
+          <ion-icon name="location-outline"></ion-icon>
+          {{ farmDetail.cityName }}, {{ farmDetail.departmentName }}
         </p>
-      </section>
-    </div>
-  </ng-template>
+      </div>
+
+      <div class="block facts">
+        <div class="pair">
+          <div class="lbl">Productor</div>
+          <div class="val">{{ farmDetail.producerName }}</div>
+        </div>
+        <div class="pair">
+          <div class="lbl">Hectáreas</div>
+          <div class="val">{{ farmDetail.hectares | number:'1.0-2' }}</div>
+        </div>
+        <div class="pair">
+          <div class="lbl">Altitud (msnm)</div>
+          <div class="val">{{ farmDetail.altitude | number:'1.0-0' }}</div>
+        </div>
+        <div class="pair">
+          <div class="lbl">Coordenadas</div>
+          <div class="val">
+            {{ farmDetail.latitude | number:'1.4-4' }},
+            {{ farmDetail.longitude | number:'1.4-4' }}
+          </div>
+        </div>
+      </div>
+
+      <div class="block actions" *ngIf="googleMapsLink">
+        <ion-button expand="block" color="primary" fill="solid" [href]="googleMapsLink" target="_blank">
+          <ion-icon slot="start" name="navigate-outline"></ion-icon>
+          Abrir en Maps
+        </ion-button>
+      </div>
+
+      <div class="block map-block" *ngIf="hasValidCoordinates">
+        <h3 class="h-title">Ubicación en mapa</h3>
+        <div class="map-box">
+          <div #mapContainer class="map"></div>
+        </div>
+        <p class="map-note">Marcador centrado con las coordenadas suministradas.</p>
+      </div>
+    </section>
+  </div>
 
   <ng-template #errorState>
     <div class="error-state">

@@ -7,8 +7,13 @@
     <section class="detail-card" *ngIf="!loadingProduct && product">
       <h1 class="page-title">Detalle del producto</h1>
 
-      <swiper-container class="hero-swiper" [attr.slides-per-view]="slidesOpts.slidesPerView"
-        [attr.space-between]="slidesOpts.spaceBetween" [attr.pagination]="slidesOpts.pagination"
+      <swiper-container #swiperRef init="false" class="hero-swiper"
+        [attr.slides-per-view]="slidesOpts.slidesPerView"
+        [attr.space-between]="slidesOpts.spaceBetween"
+        [attr.pagination]="slidesOpts.pagination"
+        [attr.autoplay]="product.images.length > 1 ? 'true' : null"
+        [attr.autoplay-delay]="product.images.length > 1 ? '4000' : null"
+        [attr.autoplay-disable-on-interaction]="'false'"
         *ngIf="product.images?.length; else noImg">
         <swiper-slide *ngFor="let img of product.images">
           <img [src]="img.imageUrl" alt="producto" class="hero-img" />

@@ -1,4 +1,14 @@
-import { Component, OnInit, inject, signal, computed, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  AfterViewInit,
+  ViewChild,
+  ElementRef,
+  inject,
+  signal,
+  computed,
+  CUSTOM_ELEMENTS_SCHEMA,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
@@ -40,7 +50,9 @@ import { OrderCreateModalComponent, OrderCreateDialogData } from '../../modals/o
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [AlertController, ToastController, ModalController],
 })
-export class ProductDetailComponent implements OnInit {
+export class ProductDetailComponent implements OnInit, AfterViewInit {
+  @ViewChild('swiperRef') swiperRef?: ElementRef<HTMLElement>;
+  private viewReady = false;
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private productService = inject(ProductService);
@@ -97,6 +109,11 @@ export class ProductDetailComponent implements OnInit {
     this.loadReviews();
   }
 
+  ngAfterViewInit(): void {
+    this.viewReady = true;
+    this.initSwiperAutoplay();
+  }
+
   private loadProduct(): void {
     this.loadingProduct = true;
     this.productService.getById(this.productId).subscribe({
@@ -104,11 +121,37 @@ export class ProductDetailComponent implements OnInit {
         this.product = data;
         this.loadingProduct = false;
         if (this.product?.images?.length) this.selectedImage.set(this.product.images[0].imageUrl);
+        this.initSwiperAutoplay();
       },
       error: () => {
         this.loadingProduct = false;
         this.showToast('No se pudo cargar el producto', 'danger');
       },
+    });
+  }
+
+  private initSwiperAutoplay(): void {
+    if (!this.viewReady) return;
+    if (!this.product?.images || this.product.images.length <= 1) return;
+
+    requestAnimationFrame(() => {
+      const swiperEl: any = this.swiperRef?.nativeElement;
+      if (!swiperEl) return;
+
+      if (typeof swiperEl.initialize === 'function' && !swiperEl.classList.contains('swiper-initialized')) {
+        swiperEl.initialize();
+      } else if (swiperEl.swiper?.update) {
+        swiperEl.swiper.update();
+      }
+
+      const swiper = swiperEl.swiper;
+      if (swiper?.autoplay) {
+        swiper.params.autoplay = swiper.params.autoplay || {};
+        swiper.params.autoplay.delay = 4000;
+        swiper.params.autoplay.disableOnInteraction = false;
+        swiper.autoplay.stop();
+        swiper.autoplay.start();
+      }
     });
   }
 
