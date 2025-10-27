@@ -62,6 +62,10 @@
           label="Altitud (msnm)"
           labelPlacement="floating"
           type="number"
+          inputmode="numeric"
+          placeholder="Ejemplo: 1450"
+          helperText="Ingresa un valor entre -200 y 4 000 msnm."
+          errorText="La altitud debe estar entre -200 y 4 000 msnm."
           fill="outline"
           formControlName="altitude"></ion-input>
 
@@ -69,16 +73,28 @@
           label="Latitud"
           labelPlacement="floating"
           type="number"
+          inputmode="decimal"
           step="0.0001"
+          min="-90"
+          max="90"
           fill="outline"
+          placeholder="Ejemplo: 2.9275"
+          helperText="Valores válidos entre -90 y 90. Usa 4 decimales."
+          errorText="Ingresa una latitud entre -90 y 90"
           formControlName="latitude"></ion-input>
 
         <ion-input
           label="Longitud"
           labelPlacement="floating"
           type="number"
+          inputmode="decimal"
           step="0.0001"
+          min="-180"
+          max="180"
           fill="outline"
+          placeholder="Ejemplo: -75.2875"
+          helperText="Valores válidos entre -180 y 180. Oeste usa signo negativo."
+          errorText="Ingresa una longitud entre -180 y 180"
           formControlName="longitude"></ion-input>
       </div>
 

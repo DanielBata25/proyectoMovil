@@ -16,7 +16,7 @@
   </ng-container>
 
   <ng-template #detailContent>
-    <div class="farm-detail-shell" *ngIf="!error && farm; else errorState">
+    <div class="farm-detail-shell" *ngIf="!error && farm as farmDetail; else errorState">
       <section class="hero-card">
         <img
           class="hero-image"
@@ -38,34 +38,34 @@
 
       <section class="info-card">
         <header class="info-header">
-          <h1>{{ farm?.name }}</h1>
+          <h1>{{ farmDetail.name }}</h1>
           <p class="info-subtitle">
             <ion-icon name="location-outline"></ion-icon>
-            {{ farm?.cityName }}, {{ farm?.departmentName }}
+            {{ farmDetail.cityName }}, {{ farmDetail.departmentName }}
           </p>
         </header>
 
         <div class="info-grid">
           <div class="info-item">
             <span class="info-label">Productor</span>
-            <span class="info-value">{{ farm?.producerName }}</span>
+            <span class="info-value">{{ farmDetail.producerName }}</span>
           </div>
 
           <div class="info-item">
             <span class="info-label">Hectáreas</span>
-            <span class="info-value">{{ farm?.hectares | number:'1.0-2' }}</span>
+            <span class="info-value">{{ farmDetail.hectares | number:'1.0-2' }}</span>
           </div>
 
           <div class="info-item">
             <span class="info-label">Altitud (msnm)</span>
-            <span class="info-value">{{ farm?.altitude | number:'1.0-0' }}</span>
+            <span class="info-value">{{ farmDetail.altitude | number:'1.0-0' }}</span>
           </div>
 
           <div class="info-item">
             <span class="info-label">Coordenadas</span>
             <span class="info-value">
-              {{ farm?.latitude | number:'1.4-4' }},
-              {{ farm?.longitude | number:'1.4-4' }}
+              {{ farmDetail.latitude | number:'1.4-4' }},
+              {{ farmDetail.longitude | number:'1.4-4' }}
             </span>
           </div>
         </div>
@@ -76,6 +76,21 @@
             Abrir en Maps
           </ion-button>
         </div>
+      </section>
+
+      <section class="map-card" *ngIf="hasValidCoordinates">
+        <header class="map-card__header">
+          <h2>Ubicación</h2>
+          <p>Mira la finca dentro del mapa sin salir de la app.</p>
+        </header>
+
+        <div class="map-card__container">
+          <div #mapContainer class="map-card__map"></div>
+        </div>
+
+        <p class="map-card__note">
+          Marcador centrado con las coordenadas suministradas para esta finca.
+        </p>
       </section>
     </div>
   </ng-template>

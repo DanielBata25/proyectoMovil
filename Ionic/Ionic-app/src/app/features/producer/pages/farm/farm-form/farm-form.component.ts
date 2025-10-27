@@ -64,9 +64,18 @@ export class FarmFormComponent implements OnInit {
     this.form = this.fb.group({
       name: ['', [Validators.required, Validators.maxLength(120)]],
       hectares: [null, [Validators.required, Validators.min(0)]],
-      altitude: [null, [Validators.required]],
-      latitude: [null, [Validators.required]],
-      longitude: [null, [Validators.required]],
+      altitude: [
+        null,
+        [Validators.required, Validators.min(-200), Validators.max(4000)],
+      ],
+      latitude: [
+        null,
+        [Validators.required, Validators.min(-90), Validators.max(90)],
+      ],
+      longitude: [
+        null,
+        [Validators.required, Validators.min(-180), Validators.max(180)],
+      ],
       departmentId: [null, [Validators.required]],
       cityId: [{ value: null, disabled: true }, [Validators.required]],
     });
