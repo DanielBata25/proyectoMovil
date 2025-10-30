@@ -7,18 +7,22 @@
     <section class="detail-card" *ngIf="!loadingProduct && product">
       <h1 class="page-title">Detalle del producto</h1>
 
-      <swiper-container #swiperRef init="false" class="hero-swiper"
-        [attr.slides-per-view]="slidesOpts.slidesPerView"
-        [attr.space-between]="slidesOpts.spaceBetween"
-        [attr.pagination]="slidesOpts.pagination"
-        [attr.autoplay]="product.images.length > 1 ? 'true' : null"
-        [attr.autoplay-delay]="product.images.length > 1 ? '4000' : null"
-        [attr.autoplay-disable-on-interaction]="'false'"
-        *ngIf="product.images?.length; else noImg">
-        <swiper-slide *ngFor="let img of product.images">
-          <img [src]="img.imageUrl" alt="producto" class="hero-img" />
-        </swiper-slide>
-      </swiper-container>
+      <div class="hero-swiper">
+        <ng-container *ngIf="galleryImages.length; else noImg">
+          <swiper-container #swiperRef init="false" *ngIf="galleryImages.length > 1; else singleImage"
+            [attr.slides-per-view]="slidesOpts.slidesPerView" [attr.space-between]="slidesOpts.spaceBetween"
+            [attr.pagination]="slidesOpts.pagination" [attr.autoplay]="'true'" [attr.autoplay-delay]="'4000'"
+            [attr.autoplay-disable-on-interaction]="'false'">
+            <swiper-slide *ngFor="let url of galleryImages">
+              <img [src]="url" alt="Imagen del producto" class="hero-img" (error)="onImageError($event)" />
+            </swiper-slide>
+          </swiper-container>
+          <ng-template #singleImage>
+            <img [src]="galleryImages[0]" alt="Imagen del producto" class="hero-img hero-img--static"
+              (error)="onImageError($event)" />
+          </ng-template>
+        </ng-container>
+      </div>
       <ng-template #noImg>
         <div class="no-img">Sin imagenes</div>
       </ng-template>
@@ -44,6 +48,11 @@
           <div class="lbl">Tipo de unidad</div>
           <div class="val">{{ product.unit }}</div>
         </div>
+        <div class="pair" *ngIf="product.stock !== null && product.stock !== undefined">
+          <div class="lbl">Disponible</div>
+          <div class="val">{{ product.stock }} {{ product.unit || '' }}</div>
+        </div>
+
         <div class="pair price-line">
           <div>
             <div class="lbl">Precio</div>
@@ -65,9 +74,6 @@
           <ion-icon name="cart" slot="start"></ion-icon>
           Anadir al pedido
         </ion-button>
-        <ion-note class="stock" *ngIf="product.stock !== null && product.stock !== undefined">
-          Disponible: {{ product.stock }} {{ product.unit || '' }}
-        </ion-note>
       </div>
 
       <div class="block">
@@ -152,8 +158,7 @@
                     <div class="name">{{ r.userName }}</div>
                     <div class="date muted small">{{ r.createAt | date:'mediumDate':'':'es-CO' }}</div>
                     <div class="mini-stars">
-                      <ion-icon *ngFor="let s of starScale"
-                        [name]="s <= r.rating ? 'star' : 'star-outline'"></ion-icon>
+                      <ion-icon *ngFor="let s of starScale" [name]="s <= r.rating ? 'star' : 'star-outline'"></ion-icon>
                     </div>
                   </div>
                 </div>
@@ -179,4 +184,3 @@
     </section>
   </div>
 </ion-content>
-

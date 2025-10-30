@@ -48,6 +48,13 @@
   object-fit: cover;
 }
 
+.hero-img--static {
+  height: 232px;
+  width: 100%;
+  display: block;
+  border-radius: 16px;
+}
+
 .no-img {
   height: 200px;
   display: grid;
@@ -333,5 +340,4 @@
     padding: 24px 0 32px;
   }
 }
-
 

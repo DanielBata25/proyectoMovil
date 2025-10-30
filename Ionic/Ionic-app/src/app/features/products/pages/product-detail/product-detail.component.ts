@@ -5,8 +5,6 @@ import {
   ViewChild,
   ElementRef,
   inject,
-  signal,
-  computed,
   CUSTOM_ELEMENTS_SCHEMA,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -68,11 +66,11 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
   productId!: number;
   product!: ProductSelectModel;
   loadingProduct = true;
+  galleryImages: string[] = [];
 
   // Carrusel (atributos de Web Component)
   slidesOpts = { slidesPerView: 1, spaceBetween: 12, pagination: true };
-
-  selectedImage = signal<string | null>(null);
+  private readonly fallbackImage = 'assets/backgrounds/descarga.jpg';
 
   reviews: ReviewSelectModel[] = [];
   loadingReviews = true;
@@ -86,9 +84,6 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
   totalReviews = 0;
 
   Math = Math;
-  principalImage = computed(() =>
-    this.selectedImage() || (this.product?.images?.length ? this.product.images[0].imageUrl : '')
-  );
 
   sendingReview = false;
   private readonly ratingLabels = ['Muy mala', 'Mala', 'Regular', 'Buena', 'Excelente'] as const;
@@ -119,8 +114,8 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
     this.productService.getById(this.productId).subscribe({
       next: (data) => {
         this.product = data;
+        this.galleryImages = this.buildGalleryImages(data);
         this.loadingProduct = false;
-        if (this.product?.images?.length) this.selectedImage.set(this.product.images[0].imageUrl);
         this.initSwiperAutoplay();
       },
       error: () => {
@@ -132,7 +127,7 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
 
   private initSwiperAutoplay(): void {
     if (!this.viewReady) return;
-    if (!this.product?.images || this.product.images.length <= 1) return;
+    if (this.galleryImages.length <= 1) return;
 
     requestAnimationFrame(() => {
       const swiperEl: any = this.swiperRef?.nativeElement;
@@ -153,6 +148,29 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
         swiper.autoplay.start();
       }
     });
+  }
+
+  private buildGalleryImages(product?: ProductSelectModel): string[] {
+    if (!product) return [];
+
+    const urls: string[] = [];
+    const images = Array.isArray(product.images) ? product.images : [];
+
+    for (const img of images) {
+      const url = typeof img?.imageUrl === 'string' ? img.imageUrl.trim() : '';
+      if (url) urls.push(url);
+    }
+
+    if (!urls.length) {
+      const single = typeof product.imageUrl === 'string' ? product.imageUrl.trim() : '';
+      if (single) urls.push(single);
+    }
+
+    return urls;
+  }
+
+  onImageError(event: Event): void {
+    (event.target as HTMLImageElement).src = this.fallbackImage;
   }
 
   private loadReviews(): void {

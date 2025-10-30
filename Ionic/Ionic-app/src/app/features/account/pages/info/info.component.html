@@ -27,17 +27,17 @@
       </div>
 
       <!-- Informaci�n B�sica -->
-      <h2 class="group-title">Informaci�n B�sica</h2>
+      <h2 class="group-title">Informacion Basica</h2>
       <div class="row">
         <div class="pill-icon"><ion-icon name="call-outline"></ion-icon></div>
         <div class="info-line">
-          <span class="primary">N�mero de tel�fono</span>
+          <span class="primary">Numero de telefono</span>
           <span class="secondary">{{ person?.phoneNumber || '+57 300 0000000' }}</span>
         </div>
       </div>
 
       <!-- Informaci�n Adicional -->
-      <h2 class="group-title">Informaci�n Adicional</h2>
+      <h2 class="group-title">Informacion Adicional</h2>
       <div class="row">
         <div class="pill-icon"><ion-icon name="id-card-outline"></ion-icon></div>
         <div class="info-line">
@@ -49,7 +49,7 @@
       <div class="row">
         <div class="pill-icon"><ion-icon name="location-outline"></ion-icon></div>
         <div class="info-line">
-          <span class="primary">Direcci�n</span>
+          <span class="primary">Direccion</span>
           <span class="secondary">{{ person?.address || '123 Main Street, Anytown, USA' }}</span>
         </div>
       </div>
@@ -59,7 +59,7 @@
       <div class="row-btn">
         <div class="pill-icon"><ion-icon name="create-outline"></ion-icon></div>
         <button class="flat-btn" (click)="goto('/account/info/update-person')">
-          <span>Actualizar Informaci�n</span>
+          <span>Actualizar Informacion</span>
           <ion-icon name="chevron-forward"></ion-icon>
         </button>
       </div>
@@ -67,7 +67,7 @@
       <div class="row-btn">
         <div class="pill-icon"><ion-icon name="lock-closed-outline"></ion-icon></div>
         <button class="flat-btn" (click)="goto('/account/info/form-change-password')">
-          <span>Cambiar Contrase�a</span>
+          <span>Cambiar Contraseña</span>
           <ion-icon name="chevron-forward"></ion-icon>
         </button>
       </div>
@@ -75,7 +75,7 @@
       <div class="row-btn">
         <div class="pill-icon"><ion-icon name="log-out-outline"></ion-icon></div>
         <button class="flat-btn" (click)="logout()" [disabled]="loggingOut">
-          <span>Cerrar Sesi�n</span>
+          <span>Cerrar Sesion</span>
           <ion-icon name="chevron-forward"></ion-icon>
         </button>
       </div>
@@ -120,7 +120,7 @@
       <div class="row-btn">
         <div class="pill-icon"><ion-icon name="mail-outline"></ion-icon></div>
         <button class="flat-btn" (click)="goto('account/support')">
-          <span>Cont�ctanos</span>
+          <span>Contactanos</span>
           <ion-icon name="chevron-forward"></ion-icon>
         </button>
       </div>
