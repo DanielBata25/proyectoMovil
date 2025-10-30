@@ -9,6 +9,36 @@
   gap: 24px;
 }
 
+.page-topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 16px 8px;
+}
+
+.back-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid #dbe2e6;
+  background: #ffffff;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+}
+
+.back-btn ion-icon {
+  font-size: 20px;
+  color: #1f3b22;
+}
+
+.topbar-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1f3b22;
+  margin: 0;
+}
 .detail-card {
   background: transparent;
   padding: 24px 0 36px;

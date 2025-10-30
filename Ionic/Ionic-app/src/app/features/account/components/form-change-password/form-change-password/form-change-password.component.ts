@@ -10,6 +10,7 @@ import { addIcons } from 'ionicons';
 import { save, close, eye, eyeOff } from 'ionicons/icons';
 
 import { Router } from '@angular/router';
+import { Location } from '@angular/common';
 import { PasswordPolicyService } from 'src/app/shared/services/passwordPolicy/password-policy.service';
 import { AuthService } from 'src/app/core/services/auth/auth.service';
 import { ChangePasswordModel } from 'src/app/core/models/changePassword.model';
@@ -32,6 +33,7 @@ export class FormChangePasswordComponent {
   private router = inject(Router);
   private alertCtrl = inject(AlertController);
   private toastCtrl = inject(ToastController);
+  private location = inject(Location);
 
   title = 'Cambiar Contraseña';
 
@@ -39,6 +41,10 @@ export class FormChangePasswordComponent {
   showCurrent = false;
   showNew = false;
   showConfirm = false;
+
+  goBack(): void {
+    this.location.back();
+  }
 
   form = this.fb.group({
     currentPassword: ['', Validators.required],
@@ -101,8 +107,4 @@ export class FormChangePasswordComponent {
     if (field === 'confirm') this.showConfirm = !this.showConfirm;
   }
 
-  // navegación al perfil/info
-  goBack() {
-    this.router.navigate(['/account/info']);
-  }
 }

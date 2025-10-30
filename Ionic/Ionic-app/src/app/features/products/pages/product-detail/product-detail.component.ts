@@ -12,7 +12,7 @@ import { FormsModule } from '@angular/forms';
 import {
   IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton,
   IonItem, IonLabel, IonButton, IonIcon, IonBadge,
-  IonSpinner, IonList, IonTextarea, IonNote
+  IonSpinner, IonList, IonTextarea
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { cart, star, starOutline, personCircle, location } from 'ionicons/icons';
@@ -27,6 +27,7 @@ import { ProductSelectModel, ReviewSelectModel, ReviewRegisterModel } from '../.
 import { AlertController, ToastController, ModalController } from '@ionic/angular';
 import { UserMeDto } from 'src/app/core/models/login.model';
 import { AuthState } from 'src/app/core/services/auth/auth.state';
+import { Location } from '@angular/common';
 
 // Swiper Web Components
 import { register } from 'swiper/element/bundle';
@@ -41,7 +42,7 @@ import { OrderCreateModalComponent, OrderCreateDialogData } from '../../modals/o
     CommonModule, FormsModule,
     IonContent,
     IonButton, IonIcon, IonBadge,
-    IonSpinner, IonTextarea, IonNote
+    IonSpinner, IonTextarea, 
 ],
   templateUrl: './product-detail.component.html',
   styleUrls: ['./product-detail.component.scss'],
@@ -56,6 +57,7 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
   private productService = inject(ProductService);
   private reviewService = inject(ReviewService);
   private authState = inject(AuthState);
+  private location = inject(Location);
 
   private alertCtrl = inject(AlertController);
   private toastCtrl = inject(ToastController);
@@ -123,6 +125,10 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
         this.showToast('No se pudo cargar el producto', 'danger');
       },
     });
+  }
+
+  goBack(): void {
+    this.location.back();
   }
 
   private initSwiperAutoplay(): void {

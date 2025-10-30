@@ -11,6 +11,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Location } from '@angular/common';
 
 import { register } from 'swiper/element/bundle';
 
@@ -30,6 +31,7 @@ export class FarmDetailComponent implements OnInit, AfterViewInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly farmService = inject(FarmService);
+  private readonly location = inject(Location);
 
   @ViewChild('mapContainer', { static: false }) mapContainer?: ElementRef<HTMLDivElement>;
   @ViewChild('swiperRef', { static: false }) swiperRef?: ElementRef<HTMLElement>;
@@ -93,6 +95,10 @@ export class FarmDetailComponent implements OnInit, AfterViewInit, OnDestroy {
 
   navigateBack(): void {
     this.router.navigate(['/home/farm']);
+  }
+
+  goBack(): void {
+    this.location.back();
   }
 
   private loadFarm(): void {

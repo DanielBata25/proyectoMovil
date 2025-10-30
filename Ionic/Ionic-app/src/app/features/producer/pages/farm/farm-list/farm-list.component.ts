@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { IonicModule, AlertController } from '@ionic/angular';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { Location } from '@angular/common';
 
 import { ContainerCardFlexComponent } from 'src/app/shared/components/cards/container-card-flex/container-card-flex.component';
 import { FarmService } from 'src/app/shared/services/farm/farm.service';
@@ -28,6 +29,7 @@ export class FarmListComponent implements OnInit {
   private readonly locationService = inject(LocationService);
   private readonly alertCtrl = inject(AlertController);
   private readonly router = inject(Router);
+  private readonly location = inject(Location);
 
   farms: FarmSelectModel[] = [];
   departments: DepartmentModel[] = [];
@@ -165,6 +167,10 @@ export class FarmListComponent implements OnInit {
 
   onCreate(): void {
     this.router.navigate(['/account/producer/farm/create']);
+  }
+
+  goBack(): void {
+    this.location.back();
   }
 
   onView(farm: FarmSelectModel): void {

@@ -10,6 +10,7 @@ import { addIcons } from 'ionicons';
 import { save, close } from 'ionicons/icons';
 
 import { Router } from '@angular/router';
+import { Location } from '@angular/common';
 import { AuthService } from 'src/app/core/services/auth/auth.service';
 import { PersonUpdateModel, UserSelectModel } from 'src/app/core/models/user.model';
 import { DepartmentModel, CityModel } from 'src/app/shared/models/location/location.model';
@@ -33,6 +34,7 @@ export class UpdatePersonComponent implements OnInit {
   private alertCtrl = inject(AlertController);
   private toastCtrl = inject(ToastController);
   private locationSvc = inject(LocationService);
+  private location = inject(Location);
 
   title = 'Actualizar datos personales';
   person?: UserSelectModel;
@@ -58,6 +60,10 @@ export class UpdatePersonComponent implements OnInit {
 
   constructor() {
     addIcons({ save, close });
+  }
+
+  goBack(): void {
+    this.location.back();
   }
 
   ngOnInit(): void {

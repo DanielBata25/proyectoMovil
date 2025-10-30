@@ -1,11 +1,18 @@
 <ion-content [fullscreen]="true" class="page-bg" forceOverscroll="false">
   <div class="page-shell detail-shell">
+    <div class="page-topbar">
+      <button type="button" class="back-btn" (click)="goBack()" aria-label="Volver">
+        <ion-icon name="arrow-back"></ion-icon>
+      </button>
+      <h1 class="topbar-title">Detalle del producto</h1>
+    </div>
+
     <div class="center" *ngIf="loadingProduct">
       <ion-spinner name="crescent"></ion-spinner>
     </div>
 
     <section class="detail-card" *ngIf="!loadingProduct && product">
-      <h1 class="page-title">Detalle del producto</h1>
+
 
       <div class="hero-swiper">
         <ng-container *ngIf="galleryImages.length; else noImg">

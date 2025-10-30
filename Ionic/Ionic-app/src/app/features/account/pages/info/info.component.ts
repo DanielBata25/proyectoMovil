@@ -14,6 +14,7 @@ import {
 } from 'ionicons/icons';
 
 import { Router, RouterModule } from '@angular/router';
+import { Location } from '@angular/common';
 
 import { AuthService } from 'src/app/core/services/auth/auth.service';
 import { AuthState } from 'src/app/core/services/auth/auth.state';
@@ -37,6 +38,7 @@ export class InfoComponent implements OnInit {
   private authState = inject(AuthState);
   private toastCtrl = inject(ToastController);
   private alertCtrl = inject(AlertController);
+  private location = inject(Location);
 
   person?: UserSelectModel;
   loading = true;
@@ -55,6 +57,10 @@ export class InfoComponent implements OnInit {
       'mail-outline': mailOutline,
       'chevron-forward': chevronForward,
     });
+  }
+
+  goBack(): void {
+    this.location.back();
   }
 
   ngOnInit(): void {

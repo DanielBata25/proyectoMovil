@@ -4,6 +4,7 @@ import { IonicModule, AlertController } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { Location } from '@angular/common';
 
 import { ProductService } from 'src/app/shared/services/product/product.service';
 import { CategoryService } from 'src/app/features/parameters/services/category/category.service';
@@ -23,6 +24,7 @@ export class ProductListComponent implements OnInit {
   private categoryService = inject(CategoryService);
   private router = inject(Router);
   private alertCtrl = inject(AlertController);
+  private location = inject(Location);
 
   // 🔹 Variables de datos
   products: ProductSelectModel[] = [];
@@ -184,6 +186,10 @@ trackByBreadcrumb = (_: number, b: { id: number; name: string }) => b.id;
 
   createProduct(): void {
     this.router.navigate(['/account/producer/product/create']);
+  }
+
+  goBack(): void {
+    this.location.back();
   }
 
   onEdit(p: ProductSelectModel): void {

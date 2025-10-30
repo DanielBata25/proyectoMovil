@@ -1,5 +1,12 @@
 <ion-content [fullscreen]="true" class="page-bg product-content">
   <div class="page-shell product-shell">
+    <div class="page-topbar">
+      <button type="button" class="back-btn" (click)="goBack()" aria-label="Volver">
+        <ion-icon name="arrow-back"></ion-icon>
+      </button>
+      <h1 class="topbar-title">Gestion de productos</h1>
+    </div>
+
     <section class="filters-card">
       <ion-searchbar
         class="search-input"
