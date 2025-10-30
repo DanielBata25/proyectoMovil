@@ -18,6 +18,7 @@ import { Router, RouterModule } from '@angular/router';
 import { AuthService } from 'src/app/core/services/auth/auth.service';
 import { AuthState } from 'src/app/core/services/auth/auth.state';
 import { UserSelectModel } from 'src/app/core/models/user.model';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-info',
@@ -35,6 +36,7 @@ export class InfoComponent implements OnInit {
   private router = inject(Router);
   private authState = inject(AuthState);
   private toastCtrl = inject(ToastController);
+  private alertCtrl = inject(AlertController);
 
   person?: UserSelectModel;
   loading = true;
@@ -81,8 +83,27 @@ export class InfoComponent implements OnInit {
     );
   }
 
-  logout() {
+  async logout() {
     if (this.loggingOut) return;
+
+    const alert = await this.alertCtrl.create({
+      header: 'Cerrar sesion',
+      message: 'Seguro que quieres cerrar tu sesion?',
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Si, salir',
+          role: 'confirm',
+        },
+      ],
+    });
+    await alert.present();
+
+    const { role } = await alert.onDidDismiss();
+    if (role !== 'confirm') {
+      return;
+    }
+
     this.loggingOut = true;
 
     this.authService.LogOut().subscribe({
