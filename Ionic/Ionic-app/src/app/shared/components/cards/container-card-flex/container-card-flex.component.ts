@@ -35,6 +35,7 @@ export class ContainerCardFlexComponent {
   /** Eventos comunes */
   @Output() editProduct = new EventEmitter<ProductSelectModel>();
   @Output() deleteProduct = new EventEmitter<ProductSelectModel>();
+  @Output() viewProduct = new EventEmitter<ProductSelectModel>();
   @Output() editFarm = new EventEmitter<FarmSelectModel>();
   @Output() deleteFarm = new EventEmitter<FarmSelectModel>();
   @Output() viewFarm = new EventEmitter<FarmSelectModel>();

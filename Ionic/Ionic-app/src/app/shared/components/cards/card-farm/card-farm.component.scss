@@ -95,7 +95,7 @@ ion-card-content.content {
   display: flex;
   justify-content: flex-end;
   gap: 6px;
-  margin-top: 10px;
+  margin-top: 6px;
 
   ion-button {
     --padding-start: 0;
@@ -105,8 +105,21 @@ ion-card-content.content {
     --background: transparent;
     --box-shadow: none;
     min-height: auto;
+    height: auto;
+  }
+
+  ion-button[color='danger'] {
+    --color: var(--ion-color-danger, #dc2626);
+  }
+
+  ion-button[color='danger'] ion-icon {
+    color: var(--color);
   }
 }
+
+.icon-edit  { color: #1b5e20; font-size: 18px; }
+.icon-delete{ color: var(--ion-color-danger, #dc2626); font-size: 18px; }
+.icon-view  { color: #1d4ed8; font-size: 18px; }
 
 .accent-bar {
   height: 4px;

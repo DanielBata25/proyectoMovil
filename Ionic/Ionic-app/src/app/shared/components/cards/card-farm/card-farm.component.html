@@ -34,14 +34,14 @@
     </div>
 
     <div class="card-actions" *ngIf="showActions" (click)="$event.stopPropagation()">
-      <ion-button fill="clear" color="primary" aria-label="Ver finca" (click)="onViewClick($event)">
-        <ion-icon slot="icon-only" name="eye-outline"></ion-icon>
+      <ion-button fill="clear" size="small" color="primary" aria-label="Ver finca" (click)="onViewClick($event)">
+        <ion-icon class="icon-view" name="eye-outline"></ion-icon>
       </ion-button>
-      <ion-button fill="clear" color="success" aria-label="Editar finca" (click)="onEditClick($event)">
-        <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+      <ion-button fill="clear" size="small" aria-label="Editar finca" (click)="onEditClick($event)">
+        <ion-icon class="icon-edit" name="create-outline"></ion-icon>
       </ion-button>
-      <ion-button fill="clear" color="danger" aria-label="Eliminar finca" (click)="onDeleteClick($event)">
-        <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+      <ion-button fill="clear" size="small" color="danger" aria-label="Eliminar finca" (click)="onDeleteClick($event)">
+        <ion-icon class="icon-delete" name="trash-outline"></ion-icon>
       </ion-button>
     </div>
   </ion-card-content>

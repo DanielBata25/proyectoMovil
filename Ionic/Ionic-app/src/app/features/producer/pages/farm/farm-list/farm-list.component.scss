@@ -166,3 +166,18 @@ ion-fab {
   margin-bottom: calc(24px + var(--ion-safe-area-bottom, 0px));
   margin-right: 1rem;
 }
+
+ion-fab-button {
+  --background: linear-gradient(135deg, #2d6a4f, #1b5e20);
+  --background-hover: #23643c;
+  --background-activated: #1e5a34;
+  --color: #ffffff;
+  --box-shadow: 0 10px 24px rgba(33, 94, 57, 0.35);
+  --border-radius: 18px;
+  width: 56px;
+  height: 56px;
+
+  ion-icon {
+    font-size: 24px;
+  }
+}

@@ -27,6 +27,7 @@ export class CardComponent {
 
   @Output() edit = new EventEmitter<ProductSelectModel>();
   @Output() delete = new EventEmitter<ProductSelectModel>();
+  @Output() view = new EventEmitter<ProductSelectModel>();
 
   // Asegúrate de tener esta imagen en src/assets/img/cargaImagen.png
   private readonly placeholder = 'assets/img/cargaImagen.png';
@@ -51,6 +52,11 @@ export class CardComponent {
   onEditClick(ev: Event) {
     ev.stopPropagation();
     this.edit.emit(this.product);
+  }
+
+  onViewClick(ev: Event) {
+    ev.stopPropagation();
+    this.view.emit(this.product);
   }
 
   onDeleteClick(ev: Event) {

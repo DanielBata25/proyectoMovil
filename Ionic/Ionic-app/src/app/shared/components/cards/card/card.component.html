@@ -54,6 +54,10 @@
     </p>
 
     <div *ngIf="showActions" class="actions">
+      <ion-button fill="clear" size="small" color="primary" (click)="onViewClick($event)" aria-label="Ver producto">
+        <ion-icon class="icon-view" name="eye-outline"></ion-icon>
+      </ion-button>
+
       <ion-button fill="clear" size="small" (click)="onEditClick($event)" aria-label="Editar producto">
         <ion-icon class="icon-edit" name="create-outline"></ion-icon>
       </ion-button>

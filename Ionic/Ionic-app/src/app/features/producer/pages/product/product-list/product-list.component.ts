@@ -9,11 +9,12 @@ import { ProductService } from 'src/app/shared/services/product/product.service'
 import { CategoryService } from 'src/app/features/parameters/services/category/category.service';
 import { ProductSelectModel } from 'src/app/shared/models/product/product.model';
 import { CategoryNodeModel } from 'src/app/features/parameters/models/category/category.model';
+import { ContainerCardFlexComponent } from 'src/app/shared/components/cards/container-card-flex/container-card-flex.component';
 
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [IonicModule, CommonModule, ReactiveFormsModule],
+  imports: [IonicModule, CommonModule, ReactiveFormsModule, ContainerCardFlexComponent],
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.scss']
 })
@@ -212,10 +213,6 @@ trackByBreadcrumb = (_: number, b: { id: number; name: string }) => b.id;
       ]
     });
     await alert.present();
-  }
-
-  getCover(product: ProductSelectModel): string | null {
-    return product.images?.[0]?.imageUrl || product.imageUrl || null;
   }
 
   private fetchCategory(categoryId: number, name: string, pushBreadcrumb: boolean): void {
