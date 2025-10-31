@@ -18,6 +18,8 @@ import { register } from 'swiper/element/bundle';
 import { FarmService } from '../../../../shared/services/farm/farm.service';
 import { FarmSelectModel } from '../../../../shared/models/farm/farm.model';
 import * as L from 'leaflet';
+import { addIcons } from 'ionicons';
+import { locateOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-farm-detail',
@@ -48,9 +50,12 @@ export class FarmDetailComponent implements OnInit, AfterViewInit, OnDestroy, Vi
   private map?: L.Map;
   private marker?: L.CircleMarker;
   private tileLayer?: L.TileLayer;
+  mapReady = false;
+  private readonly defaultCenter: L.LatLngExpression = [4.5709, -74.2973];
 
   constructor() {
     register();
+    addIcons({ locateOutline });
     this.loadLeafletAssets();
   }
 
@@ -74,6 +79,7 @@ export class FarmDetailComponent implements OnInit, AfterViewInit, OnDestroy, Vi
     setTimeout(() => {
       this.renderMap();
       this.map?.invalidateSize();
+      this.centerMapOnFarm();
     }, 150);
   }
 
@@ -88,7 +94,7 @@ export class FarmDetailComponent implements OnInit, AfterViewInit, OnDestroy, Vi
   }
 
   get hasValidCoordinates(): boolean {
-    return this.isValidCoordinate(this.farm?.latitude) && this.isValidCoordinate(this.farm?.longitude);
+    return this.getDisplayCoordinates() !== null;
   }
 
   get googleMapsLink(): string | null {
@@ -158,8 +164,9 @@ export class FarmDetailComponent implements OnInit, AfterViewInit, OnDestroy, Vi
       return;
     }
 
-    const lat = this.farm.latitude!;
-    const lon = this.farm.longitude!;
+    const coords = this.getDisplayCoordinates();
+    if (!coords) return;
+    const { lat, lng } = coords;
 
     if (!this.map) {
       this.map = L.map(container, {
@@ -179,13 +186,13 @@ export class FarmDetailComponent implements OnInit, AfterViewInit, OnDestroy, Vi
       this.tileLayer.once('load', () => setTimeout(() => this.map?.invalidateSize(), 80));
     }
 
-    this.map.setView([lat, lon], 15);
+    this.map.setView([lat, lng], 15);
     this.tileLayer?.redraw();
 
     if (this.marker) {
-      this.marker.setLatLng([lat, lon]);
+      this.marker.setLatLng([lat, lng]);
     } else {
-      this.marker = L.circleMarker([lat, lon], {
+      this.marker = L.circleMarker([lat, lng], {
         radius: 10,
         color: '#2563eb',
         weight: 3,
@@ -196,6 +203,7 @@ export class FarmDetailComponent implements OnInit, AfterViewInit, OnDestroy, Vi
       }).addTo(this.map);
     }
 
+    this.mapReady = true;
     setTimeout(() => this.map?.invalidateSize(), 200);
   }
 
@@ -209,6 +217,7 @@ export class FarmDetailComponent implements OnInit, AfterViewInit, OnDestroy, Vi
       this.map.remove();
       this.map = undefined;
     }
+    this.mapReady = false;
   }
 
   private isValidCoordinate(value: number | null | undefined): value is number {
@@ -224,5 +233,34 @@ export class FarmDetailComponent implements OnInit, AfterViewInit, OnDestroy, Vi
     link.rel = 'stylesheet';
     link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
     document.head.appendChild(link);
+  }
+
+  centerMapOnFarm(): void {
+    if (!this.mapReady || !this.map) return;
+    const coords = this.getDisplayCoordinates();
+    const target: L.LatLngExpression = coords ? [coords.lat, coords.lng] : this.defaultCenter;
+    this.map.setView(target, this.map.getZoom() ?? 15);
+    this.marker?.setLatLng(target);
+  }
+
+  private getDisplayCoordinates(): { lat: number; lng: number } | null {
+    const rawLat = this.farm?.latitude;
+    const rawLon = this.farm?.longitude;
+    if (!this.isValidCoordinate(rawLat) || !this.isValidCoordinate(rawLon)) {
+      return null;
+    }
+    const lat = this.clamp(rawLat, -90, 90);
+    const lng = this.normalizeLongitude(rawLon);
+    return { lat, lng };
+  }
+
+  private clamp(value: number, min: number, max: number): number {
+    return Math.min(Math.max(value, min), max);
+  }
+
+  private normalizeLongitude(value: number): number {
+    if (!Number.isFinite(value)) return 0;
+    const normalized = ((value + 180) % 360 + 360) % 360 - 180;
+    return this.clamp(normalized, -180, 180);
   }
 }

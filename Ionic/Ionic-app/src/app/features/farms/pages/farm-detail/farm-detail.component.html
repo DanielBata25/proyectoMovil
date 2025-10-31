@@ -84,12 +84,16 @@
         </ion-button>
       </div>
 
-      <div class="block map-block" *ngIf="hasValidCoordinates">
-        <h3 class="h-title">UbicaciÃ³n en mapa</h3>
-        <div class="map-box">
-          <div #mapContainer class="map"></div>
+      <div class="map-preview-card" *ngIf="hasValidCoordinates">
+        <div class="map-header">
+          <h3 class="section-subtitle">Vista previa en mapa</h3>
+          <ion-button fill="clear" size="small" (click)="centerMapOnFarm()" [disabled]="!mapReady">
+            <ion-icon slot="start" name="locate-outline"></ion-icon>
+            Centrar marcador
+          </ion-button>
         </div>
-        <p class="map-note">Marcador centrado con las coordenadas suministradas.</p>
+        <div class="map-preview" #mapContainer></div>
+        <p class="map-help">Marcador centrado con las coordenadas registradas.</p>
       </div>
     </section>
   </div>
@@ -102,3 +106,4 @@
     </div>
   </ng-template>
 </ion-content>
+
