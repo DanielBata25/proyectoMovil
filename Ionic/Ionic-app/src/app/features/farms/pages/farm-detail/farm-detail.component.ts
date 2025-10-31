@@ -9,7 +9,7 @@ import {
   inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, ViewDidEnter } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 
@@ -27,7 +27,7 @@ import * as L from 'leaflet';
   styleUrls: ['./farm-detail.component.scss'],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class FarmDetailComponent implements OnInit, AfterViewInit, OnDestroy {
+export class FarmDetailComponent implements OnInit, AfterViewInit, OnDestroy, ViewDidEnter {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly farmService = inject(FarmService);
@@ -51,6 +51,7 @@ export class FarmDetailComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor() {
     register();
+    this.loadLeafletAssets();
   }
 
   ngOnInit(): void {
@@ -69,6 +70,13 @@ export class FarmDetailComponent implements OnInit, AfterViewInit, OnDestroy {
     this.initSwiperAutoplay();
   }
 
+  ionViewDidEnter(): void {
+    setTimeout(() => {
+      this.renderMap();
+      this.map?.invalidateSize();
+    }, 150);
+  }
+
   ngOnDestroy(): void {
     this.destroyMap();
   }
@@ -76,14 +84,11 @@ export class FarmDetailComponent implements OnInit, AfterViewInit, OnDestroy {
   get galleryImages(): string[] {
     return (this.farm?.images ?? [])
       .map(img => img.imageUrl)
-      .filter(url => !!url);
+      .filter((url): url is string => !!url);
   }
 
   get hasValidCoordinates(): boolean {
-    return (
-      this.isValidCoordinate(this.farm?.latitude) &&
-      this.isValidCoordinate(this.farm?.longitude)
-    );
+    return this.isValidCoordinate(this.farm?.latitude) && this.isValidCoordinate(this.farm?.longitude);
   }
 
   get googleMapsLink(): string | null {
@@ -121,8 +126,7 @@ export class FarmDetailComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private initSwiperAutoplay(): void {
-    if (!this.viewReady) return;
-    if (this.galleryImages.length <= 1) return;
+    if (!this.viewReady || this.galleryImages.length <= 1) return;
 
     requestAnimationFrame(() => {
       const swiperEl: any = this.swiperRef?.nativeElement;
@@ -150,12 +154,12 @@ export class FarmDetailComponent implements OnInit, AfterViewInit, OnDestroy {
 
     const container = this.mapContainer?.nativeElement;
     if (!container) {
-      setTimeout(() => this.renderMap(), 50);
+      setTimeout(() => this.renderMap(), 80);
       return;
     }
 
-    const lat = this.farm.latitude;
-    const lon = this.farm.longitude;
+    const lat = this.farm.latitude!;
+    const lon = this.farm.longitude!;
 
     if (!this.map) {
       this.map = L.map(container, {
@@ -164,40 +168,35 @@ export class FarmDetailComponent implements OnInit, AfterViewInit, OnDestroy {
         preferCanvas: false,
       });
 
-      this.tileLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      this.tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         minZoom: 3,
         detectRetina: true,
         crossOrigin: true,
-        attribution:
-          '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-      });
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      }).addTo(this.map);
 
-      this.tileLayer.on('tileerror', ev => {
-        console.warn('[Farm Detail] tile load error', ev.error, ev.coords);
-      });
-
-      this.tileLayer.addTo(this.map);
+      this.tileLayer.once('load', () => setTimeout(() => this.map?.invalidateSize(), 80));
     }
 
     this.map.setView([lat, lon], 15);
     this.tileLayer?.redraw();
 
     if (this.marker) {
-      this.marker.remove();
+      this.marker.setLatLng([lat, lon]);
+    } else {
+      this.marker = L.circleMarker([lat, lon], {
+        radius: 10,
+        color: '#2563eb',
+        weight: 3,
+        opacity: 0.9,
+        fillColor: '#3b82f6',
+        fillOpacity: 0.7,
+        interactive: false,
+      }).addTo(this.map);
     }
 
-    this.marker = L.circleMarker([lat, lon], {
-      radius: 10,
-      color: '#2563eb',
-      weight: 3,
-      opacity: 0.9,
-      fillColor: '#3b82f6',
-      fillOpacity: 0.7,
-      interactive: false,
-    }).addTo(this.map);
-
-    setTimeout(() => this.map?.invalidateSize(), 0);
+    setTimeout(() => this.map?.invalidateSize(), 200);
   }
 
   private destroyMap(): void {
@@ -214,5 +213,16 @@ export class FarmDetailComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private isValidCoordinate(value: number | null | undefined): value is number {
     return typeof value === 'number' && Number.isFinite(value);
+  }
+
+  private loadLeafletAssets(): void {
+    const id = 'leaflet-css';
+    if (document.getElementById(id)) return;
+
+    const link = document.createElement('link');
+    link.id = id;
+    link.rel = 'stylesheet';
+    link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+    document.head.appendChild(link);
   }
 }

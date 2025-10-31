@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ElementRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
@@ -6,10 +6,14 @@ import {
   Validators,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { IonicModule, LoadingController, ToastController } from '@ionic/angular';
+import { IonicModule, LoadingController, ToastController, ViewDidEnter } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 import { firstValueFrom } from 'rxjs';
+
+import * as L from 'leaflet';
+import { addIcons } from 'ionicons';
+import { locateOutline } from 'ionicons/icons';
 
 import { FarmService } from 'src/app/shared/services/farm/farm.service';
 import { LocationService } from 'src/app/shared/services/location/location.service';
@@ -34,7 +38,7 @@ import {
   templateUrl: './farm-form.component.html',
   styleUrls: ['./farm-form.component.scss'],
 })
-export class FarmFormComponent implements OnInit {
+export class FarmFormComponent implements OnInit, AfterViewInit, OnDestroy, ViewDidEnter {
   private readonly fb = inject(FormBuilder);
   private readonly farmService = inject(FarmService);
   private readonly locationService = inject(LocationService);
@@ -60,7 +64,18 @@ export class FarmFormComponent implements OnInit {
 
   private pendingCityId: number | null = null;
 
+  @ViewChild('mapContainer', { static: false }) mapContainer?: ElementRef<HTMLDivElement>;
+
+  private map?: L.Map;
+  private marker?: L.Marker;
+  private tileLayer?: L.TileLayer;
+  private mapInitialized = false;
+  mapReady = false;
+  readonly hasMapSupport = true;
+
   constructor() {
+    addIcons({ locateOutline });
+    this.loadLeafletAssets();
     this.form = this.fb.group({
       name: ['', [Validators.required, Validators.maxLength(120)]],
       hectares: [null, [Validators.required, Validators.min(0)]],
@@ -81,7 +96,36 @@ export class FarmFormComponent implements OnInit {
     });
   }
 
+  ngAfterViewInit(): void {
+    setTimeout(() => this.initMap(), 0);
+  }
+
+  ionViewDidEnter(): void {
+    setTimeout(() => {
+      if (!this.mapInitialized) {
+        this.initMap();
+        return;
+      }
+      this.map?.invalidateSize();
+      this.updateMarkerFromForm(true);
+    }, 150);
+  }
+
+  ngOnDestroy(): void {
+    this.map?.off();
+    this.map?.remove();
+    this.mapInitialized = false;
+    this.marker = undefined;
+    this.tileLayer = undefined;
+    this.map = undefined;
+  }
+
   ngOnInit(): void {
+
+    this.form.valueChanges.subscribe(() => {
+      this.updateMarkerFromForm();
+    });
+
     const idParam = this.route.snapshot.paramMap.get('id');
     if (idParam) {
       this.isEdit = true;
@@ -282,6 +326,7 @@ export class FarmFormComponent implements OnInit {
       next: (farm) => {
         this.applyFarm(farm);
         this.isLoadingFarm = false;
+        this.updateMarkerFromForm(true);
       },
       error: async () => {
         this.isLoadingFarm = false;
@@ -335,12 +380,68 @@ export class FarmFormComponent implements OnInit {
       url: img.imageUrl,
       id: img.publicId ?? String(img.id ?? ''),
     }));
+
+    this.updateMarkerFromForm(true);
   }
 
   private clearCityControl(): void {
     this.cities = [];
-    this.form.get("cityId")?.reset(null, { emitEvent: false });
-    this.form.get("cityId")?.disable({ emitEvent: false });
+    this.form.get('cityId')?.reset(null, { emitEvent: false });
+    this.form.get('cityId')?.disable({ emitEvent: false });
+  }
+
+  private loadLeafletAssets(): void {
+    const leafletCssId = 'leaflet-css';
+    if (!document.getElementById(leafletCssId)) {
+      const link = document.createElement('link');
+      link.id = leafletCssId;
+      link.rel = 'stylesheet';
+      link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+      document.head.appendChild(link);
+    }
+  }
+
+  private initMap(): void {
+    if (this.mapInitialized) return;
+    const container = this.mapContainer?.nativeElement;
+    if (!container) {
+      setTimeout(() => this.initMap(), 120);
+      return;
+    }
+
+    this.map = L.map(container, {
+      zoomControl: true,
+      attributionControl: true,
+    }).setView([4.5709, -74.2973], 6);
+
+    this.tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors',
+      maxZoom: 19,
+    }).addTo(this.map);
+
+    this.marker = L.marker([4.5709, -74.2973]).addTo(this.map);
+
+    this.mapInitialized = true;
+    this.mapReady = true;
+    this.updateMarkerFromForm(true);
+    setTimeout(() => this.map?.invalidateSize(), 200);
+  }
+
+  private updateMarkerFromForm(fitView = false): void {
+    if (!this.mapInitialized) return;
+    const lat = this.toNumber(this.form.get('latitude')?.value);
+    const lon = this.toNumber(this.form.get('longitude')?.value);
+    if (lat === null || lon === null) return;
+
+    const position: L.LatLngExpression = [lat, lon];
+    this.marker?.setLatLng(position);
+    if (fitView) {
+      this.map?.setView(position, 13);
+    }
+  }
+
+  centerMapOnInputs(): void {
+    this.updateMarkerFromForm(true);
   }
 
   private async resolveDepartmentForCity(cityId: number): Promise<number | null> {

@@ -98,6 +98,20 @@
           formControlName="longitude"></ion-input>
       </div>
 
+      <div class="map-preview-card" *ngIf="hasMapSupport">
+        <div class="map-header">
+          <h3 class="section-subtitle">Vista previa en mapa</h3>
+          <ion-button fill="clear" size="small" (click)="centerMapOnInputs()" [disabled]="!mapReady">
+            <ion-icon slot="start" name="locate-outline"></ion-icon>
+            Centrar en coordenadas
+          </ion-button>
+        </div>
+        <div class="map-preview" #mapContainer></div>
+        <p class="map-help">
+          Ajusta los campos de latitud y longitud para visualizar la ubicación aproximada de la finca.
+        </p>
+      </div>
+
       <h2 class="section-title">Ubicacion</h2>
       <div class="form-section">
         <ion-select
