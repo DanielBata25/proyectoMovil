@@ -4,14 +4,13 @@ import { IonicModule, ToastController, AlertController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { FavoriteFacadeService } from 'src/app/shared/services/favorite/favorite-facade.service';
 import { ProductSelectModel } from 'src/app/shared/models/product/product.model';
-import { IfLoggedInDirective } from 'src/app/core/directives/if-logged-in.directive';
 
 
 
 @Component({
   selector: 'app-card',
   standalone: true,
-  imports: [CommonModule, IonicModule, IfLoggedInDirective],
+  imports: [CommonModule, IonicModule],
   templateUrl: './card.component.html',
   styleUrls: ['./card.component.scss'],
 })

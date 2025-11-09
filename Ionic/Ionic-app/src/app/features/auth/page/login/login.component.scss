@@ -53,12 +53,28 @@
   margin: 0;
 }
 
-/* Botón principal */
-.btn-custom {
-  --background: #1cc736;
-  --color: #fff;
-  height: 3rem;
-  border-radius: .5rem;
+/* Botones centrados usando componente compartido */
+.auth-card app-button {
+  display: block;
+  width: 100%;
+  max-width: 340px;
+  margin: 1.25rem auto 0;
+}
+.auth-card app-button .custom-btn {
+  width: 100%;
+  height: 3.4rem;
+  border-radius: 14px;
+  font-weight: 700;
+  letter-spacing: .25px;
+  background: linear-gradient(180deg, #32c350 0%, #1b7a34 100%);
+  box-shadow: 0 14px 28px rgba(27, 122, 52, 0.28);
+}
+.auth-card app-button .custom-btn.btn-primary:hover:not(:disabled) {
+  background: linear-gradient(180deg, #2aa046 0%, #155d29 100%);
+}
+.auth-card app-button .custom-btn:disabled {
+  opacity: 0.6;
+  box-shadow: none;
 }
 
 /* Inputs con fondo */

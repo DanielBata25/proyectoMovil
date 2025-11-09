@@ -42,9 +42,13 @@
             <a [routerLink]="['/auth/recover-password']" class="link">¿Olvidaste tu contraseña?</a>
           </div>
 
-          <ion-button type="submit" expand="block" class="btn-custom mt-12" [disabled]="formLogin.invalid || loading">
-            Iniciar Sesión
-          </ion-button>
+          <app-button
+            class="auth-btn mt-12"
+            type="submit"
+            color="primary"
+            [disabled]="formLogin.invalid || loading"
+            text="Iniciar sesión">
+          </app-button>
         </form>
       </ion-card-content>
     </ion-card>

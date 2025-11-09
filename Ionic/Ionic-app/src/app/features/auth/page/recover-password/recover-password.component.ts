@@ -9,11 +9,12 @@ import { RecoverPasswordModel, RecoverPasswordConfirmModel } from '../../../../c
 
 import { PasswordPolicyService } from '../../../../shared/services/passwordPolicy/password-policy.service';
 import { AuthService } from 'src/app/core/services/auth/auth.service';
+import { ButtonComponent } from 'src/app/shared/components/button/button.component';
 
 @Component({
   selector: 'app-recover-password',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, IonicModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, IonicModule, RouterLink, ButtonComponent],
   templateUrl: './recover-password.component.html',
   styleUrls: ['./recover-password.component.scss'],
 })

@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { take, switchMap, finalize } from 'rxjs/operators';
 
 // Ionic standalone components & controllers
@@ -18,6 +18,7 @@ import { eye, eyeOff } from 'ionicons/icons';
 import { AuthService } from 'src/app/core/services/auth/auth.service';
 import { AuthState } from 'src/app/core/services/auth/auth.state';
 import { RouterLink } from '@angular/router';
+import { ButtonComponent } from 'src/app/shared/components/button/button.component';
 
 @Component({
   standalone: true,
@@ -27,7 +28,8 @@ import { RouterLink } from '@angular/router';
     IonContent,
     IonCard, IonCardContent,
     IonItem, IonInput, IonNote,
-    IonButton, IonIcon
+    IonButton, IonIcon,
+    ButtonComponent
 ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
@@ -49,8 +51,24 @@ export class LoginComponent {
   }
 
   formLogin: FormGroup = this.fb.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
+    email: [
+      '',
+      [
+        Validators.required,
+        Validators.email,
+        Validators.maxLength(150),
+        LoginComponent.notBlank,
+      ],
+    ],
+    password: [
+      '',
+      [
+        Validators.required,
+        Validators.minLength(6),
+        LoginComponent.notBlank,
+        LoginComponent.noSpaces,
+      ],
+    ],
   });
 
   getErrorMessage(field: 'email' | 'password'): string {
@@ -58,8 +76,11 @@ export class LoginComponent {
     if (control?.hasError('required')) {
       return field === 'email' ? 'El correo es requerido' : 'La contraseña es requerida';
     }
+    if (control?.hasError('blank')) return field === 'email' ? 'El correo no puede estar en blanco.' : 'La contraseña no puede estar vacía.';
     if (control?.hasError('email')) return 'Ingrese un correo válido';
+    if (control?.hasError('maxlength')) return 'El correo no debe superar 150 caracteres.';
     if (control?.hasError('minlength')) return 'La contraseña debe tener al menos 6 caracteres';
+    if (control?.hasError('spaces')) return 'La contraseña no debe contener espacios.';
     return '';
   }
 
@@ -69,7 +90,13 @@ export class LoginComponent {
   }
 
   async login() {
-    if (this.formLogin.invalid || this.loading) return;
+    if (this.loading) return;
+    if (this.formLogin.invalid) {
+      this.formLogin.markAllAsTouched();
+      const err = this.getFirstLoginError();
+      if (err) await this.toast(err, 'danger');
+      return;
+    }
 
     const payload = this.formLogin.value as { email: string; password: string };
     console.log(payload);
@@ -92,7 +119,7 @@ export class LoginComponent {
           await this.toast('No se pudo cargar tu sesión. Intenta nuevamente.', 'danger');
           return;
         }
-        await this.toast('Inicio de sesi�n exitoso.', 'success');
+        await this.toast('Inicio de sesion exitoso.', 'success');
         await this.navCtrl.navigateRoot('/home/inicio');
       },
       error: async (err) => {
@@ -102,6 +129,27 @@ export class LoginComponent {
         await this.toast(msg, 'danger');
       }
     });
+  }
+
+  private getFirstLoginError(): string | null {
+    const fields: Array<'email' | 'password'> = ['email', 'password'];
+    for (const field of fields) {
+      const control = this.formLogin.get(field);
+      if (control?.invalid) {
+        return this.getErrorMessage(field);
+      }
+    }
+    return null;
+  }
+
+  private static notBlank(control: AbstractControl): ValidationErrors | null {
+    const value = (control.value ?? '').toString();
+    return value.trim().length ? null : { blank: true };
+  }
+
+  private static noSpaces(control: AbstractControl): ValidationErrors | null {
+    const value = (control.value ?? '').toString();
+    return value.includes(' ') ? { spaces: true } : null;
   }
 }
 

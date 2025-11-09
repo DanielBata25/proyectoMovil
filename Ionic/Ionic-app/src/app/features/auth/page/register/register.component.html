@@ -27,11 +27,11 @@
           <ion-item lines="none" class="input-custom">
             <ion-input id="email" type="email" formControlName="email" placeholder="Correo Electrónico"></ion-input>
           </ion-item>
-          <ion-note color="danger" *ngIf="credentialsForm.get('email')?.errors && credentialsForm.get('email')?.touched" class="note">
-            <ng-container *ngIf="credentialsForm.get('email')?.hasError('required')">El email es obligatorio.</ng-container>
-            <ng-container *ngIf="credentialsForm.get('email')?.hasError('email')">Formato de email no válido.</ng-container>
-            <ng-container *ngIf="credentialsForm.get('email')?.hasError('maxlength')">El email no debe superar 150 caracteres.</ng-container>
-            <ng-container *ngIf="credentialsForm.get('email')?.hasError('pattern')">El email no puede estar en blanco.</ng-container>
+          <ion-note
+            color="danger"
+            class="note"
+            *ngIf="shouldShowError(credentialsForm, 'email', 'credentials')">
+            {{ getFieldMessage('credentials', 'email') }}
           </ion-note>
 
           <!-- Password -->
@@ -39,10 +39,11 @@
           <ion-item lines="none" class="input-custom">
             <ion-input id="password" type="password" formControlName="password" placeholder="Contraseña"></ion-input>
           </ion-item>
-          <ion-note color="danger" *ngIf="credentialsForm.get('password')?.errors && credentialsForm.get('password')?.touched" class="note">
-            <ng-container *ngIf="credentialsForm.get('password')?.hasError('required')">La contraseña es obligatoria.</ng-container>
-            <ng-container *ngIf="credentialsForm.get('password')?.hasError('pattern')">La contraseña no debe contener espacios.</ng-container>
-            <ng-container *ngIf="credentialsForm.get('password')?.hasError('passwordPolicy')">Mínimo 6 caracteres y al menos 1 mayúscula.</ng-container>
+          <ion-note
+            color="danger"
+            class="note"
+            *ngIf="shouldShowError(credentialsForm, 'password', 'credentials')">
+            {{ getFieldMessage('credentials', 'password') }}
           </ion-note>
 
           <!-- Confirm Password -->
@@ -50,15 +51,21 @@
           <ion-item lines="none" class="input-custom">
             <ion-input id="confirmPassword" type="password" formControlName="confirmPassword" placeholder="Confirmar Contraseña"></ion-input>
           </ion-item>
-          <ion-note color="danger"
-                    *ngIf="(credentialsForm.get('confirmPassword')?.touched || credentialsForm.get('password')?.touched) && credentialsForm.hasError('passwordMismatch')"
-                    class="note">
-            Las contraseñas no coinciden.
+          <ion-note
+            color="danger"
+            class="note"
+            *ngIf="shouldShowError(credentialsForm, 'confirmPassword', 'credentials')">
+            {{ getFieldMessage('credentials', 'confirmPassword') }}
           </ion-note>
 
-          <ion-button type="button" expand="block" class="btn-custom mt-12" (click)="nextStep()" [disabled]="credentialsForm.invalid">
-            Siguiente
-          </ion-button>
+          <app-button
+            class="auth-btn mt-12"
+            type="button"
+            color="primary"
+            [disabled]="credentialsForm.invalid"
+            text="Siguiente"
+            (clicked)="nextStep()">
+          </app-button>
         </form>
 
         <!-- Paso 2 -->
@@ -68,11 +75,11 @@
           <ion-item lines="none" class="input-custom">
             <ion-input id="firstName" type="text" formControlName="firstName" placeholder="Nombre"></ion-input>
           </ion-item>
-          <ion-note color="danger" *ngIf="basicForm.get('firstName')?.errors && basicForm.get('firstName')?.touched" class="note">
-            <ng-container *ngIf="basicForm.get('firstName')?.hasError('required')">El nombre es obligatorio.</ng-container>
-            <ng-container *ngIf="basicForm.get('firstName')?.hasError('minlength')">Debe tener al menos 2 caracteres.</ng-container>
-            <ng-container *ngIf="basicForm.get('firstName')?.hasError('maxlength')">No debe superar 50 caracteres.</ng-container>
-            <ng-container *ngIf="basicForm.get('firstName')?.hasError('pattern')">Solo debe contener letras y espacios.</ng-container>
+          <ion-note
+            color="danger"
+            class="note"
+            *ngIf="shouldShowError(basicForm, 'firstName', 'basic')">
+            {{ getFieldMessage('basic', 'firstName') }}
           </ion-note>
 
           <!-- Apellido -->
@@ -80,11 +87,11 @@
           <ion-item lines="none" class="input-custom">
             <ion-input id="lastName" type="text" formControlName="lastName" placeholder="Apellido"></ion-input>
           </ion-item>
-          <ion-note color="danger" *ngIf="basicForm.get('lastName')?.errors && basicForm.get('lastName')?.touched" class="note">
-            <ng-container *ngIf="basicForm.get('lastName')?.hasError('required')">El apellido es obligatorio.</ng-container>
-            <ng-container *ngIf="basicForm.get('lastName')?.hasError('minlength')">Debe tener al menos 2 caracteres.</ng-container>
-            <ng-container *ngIf="basicForm.get('lastName')?.hasError('maxlength')">No debe superar 50 caracteres.</ng-container>
-            <ng-container *ngIf="basicForm.get('lastName')?.hasError('pattern')">Solo debe contener letras y espacios.</ng-container>
+          <ion-note
+            color="danger"
+            class="note"
+            *ngIf="shouldShowError(basicForm, 'lastName', 'basic')">
+            {{ getFieldMessage('basic', 'lastName') }}
           </ion-note>
 
           <!-- Identificación -->
@@ -92,16 +99,27 @@
           <ion-item lines="none" class="input-custom">
             <ion-input id="identification" type="text" formControlName="identification" placeholder="Número de Identidad"></ion-input>
           </ion-item>
-          <ion-note color="danger" *ngIf="basicForm.get('identification')?.errors && basicForm.get('identification')?.touched" class="note">
-            <ng-container *ngIf="basicForm.get('identification')?.hasError('required')">La identificación es obligatoria.</ng-container>
-            <ng-container *ngIf="basicForm.get('identification')?.hasError('minlength')">Debe tener al menos 5 caracteres.</ng-container>
-            <ng-container *ngIf="basicForm.get('identification')?.hasError('maxlength')">No debe superar 20 caracteres.</ng-container>
-            <ng-container *ngIf="basicForm.get('identification')?.hasError('pattern')">Solo puede contener letras, números, punto y guion.</ng-container>
+          <ion-note
+            color="danger"
+            class="note"
+            *ngIf="shouldShowError(basicForm, 'identification', 'basic')">
+            {{ getFieldMessage('basic', 'identification') }}
           </ion-note>
 
-          <div style="display:flex;gap:.5rem;margin-top:.75rem">
-            <ion-button fill="outline" (click)="prevStep()">Volver</ion-button>
-            <ion-button class="btn-custom" (click)="nextStep()" [disabled]="basicForm.invalid">Siguiente</ion-button>
+          <div class="button-stack">
+            <app-button
+              type="button"
+              color="secondary"
+              text="Volver"
+              (clicked)="prevStep()">
+            </app-button>
+            <app-button
+              type="button"
+              color="primary"
+              [disabled]="basicForm.invalid"
+              text="Siguiente"
+              (clicked)="nextStep()">
+            </app-button>
           </div>
         </form>
 
@@ -112,10 +130,11 @@
           <ion-item lines="none" class="input-custom">
             <ion-input id="phoneNumber" type="tel" formControlName="phoneNumber" placeholder="Número de Teléfono"></ion-input>
           </ion-item>
-          <ion-note color="danger" *ngIf="contactForm.get('phoneNumber')?.errors && contactForm.get('phoneNumber')?.touched" class="note">
-            <ng-container *ngIf="contactForm.get('phoneNumber')?.hasError('required')">El teléfono es obligatorio.</ng-container>
-            <ng-container *ngIf="contactForm.get('phoneNumber')?.hasError('maxlength')">No debe superar 25 caracteres.</ng-container>
-            <ng-container *ngIf="contactForm.get('phoneNumber')?.hasError('pattern')">Debe tener entre 7 y 15 dígitos.</ng-container>
+          <ion-note
+            color="danger"
+            class="note"
+            *ngIf="shouldShowError(contactForm, 'phoneNumber', 'contact')">
+            {{ getFieldMessage('contact', 'phoneNumber') }}
           </ion-note>
 
           <!-- Dirección -->
@@ -123,10 +142,11 @@
           <ion-item lines="none" class="input-custom">
             <ion-input id="address" type="text" formControlName="address" placeholder="Dirección"></ion-input>
           </ion-item>
-          <ion-note color="danger" *ngIf="contactForm.get('address')?.errors && contactForm.get('address')?.touched" class="note">
-            <ng-container *ngIf="contactForm.get('address')?.hasError('required')">La dirección es obligatoria.</ng-container>
-            <ng-container *ngIf="contactForm.get('address')?.hasError('minlength')">Debe tener al menos 5 caracteres.</ng-container>
-            <ng-container *ngIf="contactForm.get('address')?.hasError('maxlength')">No debe superar 120 caracteres.</ng-container>
+          <ion-note
+            color="danger"
+            class="note"
+            *ngIf="shouldShowError(contactForm, 'address', 'contact')">
+            {{ getFieldMessage('contact', 'address') }}
           </ion-note>
 
           <!-- Departamento / Ciudad -->
@@ -138,6 +158,12 @@
         <ion-select-option *ngFor="let dept of departments" [value]="dept.id">{{ dept.name }}</ion-select-option>
       </ion-select>
     </ion-item>
+    <ion-note
+      color="danger"
+      class="note"
+      *ngIf="shouldShowError(contactForm, 'departmentId', 'contact')">
+      {{ getFieldMessage('contact', 'departmentId') }}
+    </ion-note>
   </div>
 
   <div class="city-col">
@@ -147,18 +173,30 @@
         <ion-select-option *ngFor="let city of cities" [value]="city.id">{{ city.name }}</ion-select-option>
       </ion-select>
     </ion-item>
-    <ion-note color="danger" *ngIf="contactForm.get('cityId')?.invalid && contactForm.get('cityId')?.touched" class="note">
-      Debe seleccionar una ciudad válida.
+    <ion-note
+      color="danger"
+      class="note"
+      *ngIf="shouldShowError(contactForm, 'cityId', 'contact')">
+      {{ getFieldMessage('contact', 'cityId') }}
     </ion-note>
   </div>
 </div>
 
 
-          <div style="display:flex;gap:.5rem;margin-top:.75rem">
-            <ion-button fill="outline" (click)="prevStep()">Volver</ion-button>
-            <ion-button class="btn-custom" (click)="register()" [disabled]="contactForm.invalid || loading">
-              Registrarse
-            </ion-button>
+          <div class="button-stack">
+            <app-button
+              type="button"
+              color="secondary"
+              text="Volver"
+              (clicked)="prevStep()">
+            </app-button>
+            <app-button
+              type="button"
+              color="primary"
+              [disabled]="contactForm.invalid || loading"
+              text="Registrarse"
+              (clicked)="register()">
+            </app-button>
           </div>
         </form>
 

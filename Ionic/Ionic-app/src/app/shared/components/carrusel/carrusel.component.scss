@@ -1,13 +1,16 @@
 .carrusel-container {
   width: 100%;
-  height: 260px;             /* base móvil */
+  aspect-ratio: 1 / 1;
   display: block;
-  border-radius: 12px;
+  border-radius: 26px;
+  padding: clamp(12px, 3vw, 20px);
+  background: linear-gradient(135deg, #f8fafc, #eef2ff);
+  box-shadow: 0 16px 32px rgba(15, 23, 42, 0.14);
   overflow: hidden;
 
   /* bullets del swiper web component */
   &::part(pagination) {
-    bottom: 8px;
+    bottom: 16px;
   }
   &::part(bullet) {
     background: rgba(255,255,255,.6);
@@ -24,25 +27,38 @@
   }
 }
 
-@media (min-height: 700px) {
-  .carrusel-container { height: 320px; }
-}
-@media (min-height: 850px) {
-  .carrusel-container { height: 360px; }
-}
-
 .slide-content {
   position: relative;
   width: 100%;
   height: 100%;
 }
 
-.slide-content img {
+.slide-frame {
   width: 100%;
   height: 100%;
-  object-fit: cover;    /* no deforma */
+  border-radius: 22px;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: inset 0 1px 4px rgba(15, 23, 42, 0.08);
+}
+
+.slide-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
   display: block;
   transform: translateZ(0); /* ayuda a GPU en Android */
+  transition: transform 0.3s ease;
+}
+
+@media (hover: hover) {
+  .slide-frame:hover .slide-img {
+    transform: scale(1.03);
+  }
 }
 
 /* Gradiente para legibilidad */
@@ -55,8 +71,8 @@
   padding: 18px 14px;
   background: linear-gradient(
     180deg,
-    rgba(0,0,0,0) 45%,
-    rgba(0,0,0,.35) 75%,
+    rgba(0,0,0,0) 35%,
+    rgba(0,0,0,.3) 70%,
     rgba(0,0,0,.55) 100%
   );
 }

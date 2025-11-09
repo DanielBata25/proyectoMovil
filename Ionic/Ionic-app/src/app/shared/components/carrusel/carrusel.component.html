@@ -13,12 +13,15 @@
 >
   <swiper-slide *ngFor="let slide of slides; trackBy: trackByIdx">
     <div class="slide-content">
-      <img
-        [src]="slide.image"
-        [alt]="slide.title"
-        loading="lazy"
-        decoding="async"
-      />
+      <div class="slide-frame">
+        <img
+          class="slide-img"
+          [src]="slide.image"
+          [alt]="slide.title"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
       <div class="overlay">
         <h2 class="overlay-title">{{ slide.title }}</h2>
       </div>

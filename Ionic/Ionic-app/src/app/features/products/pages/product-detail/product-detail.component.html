@@ -15,18 +15,32 @@
 
 
       <div class="hero-swiper">
+        <button
+          type="button"
+          class="fav-floating"
+          *ngIf="me$ | async"
+          [disabled]="favoriteLoading"
+          [class.fav-floating--active]="product?.isFavorite"
+          (click)="toggleFavorite($event)"
+          aria-label="Agregar a favoritos">
+          <ion-icon [name]="product?.isFavorite ? 'heart' : 'heart-outline'"></ion-icon>
+        </button>
+
         <ng-container *ngIf="galleryImages.length; else noImg">
           <swiper-container #swiperRef init="false" *ngIf="galleryImages.length > 1; else singleImage"
             [attr.slides-per-view]="slidesOpts.slidesPerView" [attr.space-between]="slidesOpts.spaceBetween"
             [attr.pagination]="slidesOpts.pagination" [attr.autoplay]="'true'" [attr.autoplay-delay]="'4000'"
             [attr.autoplay-disable-on-interaction]="'false'">
             <swiper-slide *ngFor="let url of galleryImages">
-              <img [src]="url" alt="Imagen del producto" class="hero-img" (error)="onImageError($event)" />
+              <div class="hero-frame">
+                <img [src]="url" alt="Imagen del producto" class="hero-img" (error)="onImageError($event)" />
+              </div>
             </swiper-slide>
           </swiper-container>
           <ng-template #singleImage>
-            <img [src]="galleryImages[0]" alt="Imagen del producto" class="hero-img hero-img--static"
-              (error)="onImageError($event)" />
+            <div class="hero-frame hero-frame--static">
+              <img [src]="galleryImages[0]" alt="Imagen del producto" class="hero-img" (error)="onImageError($event)" />
+            </div>
           </ng-template>
         </ng-container>
       </div>

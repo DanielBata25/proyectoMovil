@@ -7,23 +7,6 @@
   (keyup.space)="onDetail(product); $event.preventDefault()"
   aria-label="Abrir detalle del producto"
 >
-  <!-- Favorito (solo si está logueado) -->
-  <div *appIfLoggedIn>
-    <ion-button
-      *ngIf="showFavorite"
-      class="fav-btn"
-      fill="solid"
-      size="small"
-      [disabled]="disabledFavorite"
-      (click)="onFavoriteClick($event)"
-      (keyup.enter)="$event.stopPropagation()"
-      (keyup.space)="$event.stopPropagation(); $event.preventDefault()"
-      aria-label="Favorito"
-    >
-      <ion-icon slot="icon-only" class="fav-icon" [name]="product.isFavorite ? 'star' : 'star-outline'" [class.fav-icon--active]="product.isFavorite"></ion-icon>
-    </ion-button>
-  </div>
-
   <!-- Imagen -->
   <div class="image-wrap">
     <img

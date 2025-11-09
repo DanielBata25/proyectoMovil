@@ -27,18 +27,22 @@
             [attr.autoplay-delay]="'4000'"
             [attr.autoplay-disable-on-interaction]="'false'">
             <swiper-slide *ngFor="let url of galleryImages">
-              <img
-                [src]="url"
-                alt="Imagen de la finca"
-                class="hero-img" />
+              <div class="hero-frame">
+                <img
+                  [src]="url"
+                  alt="Imagen de la finca"
+                  class="hero-img" />
+              </div>
             </swiper-slide>
           </swiper-container>
 
           <ng-template #singleImage>
-            <img
-              [src]="galleryImages[0]"
-              alt="Imagen de la finca"
-              class="hero-img hero-img--static" />
+            <div class="hero-frame hero-frame--static">
+              <img
+                [src]="galleryImages[0]"
+                alt="Imagen de la finca"
+                class="hero-img" />
+            </div>
           </ng-template>
         </ng-container>
       </div>

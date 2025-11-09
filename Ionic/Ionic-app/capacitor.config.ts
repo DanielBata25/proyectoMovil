@@ -4,11 +4,11 @@ const config: CapacitorConfig = {
   appId: 'io.ionic.starter',
   appName: 'Ionic-app',
   webDir: 'www',
-  plugins: {
-    CapacitorHttp: {
-      enabled: true,
-    },
-  },
+  server: {
+    cleartext: true, // permite http://
+    androidScheme: 'http',
+    hostname: '192.168.20.28',
+  }
 };
 
 export default config;

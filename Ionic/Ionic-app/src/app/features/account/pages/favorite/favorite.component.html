@@ -45,7 +45,13 @@
 
               <!-- Imagen -->
               <div class="image-wrap">
-                <ion-img [src]="p.imageUrl || p.images[0]?.imageUrl || 'assets/1.png'" [alt]="p.name"></ion-img>
+                <img
+                  class="card-image"
+                  [src]="p.imageUrl || p.images[0]?.imageUrl || 'assets/1.png'"
+                  [alt]="p.name"
+                  loading="lazy"
+                  decoding="async"
+                />
               </div>
 
               <!-- Contenido -->

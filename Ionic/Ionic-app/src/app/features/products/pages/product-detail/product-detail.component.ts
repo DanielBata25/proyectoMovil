@@ -15,7 +15,7 @@ import {
   IonSpinner, IonList, IonTextarea
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { cart, star, starOutline, personCircle, location } from 'ionicons/icons';
+import { cart, star, starOutline, personCircle, location, heart, heartOutline } from 'ionicons/icons';
 import { ActivatedRoute, Router } from '@angular/router';
 import { firstValueFrom, Observable, of } from 'rxjs';
 import { finalize, switchMap } from 'rxjs/operators';
@@ -28,6 +28,7 @@ import { AlertController, ToastController, ModalController } from '@ionic/angula
 import { UserMeDto } from 'src/app/core/models/login.model';
 import { AuthState } from 'src/app/core/services/auth/auth.state';
 import { Location } from '@angular/common';
+import { FavoriteFacadeService } from 'src/app/shared/services/favorite/favorite-facade.service';
 
 // Swiper Web Components
 import { register } from 'swiper/element/bundle';
@@ -58,6 +59,7 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
   private reviewService = inject(ReviewService);
   private authState = inject(AuthState);
   private location = inject(Location);
+  private favoriteFacade = inject(FavoriteFacadeService);
 
   private alertCtrl = inject(AlertController);
   private toastCtrl = inject(ToastController);
@@ -91,7 +93,7 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
   private readonly ratingLabels = ['Muy mala', 'Mala', 'Regular', 'Buena', 'Excelente'] as const;
 
   constructor() {
-    addIcons({ cart, star, starOutline, personCircle, location });
+    addIcons({ cart, star, starOutline, personCircle, location, heart, heartOutline });
     register(); // habilita <swiper-container> y <swiper-slide>
   }
 
@@ -362,5 +364,24 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
   ) {
     const t = await this.toastCtrl.create({ message, duration: 1600, position, color });
     await t.present();
+  }
+
+  get favoriteLoading(): boolean {
+    return this.favoriteFacade.isToggling(this.product?.id);
+  }
+
+  toggleFavorite(ev: Event): void {
+    ev.stopPropagation();
+    if (!this.product || this.favoriteLoading) return;
+
+    this.favoriteFacade.toggle(this.product).subscribe({
+      next: (isFav) => {
+        this.product.isFavorite = isFav;
+        this.showToast(isFav ? 'Añadido a favoritos' : 'Quitado de favoritos', 'success', 'top');
+      },
+      error: () => {
+        this.showToast('No se pudo actualizar el favorito', 'danger', 'top');
+      },
+    });
   }
 }
