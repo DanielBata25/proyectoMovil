@@ -1,30 +1,32 @@
-<swiper-container
-  #swiperRef
-  init="false"
-  class="carrusel-container"
-  effect="fade"
-  [attr.slides-per-view]="1"
-  [attr.space-between]="10"
-  [attr.loop]="slides.length > 1 ? 'true' : null"
-  [attr.autoplay]="slides.length > 1 ? 'true' : null"
-  [attr.autoplay-delay]="slides.length > 1 ? '4000' : null"
-  [attr.autoplay-disable-on-interaction]="'false'"
-  [attr.pagination]="slides.length > 1 ? 'true' : null"
->
-  <swiper-slide *ngFor="let slide of slides; trackBy: trackByIdx">
-    <div class="slide-content">
-      <div class="slide-frame">
+<div class="hero-swiper home-hero">
+  <swiper-container
+    #swiperRef
+    init="false"
+    class="hero-swiper__slides"
+    effect="fade"
+    [attr.slides-per-view]="1"
+    [attr.space-between]="12"
+    [attr.loop]="slides.length > 1 ? 'true' : null"
+    [attr.autoplay]="slides.length > 1 ? 'true' : null"
+    [attr.autoplay-delay]="slides.length > 1 ? '4000' : null"
+    [attr.autoplay-disable-on-interaction]="'false'"
+    [attr.pagination]="slides.length > 1 ? 'true' : null"
+  >
+    <swiper-slide *ngFor="let slide of slides; trackBy: trackByIdx">
+      <div class="hero-frame">
         <img
-          class="slide-img"
+          class="hero-img"
           [src]="slide.image"
           [alt]="slide.title"
           loading="lazy"
           decoding="async"
         />
+        <div class="overlay">
+          <a class="hero-link" [href]="slide.link || '#'" rel="noopener noreferrer">
+            <h2 class="overlay-title">{{ slide.title }}</h2>
+          </a>
+        </div>
       </div>
-      <div class="overlay">
-        <h2 class="overlay-title">{{ slide.title }}</h2>
-      </div>
-    </div>
-  </swiper-slide>
-</swiper-container>
+    </swiper-slide>
+  </swiper-container>
+</div>

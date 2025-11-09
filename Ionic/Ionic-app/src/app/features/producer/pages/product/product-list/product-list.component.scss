@@ -80,6 +80,12 @@
   align-items: center;
   font-weight: 600;
   color: #111827;
+
+  app-button {
+    --app-button-margin: 0;
+    margin: 0;
+    width: auto;
+  }
 }
 
 .category-item {
@@ -137,15 +143,16 @@
   background: rgba(226, 232, 240, 0.85);
   box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
 
-  ion-button {
-    --padding-start: 6px;
-    --padding-end: 6px;
-  }
-
   span {
     font-size: 14px;
     font-weight: 600;
     color: #1f2937;
+  }
+
+  app-button {
+    --app-button-margin: 0;
+    margin: 0;
+    width: auto;
   }
 }
 
@@ -162,6 +169,11 @@
   ion-icon {
     font-size: 44px;
     color: #9ca3af;
+  }
+
+  app-button {
+    margin-top: 0.25rem;
+    width: auto;
   }
 }
 

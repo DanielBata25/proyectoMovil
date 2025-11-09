@@ -26,6 +26,8 @@ import {
   DepartmentModel,
   CityModel,
 } from 'src/app/shared/models/location/location.model';
+import { ElevationService } from 'src/app/shared/services/elevation/elevation.service';
+import { ButtonComponent } from 'src/app/shared/components/button/button.component';
 
 @Component({
   selector: 'app-farm-form',
@@ -34,6 +36,7 @@ import {
     CommonModule,
     ReactiveFormsModule,
     IonicModule,
+    ButtonComponent,
   ],
   templateUrl: './farm-form.component.html',
   styleUrls: ['./farm-form.component.scss'],
@@ -46,6 +49,7 @@ export class FarmFormComponent implements OnInit, AfterViewInit, OnDestroy, View
   private readonly loadingCtrl = inject(LoadingController);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  private readonly elevationSvc = inject(ElevationService);
 
   form: FormGroup;
   isEdit = false;
@@ -71,6 +75,7 @@ export class FarmFormComponent implements OnInit, AfterViewInit, OnDestroy, View
   private tileLayer?: L.TileLayer;
   private mapInitialized = false;
   mapReady = false;
+  private updatingFromMap = false;
   readonly hasMapSupport = true;
 
   constructor() {
@@ -121,10 +126,7 @@ export class FarmFormComponent implements OnInit, AfterViewInit, OnDestroy, View
   }
 
   ngOnInit(): void {
-
-    this.form.valueChanges.subscribe(() => {
-      this.updateMarkerFromForm();
-    });
+    this.watchCoordinateChanges();
 
     const idParam = this.route.snapshot.paramMap.get('id');
     if (idParam) {
@@ -419,12 +421,38 @@ export class FarmFormComponent implements OnInit, AfterViewInit, OnDestroy, View
       maxZoom: 19,
     }).addTo(this.map);
 
-    this.marker = L.marker([4.5709, -74.2973]).addTo(this.map);
+    this.marker = L.marker([4.5709, -74.2973], { draggable: true }).addTo(this.map);
+    this.marker.on('dragend', () => {
+      const pos = this.marker?.getLatLng();
+      if (!pos) return;
+      this.setCoordsFromMap(pos.lat, pos.lng, false);
+    });
+    this.map.on('click', (ev: L.LeafletMouseEvent) => {
+      this.setCoordsFromMap(ev.latlng.lat, ev.latlng.lng, true);
+    });
 
     this.mapInitialized = true;
     this.mapReady = true;
     this.updateMarkerFromForm(true);
     setTimeout(() => this.map?.invalidateSize(), 200);
+  }
+
+  private async setCoordsFromMap(lat: number, lng: number, fitView = true) {
+    this.updatingFromMap = true;
+    this.form.patchValue(
+      {
+        latitude: Number(lat.toFixed(5)),
+        longitude: Number(lng.toFixed(5)),
+      },
+      { emitEvent: false }
+    );
+    this.updatingFromMap = false;
+    this.updateMarkerFromForm(fitView);
+
+    const elev = await this.elevationSvc.getElevation(lat, lng);
+    if (typeof elev === 'number') {
+      this.form.get('altitude')?.setValue(Math.round(elev), { emitEvent: false });
+    }
   }
 
   private updateMarkerFromForm(fitView = false): void {
@@ -442,6 +470,17 @@ export class FarmFormComponent implements OnInit, AfterViewInit, OnDestroy, View
 
   centerMapOnInputs(): void {
     this.updateMarkerFromForm(true);
+  }
+
+  private watchCoordinateChanges(): void {
+    this.form.get('latitude')?.valueChanges.subscribe(() => {
+      if (this.updatingFromMap) return;
+      this.updateMarkerFromForm();
+    });
+    this.form.get('longitude')?.valueChanges.subscribe(() => {
+      if (this.updatingFromMap) return;
+      this.updateMarkerFromForm();
+    });
   }
 
   private async resolveDepartmentForCity(cityId: number): Promise<number | null> {

@@ -9,7 +9,6 @@ import {
   inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule, ViewDidEnter } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 
@@ -20,16 +19,17 @@ import { FarmSelectModel } from '../../../../shared/models/farm/farm.model';
 import * as L from 'leaflet';
 import { addIcons } from 'ionicons';
 import { locateOutline } from 'ionicons/icons';
+import { ButtonComponent } from 'src/app/shared/components/button/button.component';
 
 @Component({
   selector: 'app-farm-detail',
   standalone: true,
-  imports: [CommonModule, IonicModule],
+  imports: [CommonModule, ButtonComponent],
   templateUrl: './farm-detail.component.html',
   styleUrls: ['./farm-detail.component.scss'],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class FarmDetailComponent implements OnInit, AfterViewInit, OnDestroy, ViewDidEnter {
+export class FarmDetailComponent implements OnInit, AfterViewInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly farmService = inject(FarmService);
@@ -110,6 +110,12 @@ export class FarmDetailComponent implements OnInit, AfterViewInit, OnDestroy, Vi
 
   goBack(): void {
     this.location.back();
+  }
+
+  openMaps(): void {
+    const url = this.googleMapsLink;
+    if (!url) return;
+    window.open(url, '_blank');
   }
 
   private loadFarm(): void {

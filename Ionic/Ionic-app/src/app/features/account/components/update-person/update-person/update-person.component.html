@@ -91,15 +91,22 @@
 
         <!-- Botones -->
           <div class="form-actions">
-            <ion-button expand="block" type="submit" [disabled]="form.invalid || isLoading" color="success">
-              <ion-icon slot="start" name="save"></ion-icon>
-              Guardar
-            </ion-button>
+            <app-button
+              [text]="'Guardar'"
+              icon="save"
+              color="primary"
+              type="submit"
+              [loading]="isLoading"
+              [disabled]="form.invalid || isLoading">
+            </app-button>
 
-            <ion-button expand="block" color="medium" (click)="cancel()">
-              <ion-icon slot="start" name="close"></ion-icon>
-              Cancelar
-            </ion-button>
+            <app-button
+              color="secondary"
+              icon="close"
+              [text]="'Cancelar'"
+              type="button"
+              (clicked)="cancel()">
+            </app-button>
           </div>
         </form>
       </ion-card-content>

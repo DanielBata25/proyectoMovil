@@ -16,6 +16,7 @@ export class ButtonComponent {
   @Input() disabled: boolean = false;
   @Input() color: 'primary' | 'secondary' | 'danger' = 'primary';
   @Input() icon: string = '';
+  @Input() loading = false;
   @Input() back: boolean = false;
   @Input() redirectTo: string | null = null;
 

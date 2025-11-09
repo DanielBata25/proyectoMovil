@@ -168,6 +168,10 @@
   --border-radius: 14px;
 }
 
+.actions app-button {
+  margin-top: 0;
+}
+
 .h-title {
   font-weight: 700;
   font-size: 18px;
@@ -191,6 +195,11 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  app-button {
+    margin: 0;
+    width: auto;
+  }
 }
 
 .section-subtitle {
@@ -232,6 +241,11 @@
 .error-state ion-icon {
   font-size: 32px;
   color: #dc2626;
+}
+
+.error-state app-button {
+  margin-top: 12px;
+  width: auto;
 }
 
 @media (max-width: 600px) {

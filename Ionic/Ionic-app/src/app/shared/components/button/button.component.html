@@ -11,7 +11,8 @@
   }"
   [attr.aria-label]="text"
 >
-  <ion-icon *ngIf="icon" class="icon-btn" aria-hidden="true" [name]="icon"></ion-icon>
+  <ion-spinner *ngIf="loading" class="btn-spinner" name="crescent"></ion-spinner>
+  <ion-icon *ngIf="icon && !loading" class="icon-btn" aria-hidden="true" [name]="icon"></ion-icon>
   <span class="label">{{ text }}</span>
 </button>
 
@@ -29,7 +30,8 @@
     }"
     [attr.aria-label]="text"
   >
-    <ion-icon *ngIf="icon" class="icon-btn" aria-hidden="true" [name]="icon"></ion-icon>
+    <ion-spinner *ngIf="loading" class="btn-spinner" name="crescent"></ion-spinner>
+    <ion-icon *ngIf="icon && !loading" class="icon-btn" aria-hidden="true" [name]="icon"></ion-icon>
     <span class="label">{{ text }}</span>
   </button>
 </ng-template>
@@ -48,7 +50,8 @@
     }"
     [attr.aria-label]="text"
   >
-    <ion-icon *ngIf="icon" class="icon-btn" aria-hidden="true" [name]="icon"></ion-icon>
+    <ion-spinner *ngIf="loading" class="btn-spinner" name="crescent"></ion-spinner>
+    <ion-icon *ngIf="icon && !loading" class="icon-btn" aria-hidden="true" [name]="icon"></ion-icon>
     <span class="label">{{ text }}</span>
   </button>
 </ng-template>

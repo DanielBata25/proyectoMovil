@@ -4,7 +4,7 @@ import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import {
   IonContent, IonCard, IonCardHeader, IonCardTitle,
   IonCardContent, IonItem, IonLabel, IonInput,
-  IonButton, IonIcon, AlertController, ToastController
+  IonIcon, AlertController, ToastController
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { save, close, eye, eyeOff } from 'ionicons/icons';
@@ -14,6 +14,7 @@ import { Location } from '@angular/common';
 import { PasswordPolicyService } from 'src/app/shared/services/passwordPolicy/password-policy.service';
 import { AuthService } from 'src/app/core/services/auth/auth.service';
 import { ChangePasswordModel } from 'src/app/core/models/changePassword.model';
+import { ButtonComponent } from 'src/app/shared/components/button/button.component';
 
 @Component({
   selector: 'app-form-change-password',
@@ -21,7 +22,8 @@ import { ChangePasswordModel } from 'src/app/core/models/changePassword.model';
   imports: [
     CommonModule, ReactiveFormsModule,
     IonContent, IonCard, IonCardHeader, IonCardTitle,
-    IonCardContent, IonItem, IonLabel, IonInput, IonButton, IonIcon
+    IonCardContent, IonItem, IonLabel, IonInput, IonIcon,
+    ButtonComponent
   ],
   templateUrl: './form-change-password.component.html',
   styleUrls: ['./form-change-password.component.scss']

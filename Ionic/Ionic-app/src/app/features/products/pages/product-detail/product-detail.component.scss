@@ -361,6 +361,12 @@
 .row-end {
   display: flex;
   justify-content: flex-end;
+  gap: 8px;
+
+  app-button {
+    margin: 0;
+    width: auto;
+  }
 }
 
 .reviews {
@@ -379,6 +385,11 @@
   display: flex;
   justify-content: space-between;
   gap: 12px;
+
+  app-button.btn-inline {
+    margin: 0;
+    width: auto;
+  }
 }
 
 .who {

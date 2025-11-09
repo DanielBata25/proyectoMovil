@@ -20,14 +20,15 @@
       <div class="category-block">
         <div class="category-header">
           <span class="category-label">Categoria</span>
-          <ion-button
-            fill="clear"
-            size="small"
-            (click)="clearFilter()"
+          <app-button
+            class="btn-inline"
+            color="secondary"
+            icon="refresh"
+            [text]="'Limpiar'"
+            type="button"
             [disabled]="!breadcrumb.length && !searchCtrl.value"
-            aria-label="Limpiar filtros">
-            <ion-icon slot="icon-only" name="refresh"></ion-icon>
-          </ion-button>
+            (clicked)="clearFilter()">
+          </app-button>
         </div>
 
         <ion-item lines="none" class="category-item">
@@ -78,15 +79,27 @@
         </app-container-card-flex>
 
         <div class="pagination-container" *ngIf="totalPages > 1">
-          <div class="pagination">
-            <ion-button fill="clear" size="small" (click)="prevPage()" [disabled]="page === 1">
-              <ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
-            </ion-button>
-            <span>{{ page }} / {{ totalPages }}</span>
-            <ion-button fill="clear" size="small" (click)="nextPage()" [disabled]="page === totalPages">
-              <ion-icon slot="icon-only" name="chevron-forward-outline"></ion-icon>
-            </ion-button>
-          </div>
+        <div class="pagination">
+          <app-button
+            class="btn-inline"
+            color="secondary"
+            icon="chevron-back-outline"
+            [text]="''"
+            type="button"
+            [disabled]="page === 1"
+            (clicked)="prevPage()">
+          </app-button>
+          <span>{{ page }} / {{ totalPages }}</span>
+          <app-button
+            class="btn-inline"
+            color="secondary"
+            icon="chevron-forward-outline"
+            [text]="''"
+            type="button"
+            [disabled]="page === totalPages"
+            (clicked)="nextPage()">
+          </app-button>
+        </div>
         </div>
       </ng-container>
     </section>
@@ -97,9 +110,13 @@
       <ion-icon name="layers-outline"></ion-icon>
       <p *ngIf="!loading">No tienes productos todavia.</p>
       <p *ngIf="loading">Cargando productos...</p>
-      <ion-button fill="clear" size="small" (click)="createProduct()">
-        Crear el primero
-      </ion-button>
+      <app-button
+        class="btn-inline"
+        color="secondary"
+        [text]="'Crear el primero'"
+        type="button"
+        (clicked)="createProduct()">
+      </app-button>
     </div>
   </ng-template>
 

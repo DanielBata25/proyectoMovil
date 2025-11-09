@@ -77,23 +77,8 @@ ion-input {
   flex-direction: column;
   gap: 12px;
   margin-top: 16px;
-}
 
-ion-button {
-  --border-radius: 12px;
-  font-weight: 600;
-}
-
-ion-button[color="success"] {
-  --background: #2e7d32;
-  --background-hover: #1b5e20;
-  --background-activated: #1b5e20;
-  --color: #fff;
-}
-
-ion-button[color="medium"] {
-  --background: #9e9e9e;
-  --background-hover: #757575;
-  --background-activated: #616161;
-  --color: #fff;
+  app-button {
+    --app-button-margin: 0;
+  }
 }

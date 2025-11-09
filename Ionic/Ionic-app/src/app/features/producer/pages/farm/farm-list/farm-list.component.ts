@@ -6,6 +6,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Location } from '@angular/common';
 
 import { ContainerCardFlexComponent } from 'src/app/shared/components/cards/container-card-flex/container-card-flex.component';
+import { ButtonComponent } from 'src/app/shared/components/button/button.component';
 import { FarmService } from 'src/app/shared/services/farm/farm.service';
 import { LocationService } from 'src/app/shared/services/location/location.service';
 import { FarmSelectModel } from 'src/app/shared/models/farm/farm.model';
@@ -20,6 +21,7 @@ import { Router } from '@angular/router';
     IonicModule,
     ReactiveFormsModule,
     ContainerCardFlexComponent,
+    ButtonComponent,
   ],
   templateUrl: './farm-list.component.html',
   styleUrls: ['./farm-list.component.scss'],

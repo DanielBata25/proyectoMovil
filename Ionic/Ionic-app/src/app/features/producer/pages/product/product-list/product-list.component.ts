@@ -11,11 +11,12 @@ import { CategoryService } from 'src/app/features/parameters/services/category/c
 import { ProductSelectModel } from 'src/app/shared/models/product/product.model';
 import { CategoryNodeModel } from 'src/app/features/parameters/models/category/category.model';
 import { ContainerCardFlexComponent } from 'src/app/shared/components/cards/container-card-flex/container-card-flex.component';
+import { ButtonComponent } from 'src/app/shared/components/button/button.component';
 
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [IonicModule, CommonModule, ReactiveFormsModule, ContainerCardFlexComponent],
+  imports: [IonicModule, CommonModule, ReactiveFormsModule, ContainerCardFlexComponent, ButtonComponent],
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.scss']
 })

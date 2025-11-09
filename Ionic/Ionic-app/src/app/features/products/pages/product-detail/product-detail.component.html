@@ -90,11 +90,14 @@
       </div>
 
       <div class="block cta">
-        <ion-button expand="block" size="small" (click)="openCreateOrder()"
-          [disabled]="loadingProduct || (product.stock ?? 0) <= 0" class="btn-order">
-          <ion-icon name="cart" slot="start"></ion-icon>
-          Anadir al pedido
-        </ion-button>
+        <app-button
+          [text]="'Añadir al pedido'"
+          icon="cart"
+          color="primary"
+          type="button"
+          [disabled]="loadingProduct || (product.stock ?? 0) <= 0"
+          (clicked)="openCreateOrder()">
+        </app-button>
       </div>
 
       <div class="block">
@@ -153,11 +156,15 @@
             </ion-textarea>
 
             <div class="row-end">
-              <ion-button class="btn-send" (click)="submitReview()"
-                [disabled]="selectedRating === 0 || !newReview.trim() || (sendingReview)">
-                <ion-spinner slot="start" name="crescent" *ngIf="sendingReview"></ion-spinner>
-                Enviar reseña
-              </ion-button>
+              <app-button
+                class="btn-send"
+                [text]="'Enviar reseña'"
+                color="primary"
+                type="button"
+                [loading]="sendingReview"
+                [disabled]="selectedRating === 0 || !newReview.trim() || (sendingReview)"
+                (clicked)="submitReview()">
+              </app-button>
             </div>
           </div>
         </ng-container>
@@ -183,10 +190,14 @@
                     </div>
                   </div>
                 </div>
-                <ion-button fill="clear" color="danger" size="small" *ngIf="(me$ | async)?.id === r.userId"
-                  (click)="deleteReview(r.id)">
-                  Eliminar
-                </ion-button>
+                <app-button
+                  *ngIf="(me$ | async)?.id === r.userId"
+                  class="btn-inline"
+                  [text]="'Eliminar'"
+                  color="danger"
+                  type="button"
+                  (clicked)="deleteReview(r.id)">
+                </app-button>
               </div>
               <p class="body-text">{{ r.comment }}</p>
             </div>

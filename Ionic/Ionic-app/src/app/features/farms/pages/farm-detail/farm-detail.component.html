@@ -82,19 +82,27 @@
       </div>
 
       <div class="block actions" *ngIf="googleMapsLink">
-        <ion-button expand="block" color="primary" fill="solid" [href]="googleMapsLink" target="_blank">
-          <ion-icon slot="start" name="navigate-outline"></ion-icon>
-          Abrir en Maps
-        </ion-button>
+        <app-button
+          color="primary"
+          icon="navigate-outline"
+          [text]="'Abrir en Maps'"
+          type="button"
+          (clicked)="openMaps()">
+        </app-button>
       </div>
 
       <div class="map-preview-card" *ngIf="hasValidCoordinates">
         <div class="map-header">
           <h3 class="section-subtitle">Vista previa en mapa</h3>
-          <ion-button fill="clear" size="small" (click)="centerMapOnFarm()" [disabled]="!mapReady">
-            <ion-icon slot="start" name="locate-outline"></ion-icon>
-            Centrar marcador
-          </ion-button>
+          <app-button
+            class="btn-inline"
+            color="secondary"
+            icon="locate-outline"
+            [text]="'Centrar marcador'"
+            type="button"
+            [disabled]="!mapReady"
+            (clicked)="centerMapOnFarm()">
+          </app-button>
         </div>
         <div class="map-preview" #mapContainer></div>
         <p class="map-help">Marcador centrado con las coordenadas registradas.</p>
@@ -106,7 +114,12 @@
     <div class="error-state">
       <ion-icon name="alert-circle-outline"></ion-icon>
       <p>No se pudo cargar la finca.</p>
-      <ion-button fill="clear" (click)="navigateBack()">Volver</ion-button>
+      <app-button
+        color="secondary"
+        [text]="'Volver'"
+        type="button"
+        (clicked)="navigateBack()">
+      </app-button>
     </div>
   </ng-template>
 </ion-content>

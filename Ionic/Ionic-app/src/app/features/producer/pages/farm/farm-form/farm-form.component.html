@@ -101,10 +101,15 @@
       <div class="map-preview-card" *ngIf="hasMapSupport">
         <div class="map-header">
           <h3 class="section-subtitle">Vista previa en mapa</h3>
-          <ion-button fill="clear" size="small" (click)="centerMapOnInputs()" [disabled]="!mapReady">
-            <ion-icon slot="start" name="locate-outline"></ion-icon>
-            Centrar en coordenadas
-          </ion-button>
+          <app-button
+            class="btn-inline"
+            color="secondary"
+            icon="locate-outline"
+            [text]="'Centrar en coordenadas'"
+            type="button"
+            [disabled]="!mapReady"
+            (clicked)="centerMapOnInputs()">
+          </app-button>
         </div>
         <div class="map-preview" #mapContainer></div>
         <p class="map-help">
@@ -136,12 +141,18 @@
       </div>
 
       <div class="inline-actions">
-        <ion-button type="button" color="medium" fill="outline" expand="block" (click)="onCancel()">
-          Cancelar
-        </ion-button>
-        <ion-button type="submit" color="success" expand="block" [disabled]="form.invalid || isSaving">
-          {{ isEdit ? 'Actualizar' : 'Crear' }}
-        </ion-button>
+        <app-button
+          color="secondary"
+          [text]="'Cancelar'"
+          type="button"
+          (clicked)="onCancel()">
+        </app-button>
+        <app-button
+          color="primary"
+          [text]="isEdit ? 'Actualizar' : 'Crear'"
+          type="submit"
+          [disabled]="form.invalid || isSaving">
+        </app-button>
       </div>
     </form>
   </div>

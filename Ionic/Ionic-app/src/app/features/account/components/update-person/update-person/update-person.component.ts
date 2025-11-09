@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import {
   IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardContent,
-  IonItem, IonLabel, IonInput, IonButton, IonIcon, IonSelect, IonSelectOption,
+  IonItem, IonLabel, IonInput, IonIcon, IonSelect, IonSelectOption,
   AlertController, ToastController
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -15,6 +15,7 @@ import { AuthService } from 'src/app/core/services/auth/auth.service';
 import { PersonUpdateModel, UserSelectModel } from 'src/app/core/models/user.model';
 import { DepartmentModel, CityModel } from 'src/app/shared/models/location/location.model';
 import { LocationService } from 'src/app/shared/services/location/location.service';
+import { ButtonComponent } from 'src/app/shared/components/button/button.component';
 
 @Component({
   selector: 'app-update-person',
@@ -22,7 +23,8 @@ import { LocationService } from 'src/app/shared/services/location/location.servi
   imports: [
     CommonModule, ReactiveFormsModule,
     IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardContent,
-    IonItem, IonLabel, IonInput, IonButton, IonIcon, IonSelect, IonSelectOption
+    IonItem, IonLabel, IonInput, IonIcon, IonSelect, IonSelectOption,
+    ButtonComponent
   ],
   templateUrl: './update-person.component.html',
   styleUrls: ['./update-person.component.scss']

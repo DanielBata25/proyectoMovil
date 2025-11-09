@@ -70,10 +70,22 @@ ion-select {
 }
 
 .map-header {
+
   display: flex;
+
   justify-content: space-between;
+
   align-items: center;
+
+
+
+  app-button {
+    --app-button-margin: 0;
+    margin: 0;
+    width: auto;
+  }
 }
+
 
 .section-subtitle {
   margin: 0;
@@ -102,14 +114,8 @@ ion-select {
   margin-top: 24px;
   margin-bottom: calc(env(safe-area-inset-bottom) + 40px);
 
-  ion-button {
-    --border-radius: 12px;
-    font-weight: 600;
-    text-transform: uppercase;
-  }
-
-  ion-button[color='success'] {
-    --background: #2d6a4f;
+  app-button {
+    --app-button-margin: 0;
   }
 }
 

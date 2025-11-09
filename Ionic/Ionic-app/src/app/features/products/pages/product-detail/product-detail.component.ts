@@ -11,7 +11,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
   IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton,
-  IonItem, IonLabel, IonButton, IonIcon, IonBadge,
+  IonItem, IonLabel, IonIcon, IonBadge,
   IonSpinner, IonList, IonTextarea
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -35,6 +35,7 @@ import { register } from 'swiper/element/bundle';
 
 // Modal de Order (Ionic)
 import { OrderCreateModalComponent, OrderCreateDialogData } from '../../modals/order-create-dialog/order-create-dialog.component'; // ajusta la ruta real
+import { ButtonComponent } from 'src/app/shared/components/button/button.component';
 
 @Component({
   selector: 'app-product-detail',
@@ -42,8 +43,9 @@ import { OrderCreateModalComponent, OrderCreateDialogData } from '../../modals/o
   imports: [
     CommonModule, FormsModule,
     IonContent,
-    IonButton, IonIcon, IonBadge,
+    IonIcon, IonBadge,
     IonSpinner, IonTextarea, 
+    ButtonComponent
 ],
   templateUrl: './product-detail.component.html',
   styleUrls: ['./product-detail.component.scss'],

@@ -71,6 +71,12 @@
     font-weight: 600;
     color: #0f172a;
   }
+
+  app-button {
+    --app-button-margin: 0;
+    margin: 0;
+    width: auto;
+  }
 }
 
 .filters-card {
@@ -121,9 +127,10 @@
   --placeholder-opacity: 0.6;
 }
 
-.clear-btn {
-  justify-self: flex-start;
+.filters-body app-button {
+  --app-button-margin: 0;
   margin-top: 0.2rem;
+  width: auto;
 }
 
 .results-card {
@@ -145,6 +152,11 @@
     font-size: 2.6rem;
     color: #0ea5e9;
   }
+
+  app-button {
+    margin-top: 0.2rem;
+    width: auto;
+  }
 }
 
 .pager {
@@ -157,10 +169,10 @@
   background: rgba(226, 232, 240, 0.85);
   box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
 
-  ion-button {
+  app-button {
+    --app-button-margin: 0;
     margin: 0;
-    --padding-start: 6px;
-    --padding-end: 6px;
+    width: auto;
   }
 
   &__label {
