@@ -23,7 +23,7 @@
           Este campo es obligatorio
         </div>
         <div class="error" *ngIf="f.firstName.hasError('minlength') && f.firstName.touched">
-          MÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­nimo 2 caracteres
+          Minimo 2 caracteres
         </div>
 
         <!-- Apellidos -->
@@ -35,19 +35,19 @@
           Este campo es obligatorio
         </div>
         <div class="error" *ngIf="f.lastName.hasError('minlength') && f.lastName.touched">
-          MÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­nimo 2 caracteres
+          Minimo 2 caracteres
         </div>
 
-        <!-- TelÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©fono -->
+        <!-- -->
         <ion-item>
-          <ion-label position="floating">TelÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©fono</ion-label>
+          <ion-label position="floating">Telefono</ion-label>
           <ion-input formControlName="phoneNumber" placeholder="Solo dÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­gitos" inputmode="numeric"></ion-input>
         </ion-item>
         <div class="error" *ngIf="f.phoneNumber.hasError('required') && f.phoneNumber.touched">
           Este campo es obligatorio
         </div>
         <div class="error" *ngIf="f.phoneNumber.hasError('pattern') && f.phoneNumber.touched">
-          Debe tener entre 7 y 15 dÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­gitos
+          Debe tener entre 7 y 15 digitos
         </div>
 
         <!-- Departamento y Ciudad -->
@@ -77,7 +77,7 @@
           </div>
         </div>
 
-        <!-- DirecciÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n -->
+        <!-- Direccion -->
         <ion-item>
           <ion-label position="floating">DirecciÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n</ion-label>
           <ion-input formControlName="address" placeholder="Ingresa tu direcciÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n"></ion-input>
@@ -86,7 +86,7 @@
           Este campo es obligatorio
         </div>
         <div class="error" *ngIf="f.address.hasError('minlength') && f.address.touched">
-          MÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­nimo 4 caracteres
+          Minimo 4 caracteres
         </div>
 
         <!-- Botones -->
