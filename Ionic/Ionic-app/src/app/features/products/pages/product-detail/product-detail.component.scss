@@ -127,6 +127,7 @@
   box-shadow: 0 10px 24px rgba(15, 23, 42, 0.18);
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
+  z-index: 2;
 }
 
 .fav-floating ion-icon {
