@@ -72,7 +72,7 @@ export class FavoriteComponent implements OnInit, OnDestroy {
   }
 
   gotoProduct(p: ProductSelectModel) {
-    this.router.navigate(['/home/product/detail', p.id]);
+    this.router.navigate(['/home/product', p.id]);
   }
 
   toggleFavorite(p: ProductSelectModel, ev?: Event) {

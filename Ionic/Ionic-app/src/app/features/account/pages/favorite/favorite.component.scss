@@ -9,7 +9,23 @@
 }
 
 .page-shell {
-  padding: 16px;
+  padding: 24px 16px 16px;
+}
+
+.page-bg {
+  --padding-top: 8px;
+}
+
+.favorites-grid {
+  margin-top: 12px;
+
+  ion-col {
+    display: flex;
+  }
+
+  .product-card {
+    flex: 1;
+  }
 }
 
 .image-wrap {
