@@ -77,6 +77,12 @@ export class FarmFormComponent implements OnInit, AfterViewInit, OnDestroy, View
   mapReady = false;
   private updatingFromMap = false;
   readonly hasMapSupport = true;
+  private readonly farmMarkerIcon = L.icon({
+    iconUrl: 'assets/img/map-pin.svg',
+    iconSize: [32, 44],
+    iconAnchor: [16, 42],
+    popupAnchor: [0, -36],
+  });
 
   constructor() {
     addIcons({ locateOutline });
@@ -224,12 +230,21 @@ export class FarmFormComponent implements OnInit, AfterViewInit, OnDestroy, View
       return;
     }
 
+    const latitude = this.normalizeLatitude(this.toNumber(value.latitude));
+    const longitude = this.normalizeLongitude(this.toNumber(value.longitude));
+    if (latitude === null || longitude === null) {
+      await loading.dismiss();
+      this.isSaving = false;
+      void this.presentToast('Coordenadas incompletas o inválidas.');
+      return;
+    }
+
     const core = {
       name: value.name.trim(),
       hectares: Number(value.hectares),
       altitude: Number(value.altitude),
-      latitude: Number(value.latitude),
-      longitude: Number(value.longitude),
+      latitude,
+      longitude,
       cityId,
     };
 
@@ -341,14 +356,16 @@ export class FarmFormComponent implements OnInit, AfterViewInit, OnDestroy, View
   private applyFarm(farm: FarmSelectModel): void {
     const departmentId = this.toNumber(farm.departmentId);
     const cityId = this.toNumber(farm.cityId);
+    const latitude = this.normalizeLatitude(this.toNumber(farm.latitude));
+    const longitude = this.normalizeLongitude(this.toNumber(farm.longitude));
 
     this.form.patchValue(
       {
         name: farm.name,
         hectares: farm.hectares,
         altitude: farm.altitude,
-        latitude: farm.latitude,
-        longitude: farm.longitude,
+        latitude: latitude ?? farm.latitude ?? null,
+        longitude: longitude ?? farm.longitude ?? null,
         departmentId,
       },
       { emitEvent: false },
@@ -401,6 +418,20 @@ export class FarmFormComponent implements OnInit, AfterViewInit, OnDestroy, View
       link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
       document.head.appendChild(link);
     }
+
+    // Leaflet busca los íconos en /media por defecto; forzamos URLs absolutas para evitar 404.
+    const iconBase = 'https://unpkg.com/leaflet@1.9.4/dist/images/';
+    const iconOptions: L.IconOptions = {
+      iconRetinaUrl: `${iconBase}marker-icon-2x.png`,
+      iconUrl: `${iconBase}marker-icon.png`,
+      shadowUrl: `${iconBase}marker-shadow.png`,
+    };
+
+    const DefaultIcon = L.Icon.Default as any;
+    if (!DefaultIcon._agroIconPatched) {
+      DefaultIcon.mergeOptions(iconOptions);
+      DefaultIcon._agroIconPatched = true;
+    }
   }
 
   private initMap(): void {
@@ -421,7 +452,10 @@ export class FarmFormComponent implements OnInit, AfterViewInit, OnDestroy, View
       maxZoom: 19,
     }).addTo(this.map);
 
-    this.marker = L.marker([4.5709, -74.2973], { draggable: true }).addTo(this.map);
+    this.marker = L.marker([4.5709, -74.2973], {
+      draggable: true,
+      icon: this.farmMarkerIcon,
+    }).addTo(this.map);
     this.marker.on('dragend', () => {
       const pos = this.marker?.getLatLng();
       if (!pos) return;
@@ -457,9 +491,18 @@ export class FarmFormComponent implements OnInit, AfterViewInit, OnDestroy, View
 
   private updateMarkerFromForm(fitView = false): void {
     if (!this.mapInitialized) return;
-    const lat = this.toNumber(this.form.get('latitude')?.value);
-    const lon = this.toNumber(this.form.get('longitude')?.value);
+    const rawLat = this.toNumber(this.form.get('latitude')?.value);
+    const rawLon = this.toNumber(this.form.get('longitude')?.value);
+    const lat = this.normalizeLatitude(rawLat);
+    const lon = this.normalizeLongitude(rawLon);
     if (lat === null || lon === null) return;
+
+    if (rawLat !== null && lat !== rawLat) {
+      this.form.get('latitude')?.setValue(lat, { emitEvent: false });
+    }
+    if (rawLon !== null && lon !== rawLon) {
+      this.form.get('longitude')?.setValue(lon, { emitEvent: false });
+    }
 
     const position: L.LatLngExpression = [lat, lon];
     this.marker?.setLatLng(position);
@@ -514,5 +557,18 @@ export class FarmFormComponent implements OnInit, AfterViewInit, OnDestroy, View
     if (value === null || value === undefined || value === '') return null;
     const num = Number(value);
     return Number.isFinite(num) ? num : null;
+  }
+
+  private normalizeLatitude(value: number | null): number | null {
+    if (value === null || value === undefined) return null;
+    if (!Number.isFinite(value)) return null;
+    return Math.min(Math.max(value, -90), 90);
+  }
+
+  private normalizeLongitude(value: number | null): number | null {
+    if (value === null || value === undefined) return null;
+    if (!Number.isFinite(value)) return null;
+    const normalized = ((value + 180) % 360 + 360) % 360 - 180;
+    return Math.min(Math.max(normalized, -180), 180);
   }
 }

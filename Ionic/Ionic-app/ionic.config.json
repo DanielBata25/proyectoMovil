@@ -8,5 +8,11 @@
         "port": 8100,
         "host": "localhost",
         "ssl": false
-    }
+    },
+    "proxies": [
+        {
+            "path": "/api",
+            "proxyUrl": "http://172.30.6.184:5253/api"
+        }
+    ]
 }

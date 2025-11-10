@@ -1,11 +1,34 @@
 // src/app/core/http/api.native.ts
-import { CapacitorHttp } from '@capacitor/core'; // o: import { Http as CapacitorHttp } from '@capacitor/http';
-import { CapacitorCookies } from '@capacitor/core';
+import { CapacitorCookies, CapacitorHttp } from '@capacitor/core'; // o: import { Http as CapacitorHttp } from '@capacitor/http';
 import { Preferences } from '@capacitor/preferences';
 import { environment } from 'src/environments/environment';
 
-const API = environment.apiUrl.replace(/\/+$/, '');
-const API_ORIGIN = new URL(API + '/').origin;
+const hasWindow = typeof window !== 'undefined';
+const isHttpOrigin = hasWindow && /^https?:/i.test(window.location?.protocol ?? '');
+const useBrowserProxy = isHttpOrigin && !!environment.apiUrlBrowser;
+const rawApi = useBrowserProxy ? environment.apiUrlBrowser : environment.apiUrl;
+
+const API = (rawApi ?? '').replace(/\/+$/, '');
+const API_IS_ABSOLUTE = /^https?:\/\//i.test(API);
+const API_ABSOLUTE = (() => {
+  if (API_IS_ABSOLUTE) return API;
+  if (hasWindow && window.location) {
+    const prefix = API.startsWith('/') ? '' : '/';
+    return `${window.location.origin}${prefix}${API}`;
+  }
+  return API;
+})();
+const API_BASE = API_ABSOLUTE.replace(/\/+$/, '');
+
+const API_ORIGIN = (() => {
+  if (API_IS_ABSOLUTE) return new URL(`${API}/`).origin;
+  if (hasWindow && window.location) return window.location.origin;
+  try {
+    return new URL(`${API_ABSOLUTE}/`).origin;
+  } catch {
+    return '';
+  }
+})();
 
 const XSRF_PREF_KEY = 'XSRF';
 const XSRF_COOKIE_KEY = 'XSRF-TOKEN';
@@ -16,6 +39,7 @@ async function getXsrf(): Promise<string | null> {
 }
 
 async function syncXsrfFromCookies(): Promise<void> {
+  if (!API_ORIGIN) return;
   const res = await CapacitorCookies.getCookies({ url: API_ORIGIN });
   const cookiesMap = ((res as unknown as { cookies?: any }).cookies ??
     {}) as Record<string, string>;
@@ -48,7 +72,9 @@ export class ApiNative {
       delete headers['Content-Type'];
     }
 
-    const url = path.startsWith('http') ? path : `${API}${path}`;
+    const url = path.startsWith('http')
+      ? path
+      : `${API_BASE}${path.startsWith('/') ? '' : '/'}${path}`;
     // const resp = await CapacitorHttp.request({ method, url, data: body, headers });
     console.log('[API][REQ]', { method, url, headers, body });
 
@@ -148,8 +174,9 @@ export class ApiNative {
       'Content-Type': 'application/json',
       ...(xsrf ? { 'X-XSRF-TOKEN': xsrf } : {}),
     };
+    const refreshUrl = `${API_BASE}/Auth/refresh`;
     const resp = await CapacitorHttp.post({
-      url: `${API}Auth/refresh`,
+      url: refreshUrl,
       data: {},
       headers,
     });

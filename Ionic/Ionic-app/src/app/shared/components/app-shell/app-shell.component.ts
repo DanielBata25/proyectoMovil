@@ -34,7 +34,9 @@ export class AppShellComponent implements AfterViewInit {
   navBackTo: string | string[] = '/home/inicio';
 
   private readonly BACK_RULES: Array<{ pattern: RegExp; backTo: string | string[] }> = [
+    { pattern: /^\/home\/product\/.+/, backTo: '/home/product' },
     { pattern: /^\/products\/.+/, backTo: '/products' },
+    { pattern: /^\/home\/farm\/.+/, backTo: '/home/farm' },
     { pattern: /^\/farms\/.+/, backTo: '/farms' },
     { pattern: /^\/account\/info\/form-change-password/, backTo: '/account/info' },
     { pattern: /^\/account\/info\/update-person/, backTo: '/account/info' },
@@ -44,6 +46,7 @@ export class AppShellComponent implements AfterViewInit {
     { pattern: /^\/account\/producer\/farm\/create/, backTo: '/account/producer/farm' },
     { pattern: /^\/account\/producer\/farm\/update\/.+/, backTo: '/account/producer/farm' },
     { pattern: /^\/account\/producer\/farm(?:\/)?$/, backTo: '/account/info' },
+    
   ];
 
   @ViewChild('headerHost', { read: ElementRef })

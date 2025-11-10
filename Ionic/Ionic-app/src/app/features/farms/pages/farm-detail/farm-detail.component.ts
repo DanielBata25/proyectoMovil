@@ -48,7 +48,7 @@ export class FarmDetailComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private viewReady = false;
   private map?: L.Map;
-  private marker?: L.CircleMarker;
+  private marker?: L.Marker;
   private tileLayer?: L.TileLayer;
   mapReady = false;
   private readonly defaultCenter: L.LatLngExpression = [4.5709, -74.2973];
@@ -174,41 +174,8 @@ export class FarmDetailComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!coords) return;
     const { lat, lng } = coords;
 
-    if (!this.map) {
-      this.map = L.map(container, {
-        zoomControl: true,
-        attributionControl: false,
-        preferCanvas: false,
-      });
-
-      this.tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        minZoom: 3,
-        detectRetina: true,
-        crossOrigin: true,
-        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-      }).addTo(this.map);
-
-      this.tileLayer.once('load', () => setTimeout(() => this.map?.invalidateSize(), 80));
-    }
-
-    this.map.setView([lat, lng], 15);
-    this.tileLayer?.redraw();
-
-    if (this.marker) {
-      this.marker.setLatLng([lat, lng]);
-    } else {
-      this.marker = L.circleMarker([lat, lng], {
-        radius: 10,
-        color: '#2563eb',
-        weight: 3,
-        opacity: 0.9,
-        fillColor: '#3b82f6',
-        fillOpacity: 0.7,
-        interactive: false,
-      }).addTo(this.map);
-    }
-
+    this.ensureMap(container, [lat, lng]);
+    this.marker?.setLatLng([lat, lng]);
     this.mapReady = true;
     setTimeout(() => this.map?.invalidateSize(), 200);
   }
@@ -232,13 +199,24 @@ export class FarmDetailComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private loadLeafletAssets(): void {
     const id = 'leaflet-css';
-    if (document.getElementById(id)) return;
+    if (!document.getElementById(id)) {
+      const link = document.createElement('link');
+      link.id = id;
+      link.rel = 'stylesheet';
+      link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+      document.head.appendChild(link);
+    }
 
-    const link = document.createElement('link');
-    link.id = id;
-    link.rel = 'stylesheet';
-    link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
-    document.head.appendChild(link);
+    const iconBase = 'https://unpkg.com/leaflet@1.9.4/dist/images/';
+    const DefaultIcon = L.Icon.Default as any;
+    if (!DefaultIcon._agroIconPatched) {
+      DefaultIcon.mergeOptions({
+        iconRetinaUrl: `${iconBase}marker-icon-2x.png`,
+        iconUrl: `${iconBase}marker-icon.png`,
+        shadowUrl: `${iconBase}marker-shadow.png`,
+      });
+      DefaultIcon._agroIconPatched = true;
+    }
   }
 
   centerMapOnFarm(): void {
@@ -257,7 +235,40 @@ export class FarmDetailComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     const lat = this.clamp(rawLat, -90, 90);
     const lng = this.normalizeLongitude(rawLon);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
     return { lat, lng };
+  }
+
+  private ensureMap(container: HTMLElement, coords: L.LatLngExpression): void {
+    if (!this.map) {
+      this.map = L.map(container, {
+        zoomControl: true,
+        attributionControl: false,
+        preferCanvas: false,
+      });
+
+      this.tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        minZoom: 3,
+        detectRetina: true,
+        crossOrigin: true,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      }).addTo(this.map);
+
+      this.tileLayer.once('load', () => setTimeout(() => this.map?.invalidateSize(), 80));
+
+      this.marker = L.marker(coords, {
+        icon: L.icon({
+          iconUrl: 'assets/img/map-pin.svg',
+          iconSize: [30, 42],
+          iconAnchor: [15, 40],
+        }),
+        interactive: false,
+      }).addTo(this.map);
+    }
+
+    this.map.setView(coords, 15);
+    this.tileLayer?.redraw();
   }
 
   private clamp(value: number, min: number, max: number): number {
