@@ -1,5 +1,10 @@
 <!-- app-shell.component.html -->
-<app-navbar-bueno *ngIf="!hideBars" #headerHost></app-navbar-bueno>
+<app-navbar-bueno
+  *ngIf="!hideBars"
+  #headerHost
+  [showBack]="showBack"
+  [backTo]="navBackTo">
+</app-navbar-bueno>
 
 <div class="app-shell__content">
   <router-outlet></router-outlet>

@@ -1,9 +1,6 @@
 <ion-content [fullscreen]="true" class="page-bg" forceOverscroll="false">
   <div class="page-shell detail-shell">
     <div class="page-topbar">
-      <button type="button" class="back-btn" (click)="goBack()" aria-label="Volver">
-        <ion-icon name="arrow-back"></ion-icon>
-      </button>
       <h1 class="topbar-title">Detalle de la finca</h1>
     </div>
 
@@ -48,7 +45,7 @@
       </div>
 
       <ng-template #noImg>
-        <div class="no-img">Sin fotografÃ­as registradas</div>
+        <div class="no-img">Sin fotografias registradas</div>
       </ng-template>
 
       <div class="block">
@@ -65,7 +62,7 @@
           <div class="val">{{ farmDetail.producerName }}</div>
         </div>
         <div class="pair">
-          <div class="lbl">HectÃ¡reas</div>
+          <div class="lbl">Hectareas</div>
           <div class="val">{{ farmDetail.hectares | number:'1.0-2' }}</div>
         </div>
         <div class="pair">

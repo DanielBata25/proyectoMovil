@@ -1,10 +1,6 @@
 <ion-content [fullscreen]="true" class="page-bg">
   <div class="page-shell page-shell--center">
     <div class="page-topbar">
-      <button type="button" class="back-btn" (click)="goBack()" aria-label="Volver">
-        <ion-icon name="arrow-back"></ion-icon>
-      </button>
-      <h1 class="topbar-title">{{ title }}</h1>
     </div>
     <ion-card class="form-card">
       <ion-card-header>
@@ -41,7 +37,7 @@
         <!-- -->
         <ion-item>
           <ion-label position="floating">Telefono</ion-label>
-          <ion-input formControlName="phoneNumber" placeholder="Solo dÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­gitos" inputmode="numeric"></ion-input>
+          <ion-input formControlName="phoneNumber" placeholder="Solo digitos" inputmode="numeric"></ion-input>
         </ion-item>
         <div class="error" *ngIf="f.phoneNumber.hasError('required') && f.phoneNumber.touched">
           Este campo es obligatorio
@@ -80,7 +76,7 @@
         <!-- Direccion -->
         <ion-item>
           <ion-label position="floating">Direccion</ion-label>
-          <ion-input formControlName="address" placeholder="Ingresa tu direcciÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n"></ion-input>
+          <ion-input formControlName="address" placeholder="Ingresa tu direccion"></ion-input>
         </ion-item>
         <div class="error" *ngIf="f.address.hasError('required') && f.address.touched">
           Este campo es obligatorio

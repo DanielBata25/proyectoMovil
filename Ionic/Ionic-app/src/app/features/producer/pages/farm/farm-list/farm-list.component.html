@@ -1,10 +1,12 @@
 <ion-content [fullscreen]="true" class="page-bg product-content">
   <div class="page-shell product-shell">
     <div class="page-topbar">
-      <button type="button" class="back-btn" (click)="goBack()" aria-label="Volver">
-        <ion-icon name="arrow-back"></ion-icon>
-      </button>
-      <h1 class="topbar-title">Gestion de fincas</h1>
+      <div class="topbar-pill">
+        <button type="button" class="pill-back-btn" (click)="goBack()" aria-label="Volver">
+          <ion-icon name="arrow-back"></ion-icon>
+        </button>
+        <span class="brand-name">Portal-AgroComercial</span>
+      </div>
     </div>
 
     <section class="results-card">

@@ -1,17 +1,22 @@
 <ion-header class="nb-header" [translucent]="false">
   <ion-toolbar class="nb-onebar">
-    <div class="nb-row">
-      <!-- IZQUIERDA: logo + nombre -->
-      <div class="nb-left">
-        <img class="nb-logo" src="assets/logo/logo.png" alt="Logo" />
-        <span class="nb-title">Portal-AgroComercial</span>
+    <div class="nb-row" [class.nb-row--back]="showBack">
+      <div class="nb-left" [class.nb-left--back]="showBack">
+        <button
+          *ngIf="showBack"
+          type="button"
+          class="nb-back-btn"
+          (click)="goBack()"
+          aria-label="Volver">
+          <ion-icon name="arrow-back"></ion-icon>
+        </button>
+        <img *ngIf="!showBack" class="nb-logo" src="assets/logo/logo.png" alt="Logo" />
+        <span class="nb-title" [class.nb-title--center]="showBack">Portal-AgroComercial</span>
       </div>
 
-      <!-- ESPACIADOR CENTRAL -->
-      <div class="nb-center"></div>
+      <div class="nb-center" [class.nb-center--hidden]="showBack"></div>
 
-      <!-- DERECHA: notificaciones -->
-      <div class="nb-right">
+      <div class="nb-right" *ngIf="showNotifications">
         <ion-button fill="clear" routerLink="/notifications" aria-label="Notificaciones">
           <ion-icon name="notifications"></ion-icon>
         </ion-button>

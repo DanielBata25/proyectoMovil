@@ -31,18 +31,30 @@ $blanco: #ffffff;
   grid-template-columns: auto 1fr auto;
   align-items: center;
   min-height: 70px;
-  margin-top: 8px;     /* ya baja el contenido */
-  margin-bottom: -20px;  /*aire después de la barra */
+  margin-top: 8px;
+  margin-bottom: -20px;
   padding: 0 16px;
   box-sizing: border-box;
 }
+
+
+
+
 
 
 /* IZQUIERDA */
 .nb-left {
   display: flex;
   align-items: center;
-  gap: 10px; /* separación entre logo y título */
+  gap: 10px;
+}
+
+.nb-left.nb-left--back {
+  position: relative;
+  justify-content: center;
+  padding-left: 40px;
+  grid-column: 1 / span 2;
+  width: 100%;
 }
 
 .nb-logo {
@@ -58,12 +70,21 @@ $blanco: #ffffff;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 180px; /* evita que desborde en pantallas pequeñas */
+  max-width: 180px;
+}
+
+.nb-title.nb-title--center {
+  text-align: center;
+  max-width: 100%;
 }
 
 /* CENTRO */
 .nb-center {
   min-width: 0;
+}
+
+.nb-center.nb-center--hidden {
+  display: none;
 }
 
 /* DERECHA */
@@ -86,9 +107,30 @@ ion-icon {
   color: $blanco !important;
 }
 
+.nb-back-btn {
+  position: absolute;
+  left: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.15);
+  display: grid;
+  place-items: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.nb-back-btn ion-icon {
+  font-size: 20px;
+  color: #ffffff !important;
+}
+
 /* Compacto en pantallas angostas */
 @media (max-width: 360px) {
   .nb-logo { height: 22px; }
   .nb-title { font-size: 16px; max-width: 140px; }
   .nb-row { min-height: 56px; }
 }
+
+
+

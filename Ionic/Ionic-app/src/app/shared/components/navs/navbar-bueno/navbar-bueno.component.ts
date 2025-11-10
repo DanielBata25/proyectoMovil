@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-navbar-bueno',
@@ -13,10 +14,17 @@ import { Router } from '@angular/router';
 export class NavbarBuenoComponent {
   @Input() title = 'Cuenta';
   @Input() backTo: string | string[] = '/home/inicio';
+  @Input() showBack = false;
+  @Input() showNotifications = true;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private location: Location) {}
 
   goBack() {
+    if (this.backTo === 'history') {
+      this.location.back();
+      return;
+    }
+
     if (Array.isArray(this.backTo)) this.router.navigate(this.backTo);
     else this.router.navigate([this.backTo]);
   }

@@ -30,6 +30,21 @@ export class AppShellComponent implements AfterViewInit {
   private headerEl?: HTMLElement;
   private footerEl?: HTMLElement;
   private rafId?: number;
+  showBack = false;
+  navBackTo: string | string[] = '/home/inicio';
+
+  private readonly BACK_RULES: Array<{ pattern: RegExp; backTo: string | string[] }> = [
+    { pattern: /^\/products\/.+/, backTo: '/products' },
+    { pattern: /^\/farms\/.+/, backTo: '/farms' },
+    { pattern: /^\/account\/info\/form-change-password/, backTo: '/account/info' },
+    { pattern: /^\/account\/info\/update-person/, backTo: '/account/info' },
+    { pattern: /^\/account\/producer\/product\/create/, backTo: '/account/producer/product' },
+    { pattern: /^\/account\/producer\/product\/update\/.+/, backTo: '/account/producer/product' },
+    { pattern: /^\/account\/producer\/product(?:\/)?$/, backTo: '/account/info' },
+    { pattern: /^\/account\/producer\/farm\/create/, backTo: '/account/producer/farm' },
+    { pattern: /^\/account\/producer\/farm\/update\/.+/, backTo: '/account/producer/farm' },
+    { pattern: /^\/account\/producer\/farm(?:\/)?$/, backTo: '/account/info' },
+  ];
 
   @ViewChild('headerHost', { read: ElementRef })
   set headerHost(ref: ElementRef<HTMLElement> | undefined) {
@@ -55,6 +70,7 @@ export class AppShellComponent implements AfterViewInit {
         if (nextHideBars !== this.hideBars) {
           this.hideBars = nextHideBars;
         }
+        this.updateBackState(url);
         this.scheduleOffsetUpdate();
       });
 
@@ -101,5 +117,11 @@ export class AppShellComponent implements AfterViewInit {
 
     hostElement.style.setProperty('--app-shell-header-offset', `${headerHeight}px`);
     hostElement.style.setProperty('--app-shell-footer-offset', `${footerHeight}px`);
+  }
+
+  private updateBackState(url: string): void {
+    const match = this.BACK_RULES.find(rule => rule.pattern.test(url));
+    this.showBack = !!match;
+    this.navBackTo = match?.backTo ?? '/home/inicio';
   }
 }
