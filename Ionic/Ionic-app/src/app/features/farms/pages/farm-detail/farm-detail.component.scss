@@ -115,11 +115,15 @@
 }
 
 .block {
-  padding: 16px 0;
+  padding: 14px 0;
 }
 
 .block + .block {
   border-top: 1px solid #eef1f2;
+}
+
+.block-header {
+  padding-bottom: 8px;
 }
 
 .title {
@@ -134,33 +138,34 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: #2d6a4f;
-  font-weight: 600;
+  color: #6b7280;
+  font-weight: 500;
   font-size: 14px;
 }
 
 .facts {
   display: grid;
   gap: 12px;
+  padding-top: 6px;
 }
 
 .pair {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 }
 
 .lbl {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: #5b6d61;
+  color: #46525c;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 .val {
-  font-size: 16px;
-  color: #19281d;
+  font-size: 14px;
+  color: #111827;
   font-weight: 600;
 }
 

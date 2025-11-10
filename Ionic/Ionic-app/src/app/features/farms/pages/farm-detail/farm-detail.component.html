@@ -48,12 +48,14 @@
         <div class="no-img">Sin fotografias registradas</div>
       </ng-template>
 
-      <div class="block">
-        <h2 class="title">{{ farmDetail.name }}</h2>
-        <p class="location">
-          <ion-icon name="location-outline"></ion-icon>
-          {{ farmDetail.cityName }}, {{ farmDetail.departmentName }}
-        </p>
+      <div class="block block-header">
+        <div>
+          <h2 class="title">{{ farmDetail.name }}</h2>
+          <p class="location">
+            <ion-icon name="location-outline"></ion-icon>
+            {{ farmDetail.cityName }}, {{ farmDetail.departmentName }}
+          </p>
+        </div>
       </div>
 
       <div class="block facts">
@@ -78,18 +80,8 @@
         </div>
       </div>
 
-      <div class="block actions" *ngIf="googleMapsLink">
-        <app-button
-          color="primary"
-          icon="navigate-outline"
-          [text]="'Abrir en Maps'"
-          type="button"
-          (clicked)="openMaps()">
-        </app-button>
-      </div>
-
-      <div class="map-preview-card" *ngIf="hasValidCoordinates">
-        <div class="map-header">
+     <div class="map-preview-card" *ngIf="hasValidCoordinates">
+       <div class="map-header">
           <h3 class="section-subtitle">Vista previa en mapa</h3>
           <app-button
             class="btn-inline"
@@ -120,4 +112,3 @@
     </div>
   </ng-template>
 </ion-content>
-

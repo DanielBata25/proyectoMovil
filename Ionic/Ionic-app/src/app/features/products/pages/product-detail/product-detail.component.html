@@ -1,8 +1,5 @@
 <ion-content [fullscreen]="true" class="page-bg" forceOverscroll="false">
   <div class="page-shell detail-shell">
-    <div class="page-topbar">
-      <h1 class="topbar-title">Detalle del producto</h1>
-    </div>
 
     <div class="center" *ngIf="loadingProduct">
       <ion-spinner name="crescent"></ion-spinner>
@@ -17,10 +14,10 @@
           class="fav-floating"
           *ngIf="me$ | async"
           [disabled]="favoriteLoading"
-          [class.fav-floating--active]="product?.isFavorite"
+          [class.fav-floating--active]="product.isFavorite"
           (click)="toggleFavorite($event)"
           aria-label="Agregar a favoritos">
-          <ion-icon [name]="product?.isFavorite ? 'heart' : 'heart-outline'"></ion-icon>
+          <ion-icon [name]="product.isFavorite ? 'heart' : 'heart-outline'"></ion-icon>
         </button>
 
         <ng-container *ngIf="galleryImages.length; else noImg">
@@ -92,7 +89,7 @@
           icon="cart"
           color="primary"
           type="button"
-          [disabled]="loadingProduct || (product.stock ?? 0) <= 0"
+          [disabled]="loadingProduct || product.stock <= 0"
           (clicked)="openCreateOrder()">
         </app-button>
       </div>
@@ -178,7 +175,7 @@
             <div class="r-item" *ngFor="let r of reviews; trackBy: trackByReview">
               <div class="r-head">
                 <div class="who">
-                  <div class="avatar">{{ r.userName?.[0] || 'U' }}</div>
+                  <div class="avatar">{{ r.userName?.[0] ?? 'U' }}</div>
                   <div>
                     <div class="name">{{ r.userName }}</div>
                     <div class="date muted small">{{ r.createAt | date:'mediumDate':'':'es-CO' }}</div>
@@ -213,3 +210,6 @@
     </section>
   </div>
 </ion-content>
+
+
+
