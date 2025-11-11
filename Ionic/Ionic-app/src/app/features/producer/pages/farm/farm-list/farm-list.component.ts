@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule, AlertController } from '@ionic/angular';
+import { IonicModule, AlertController, ToastController } from '@ionic/angular';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 
@@ -21,6 +21,7 @@ export class FarmListComponent implements OnInit {
   private readonly alertCtrl = inject(AlertController);
   private readonly router = inject(Router);
   private readonly location = inject(Location);
+  private readonly toastCtrl = inject(ToastController);
 
   farms: FarmSelectModel[] = [];
   loadingFarms = true;
@@ -97,8 +98,12 @@ export class FarmListComponent implements OnInit {
       next: () => {
         this.farms = this.farms.filter(f => f.id !== id);
         this.pageIndex = 0;
+        this.presentToast('Finca eliminada', 'success');
       },
-      error: err => console.error('[Farm][delete]', err),
+      error: err => {
+        console.error('[Farm][delete]', err);
+        this.presentToast('No se pudo eliminar la finca', 'danger');
+      },
     });
   }
 
@@ -109,12 +114,26 @@ export class FarmListComponent implements OnInit {
         this.farms = farms ?? [];
         this.pageIndex = 0;
         this.loadingFarms = false;
+        if (this.farms.length === 0) {
+          this.presentToast('Aún no tienes fincas registradas', 'medium');
+        }
       },
       error: err => {
         console.error('[Farm][getByProducer]', err);
         this.farms = [];
         this.loadingFarms = false;
+        this.presentToast('No se pudieron cargar las fincas', 'danger');
       },
     });
+  }
+
+  private async presentToast(message: string, color: 'success' | 'danger' | 'medium' = 'success') {
+    const toast = await this.toastCtrl.create({
+      message,
+      duration: 1800,
+      position: 'bottom',
+      color,
+    });
+    await toast.present();
   }
 }

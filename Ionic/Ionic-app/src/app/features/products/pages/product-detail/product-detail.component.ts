@@ -264,7 +264,7 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
     if (this.selectedRating < 1 || this.selectedRating > 5) return;
     const comment = this.newReview.trim();
     if (comment.length < 4) {
-      void this.showToast('La reseña debe tener al menos 4 caracteres.', 'warning', 'top');
+      void this.showToast('La reseña debe tener al menos 4 caracteres.', 'warning', 'bottom');
       return;
     }
 
@@ -301,7 +301,7 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
           (err as any)?.error?.message ||
           err?.message ||
           'No se pudo publicar la reseña';
-        this.showToast(message, 'danger', 'top');
+        this.showToast(message, 'danger', 'bottom');
       },
     });
   }
@@ -362,7 +362,7 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
   private async showToast(
     message: string,
     color: 'success' | 'warning' | 'danger' | 'medium' = 'medium',
-    position: 'top' | 'bottom' | 'middle' = 'top'
+    position: 'top' | 'bottom' | 'middle' = 'bottom'
   ) {
     const t = await this.toastCtrl.create({ message, duration: 1600, position, color });
     await t.present();
@@ -379,10 +379,10 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
     this.favoriteFacade.toggle(this.product).subscribe({
       next: (isFav) => {
         this.product.isFavorite = isFav;
-        this.showToast(isFav ? 'Añadido a favoritos' : 'Quitado de favoritos', 'success', 'top');
+        this.showToast(isFav ? 'Añadido a favoritos' : 'Quitado de favoritos', 'success', 'bottom');
       },
       error: () => {
-        this.showToast('No se pudo actualizar el favorito', 'danger', 'top');
+        this.showToast('No se pudo actualizar el favorito', 'danger', 'bottom');
       },
     });
   }

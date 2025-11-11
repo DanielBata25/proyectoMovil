@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { IonicModule, AlertController } from '@ionic/angular';
+import { IonicModule, AlertController, ToastController } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -26,6 +26,7 @@ export class ProductListComponent implements OnInit {
   private router = inject(Router);
   private alertCtrl = inject(AlertController);
   private location = inject(Location);
+  private toastCtrl = inject(ToastController);
 
   // 🔹 Variables de datos
   products: ProductSelectModel[] = [];
@@ -214,6 +215,9 @@ trackByBreadcrumb = (_: number, b: { id: number; name: string }) => b.id;
             this.productService.delete(p.id).subscribe(() => {
               this.products = this.products.filter(x => x.id !== p.id);
               this.applyFilters();
+              this.showToast('Producto eliminado', 'success');
+            }, () => {
+              this.showToast('No se pudo eliminar el producto', 'danger');
             });
           }
         }
@@ -260,5 +264,15 @@ trackByBreadcrumb = (_: number, b: { id: number; name: string }) => b.id;
     } else {
       this.categoryCtrl.enable({ emitEvent: false });
     }
+  }
+
+  private async showToast(message: string, color: 'success' | 'danger' = 'success') {
+    const toast = await this.toastCtrl.create({
+      message,
+      duration: 1800,
+      position: 'bottom',
+      color
+    });
+    await toast.present();
   }
 }

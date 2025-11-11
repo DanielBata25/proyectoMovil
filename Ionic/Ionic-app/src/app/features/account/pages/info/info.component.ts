@@ -118,7 +118,8 @@ export class InfoComponent implements OnInit {
         const toast = await this.toastCtrl.create({
           message: 'Sesión cerrada correctamente ✅',
           duration: 2000,
-          color: 'success'
+          color: 'success',
+          position: 'bottom'
         });
         await toast.present();
         this.router.navigateByUrl('/auth/login');
@@ -127,7 +128,8 @@ export class InfoComponent implements OnInit {
         const toast = await this.toastCtrl.create({
           message: err?.error?.message ?? 'No se pudo cerrar sesión.',
           duration: 2500,
-          color: 'danger'
+          color: 'danger',
+          position: 'bottom'
         });
         await toast.present();
         this.loggingOut = false;

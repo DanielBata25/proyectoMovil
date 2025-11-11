@@ -85,7 +85,7 @@ export class LoginComponent {
   }
 
   private async toast(message: string, color: 'success' | 'danger' | 'medium' = 'medium') {
-    const t = await this.toastCtrl.create({ message, duration: 1800, color, position: 'top' });
+    const t = await this.toastCtrl.create({ message, duration: 1800, color, position: 'bottom' });
     await t.present();
   }
 

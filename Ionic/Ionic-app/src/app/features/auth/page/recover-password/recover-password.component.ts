@@ -82,7 +82,7 @@ export class RecoverPasswordComponent implements OnInit {
     return loading;
   }
   private async toast(message: string, color: 'success' | 'danger' | 'medium' = 'success') {
-    const t = await this.toastCtrl.create({ message, duration: 1800, position: 'top', color });
+    const t = await this.toastCtrl.create({ message, duration: 1800, position: 'bottom', color });
     await t.present();
   }
   private async alert(header: string, message: string) {

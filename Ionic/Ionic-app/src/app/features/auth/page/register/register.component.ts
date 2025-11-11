@@ -236,7 +236,7 @@ export class RegisterComponent implements OnInit {
   }
 
   private async toast(message: string, color: 'success' | 'danger' | 'medium' = 'medium') {
-    const t = await this.toastCtrl.create({ message, duration: 2000, color, position: 'top' });
+    const t = await this.toastCtrl.create({ message, duration: 2000, color, position: 'bottom' });
     await t.present();
   }
 

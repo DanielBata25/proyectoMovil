@@ -288,7 +288,7 @@ goTo(step: number, bypassValidation = false): void {
 
   // ====== UI helpers ======
   private async toast(message: string, color: 'success'|'warning'|'danger'|'medium' = 'medium') {
-    const t = await this.toastCtrl.create({ message, duration: 1700, position: 'top', color });
+    const t = await this.toastCtrl.create({ message, duration: 1700, position: 'bottom', color });
     await t.present();
   }
 }

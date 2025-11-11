@@ -71,7 +71,7 @@ export class CardComponent {
         const t = await this.toastCtrl.create({
           message: isFav ? 'Añadido a favoritos' : 'Quitado de favoritos',
           duration: 1400,
-          position: 'top',
+          position: 'bottom',
           color: 'success',
         });
         await t.present();
@@ -80,7 +80,7 @@ export class CardComponent {
         const t = await this.toastCtrl.create({
           message: 'No se pudo actualizar el favorito',
           duration: 1800,
-          position: 'top',
+          position: 'bottom',
           color: 'danger',
         });
         await t.present();

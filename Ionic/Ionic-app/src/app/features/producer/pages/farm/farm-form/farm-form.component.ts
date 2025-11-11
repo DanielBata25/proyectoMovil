@@ -548,7 +548,7 @@ export class FarmFormComponent implements OnInit, AfterViewInit, OnDestroy, View
       message,
       duration: 2000,
       color,
-      position: 'top',
+      position: 'bottom',
     });
     await toast.present();
   }
