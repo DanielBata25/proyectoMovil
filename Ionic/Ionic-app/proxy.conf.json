@@ -1,7 +1,7 @@
 [
   {
     "context": ["/api"],
-    "target": "http://172.30.6.184:5253",
+    "target": "http://192.168.20.28:5253",
     "secure": false,
     "changeOrigin": false,
     "logLevel": "info"

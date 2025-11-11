@@ -3,14 +3,14 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    width: 11.5rem;
-    min-height: 17rem;
-    padding: 12px 12px 14px;
-    border: 1px solid #e5e7eb;
-    border-radius: 18px;
-    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.12);
+    width: 9rem;
+    min-height: 14rem;
+    padding: 8px 8px 10px;
+    border: 1px solid #e5e5e5;
+    border-radius: 14px;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
     background: #fff;
-    gap: 12px;
+    gap: 8px;
     overflow: hidden;
     transition: transform 0.25s ease, box-shadow 0.25s ease;
   }
@@ -48,10 +48,10 @@
 
   .image-wrap {
     width: 100%;
-    aspect-ratio: 1 / 1;
-    padding: 8px;
-    border-radius: 14px;
-    background: linear-gradient(140deg, #f8fafc, #eef2ff);
+    aspect-ratio: 0.9 / 1;
+    padding: 4px;
+    border-radius: 10px;
+    background: linear-gradient(140deg, #fdfdfd, #f4f6fb);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -75,7 +75,7 @@
   ion-card-content.content {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 3px;
     padding: 0;
   }
   .title {
@@ -86,13 +86,12 @@
     color: #4b5563;
     letter-spacing: -0.15px;
     text-transform: capitalize;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .line-2 {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    min-height: calc(1.25em * 2);
+    display: block;
   }
   .info-row,
   .row {
@@ -100,18 +99,18 @@
     align-items: center;
     gap: 4px;
     margin: 0;
-    font-size: 12px;
+    font-size: 11px;
     color: #9ca3af;
 
     ion-icon {
-      font-size: 14px;
+      font-size: 11px;
       color: inherit;
     }
   }
   .price {
-    margin-top: 6px;
+    margin-top: 4px;
     font-weight: 700;
-    font-size: 18px;
+    font-size: 14px;
     color: #111827;
     letter-spacing: -0.35px;
   }
@@ -163,17 +162,22 @@
 
   @media (max-width: 480px) {
     .product-card {
-      width: 9.6rem;
-      padding: 10px;
-      gap: 10px;
+      width: 8.2rem;
+      padding: 8px;
+      gap: 6px;
     }
     .price {
-      font-size: 16px;
+      font-size: 14px;
     }
   }
   @media (min-width: 768px) {
     .product-card {
-      width: 12rem;
+      width: 9.6rem;
+    }
+  }
+  @media (min-width: 1024px) {
+    .product-card {
+      width: 10rem;
     }
   }
 }

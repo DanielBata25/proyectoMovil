@@ -25,8 +25,8 @@
   display: flex;
   flex-wrap: nowrap;
   overflow-x: auto;
-  gap: 16px;
-  padding: 8px 0;
+  gap: 10px;
+  padding: 6px 0;
   scroll-behavior: smooth;
 }
 
@@ -40,5 +40,8 @@
 /* Opcional: en pantallas chicas, reduce margen/padding para que quepan más cartas */
 @media (max-width: 480px) {
   .product-section { padding: 12px; }
-  .product-container { gap: 12px; }
+  .product-container {
+    gap: 6px;
+    padding: 4px 0;
+  }
 }
