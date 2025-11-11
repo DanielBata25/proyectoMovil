@@ -199,7 +199,9 @@ trackByBreadcrumb = (_: number, b: { id: number; name: string }) => b.id;
   }
 
   viewProduct(p: ProductSelectModel): void {
-    this.router.navigate(['/products', p.id]);
+    this.router.navigate(['/products', p.id], {
+      queryParams: { back: '/account/producer/product' },
+    });
   }
 
   async onDelete(p: ProductSelectModel): Promise<void> {

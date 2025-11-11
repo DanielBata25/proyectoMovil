@@ -32,6 +32,8 @@ export class AppShellComponent implements AfterViewInit {
   private rafId?: number;
   showBack = false;
   navBackTo: string | string[] = '/home/inicio';
+  private lastProducerFarmRoute: string | null = null;
+  private lastProducerProductRoute: string | null = null;
 
   private readonly BACK_RULES: Array<{ pattern: RegExp; backTo: string | string[] }> = [
     { pattern: /^\/home\/product\/.+/, backTo: '/home/product' },
@@ -123,7 +125,29 @@ export class AppShellComponent implements AfterViewInit {
   }
 
   private updateBackState(url: string): void {
-    const match = this.BACK_RULES.find(rule => rule.pattern.test(url));
+    const path = url.split('?')[0];
+
+    if (/^\/account\/producer\/farm/.test(path)) {
+      this.lastProducerFarmRoute = '/account/producer/farm';
+    }
+
+    if (/^\/home\/farm\/.+/.test(path) && this.lastProducerFarmRoute) {
+      this.showBack = true;
+      this.navBackTo = this.lastProducerFarmRoute;
+      return;
+    }
+
+    if (/^\/account\/producer\/product/.test(path)) {
+      this.lastProducerProductRoute = '/account/producer/product';
+    }
+
+    if (/^\/products\/.+/.test(path) && this.lastProducerProductRoute) {
+      this.showBack = true;
+      this.navBackTo = this.lastProducerProductRoute;
+      return;
+    }
+
+    const match = this.BACK_RULES.find(rule => rule.pattern.test(path));
     this.showBack = !!match;
     this.navBackTo = match?.backTo ?? '/home/inicio';
   }
