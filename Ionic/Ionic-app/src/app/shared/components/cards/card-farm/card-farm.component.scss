@@ -2,10 +2,6 @@
 
 @include card.product-card-shell();
 
-.image-wrap {
-  aspect-ratio: 4 / 3;
-}
-
 .card-image {
   object-fit: cover;
 }

@@ -1,77 +1,72 @@
-<ion-header>
+<ion-header translucent="true">
   <ion-toolbar>
-    <ion-title>
-      <ion-icon name="person-circle-outline" slot="start"></ion-icon>
-      Actualizar perfil
-    </ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="close()">Cancelar</ion-button>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home/inicio"></ion-back-button>
     </ion-buttons>
+    <ion-title>Perfil del productor</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <form [formGroup]="form" (ngSubmit)="submit()" class="ion-padding">
-
-    <!-- Descripción -->
-    <ion-item>
-      <ion-label position="stacked">Descripción</ion-label>
-      <ion-textarea
-        formControlName="description"
-        maxlength="500"
-        autoGrow="true">
-      </ion-textarea>
-    </ion-item>
-    <ion-note slot="end">
-      {{ form.get('description')?.value?.length || 0 }}/500
-    </ion-note>
-
-    <ion-item-divider>
-      <ion-label>Redes sociales (opcional)</ion-label>
-      <ion-button slot="end" fill="outline" size="small" (click)="addSocialLink()">
-        <ion-icon slot="start" name="add-outline"></ion-icon>
-        Añadir red
-      </ion-button>
-    </ion-item-divider>
-
-    <!-- Lista de redes -->
-    <div class="social-list">
-      <div *ngFor="let sl of socialLinksControls; let i = index" [formGroup]="sl" class="social-item">
-
-        <ion-item>
-          <ion-label position="stacked">Red</ion-label>
-          <ion-select formControlName="network">
-            <ion-select-option [value]="SocialNetwork.Website">🌐 Sitio web</ion-select-option>
-            <ion-select-option [value]="SocialNetwork.Facebook">📘 Facebook</ion-select-option>
-            <ion-select-option [value]="SocialNetwork.Instagram">📸 Instagram</ion-select-option>
-            <ion-select-option [value]="SocialNetwork.Whatsapp">💬 WhatsApp</ion-select-option>
-            <ion-select-option [value]="SocialNetwork.X">@ X</ion-select-option>
-          </ion-select>
-        </ion-item>
-
-        <ion-item>
-          <ion-label position="stacked">URL o usuario</ion-label>
-          <ion-input formControlName="url" maxlength="512" placeholder="https://"></ion-input>
-        </ion-item>
-
-        <ion-button color="danger" fill="clear" (click)="removeSocialLink(i)">
-          <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
-        </ion-button>
-      </div>
+<ion-content [fullscreen]="true" class="profile-content">
+  <div class="page-shell">
+    <div class="center" *ngIf="loading">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p class="muted">Cargando información...</p>
     </div>
 
-    <ion-note color="danger" *ngIf="socialLinksFA.hasError('duplicateNetwork')">
-      No puedes repetir el mismo tipo de red social.
-    </ion-note>
+    <ng-container *ngIf="!loading && producer; else emptyState">
+      <section class="profile-card">
+        <ion-icon class="avatar" name="person-circle-outline"></ion-icon>
+        <h2>{{ producer.fullName }}</h2>
+        <div class="rating" *ngIf="producer.averageRating !== null && producer.averageRating !== undefined">
+          <ion-icon name="star"></ion-icon>
+          <span>{{ producer.averageRating | number: '1.1-1' }}</span>
+          <span class="rating-label">/ 5</span>
+        </div>
+        <p class="description">
+          {{ producer.description || 'Este productor aún no ha actualizado su descripción.' }}
+        </p>
+      </section>
 
-    <!-- Botones -->
-    <ion-footer>
-      <ion-toolbar>
-        <ion-buttons slot="end">
-          <ion-button type="button" (click)="close()">Cancelar</ion-button>
-          <ion-button type="submit" color="primary" [disabled]="form.invalid">Guardar</ion-button>
-        </ion-buttons>
-      </ion-toolbar>
-    </ion-footer>
-  </form>
+      <section class="info-card">
+        <div class="pair">
+          <div class="lbl">Código</div>
+          <div class="val code">{{ producer.code }}</div>
+        </div>
+        <div class="pair">
+          <div class="lbl">Correo</div>
+          <div class="val">{{ producer.email || 'No registrado' }}</div>
+        </div>
+        <div class="pair">
+          <div class="lbl">Teléfono</div>
+          <div class="val">{{ producer.phoneNumber || 'No registrado' }}</div>
+        </div>
+      </section>
+
+      <section class="info-card">
+        <h3>Redes sociales</h3>
+        <div class="networks" *ngIf="producer.networks?.length; else noNetworks">
+          <a
+            class="network-chip"
+            *ngFor="let network of producer.networks"
+            [href]="normalizeUrl(network.url)"
+            target="_blank"
+            rel="noopener noreferrer">
+            <ion-icon [name]="networkIcon(network.network)"></ion-icon>
+            <span>{{ networkLabel(network.network) }}</span>
+          </a>
+        </div>
+        <ng-template #noNetworks>
+          <p class="muted small">El productor aún no registra redes sociales.</p>
+        </ng-template>
+      </section>
+    </ng-container>
+
+    <ng-template #emptyState>
+      <div class="center" *ngIf="errorMessage">
+        <p class="error">{{ errorMessage }}</p>
+        <ion-button fill="clear" (click)="retry()">Reintentar</ion-button>
+      </div>
+    </ng-template>
+  </div>
 </ion-content>

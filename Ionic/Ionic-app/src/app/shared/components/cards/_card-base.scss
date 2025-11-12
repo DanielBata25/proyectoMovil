@@ -3,22 +3,22 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    width: 9rem;
-    min-height: 14rem;
-    padding: 8px 8px 10px;
-    border: 1px solid #e5e5e5;
-    border-radius: 14px;
-    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+    width: 11.25rem;
+    min-height: 12.5rem;
+    padding: 12px;
+    border: 1px solid #e4e4e7;
+    border-radius: 18px;
+    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
     background: #fff;
-    gap: 8px;
+    gap: 12px;
     overflow: hidden;
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
 
   @media (hover: hover) {
     .product-card:hover {
       transform: translateY(-2px);
-      box-shadow: 0 16px 30px rgba(15, 23, 42, 0.18);
+      box-shadow: 0 18px 34px rgba(15, 23, 42, 0.18);
     }
   }
 
@@ -48,10 +48,10 @@
 
   .image-wrap {
     width: 100%;
-    aspect-ratio: 0.9 / 1;
-    padding: 4px;
-    border-radius: 10px;
-    background: linear-gradient(140deg, #fdfdfd, #f4f6fb);
+    aspect-ratio: 1 / 1;
+    padding: 8px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #fdfdfd, #f2f4fb);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -75,12 +75,12 @@
   ion-card-content.content {
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: 4px;
     padding: 0;
   }
   .title {
     margin: 0;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 600;
     line-height: 1.25;
     color: #4b5563;
@@ -99,7 +99,7 @@
     align-items: center;
     gap: 4px;
     margin: 0;
-    font-size: 11px;
+    font-size: 12px;
     color: #9ca3af;
 
     ion-icon {
@@ -108,9 +108,9 @@
     }
   }
   .price {
-    margin-top: 4px;
+    margin-top: 6px;
     font-weight: 700;
-    font-size: 14px;
+    font-size: 16px;
     color: #111827;
     letter-spacing: -0.35px;
   }
@@ -158,22 +158,22 @@
 
   @media (max-width: 480px) {
     .product-card {
-      width: 8.2rem;
-      padding: 8px;
-      gap: 6px;
+      width: 9.2rem;
+      padding: 10px;
+      gap: 8px;
     }
     .price {
-      font-size: 14px;
+      font-size: 15px;
     }
   }
   @media (min-width: 768px) {
     .product-card {
-      width: 9.6rem;
+      width: 11.5rem;
     }
   }
   @media (min-width: 1024px) {
     .product-card {
-      width: 10rem;
+      width: 12rem;
     }
   }
 }

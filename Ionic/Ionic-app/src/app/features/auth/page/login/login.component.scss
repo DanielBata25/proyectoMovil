@@ -77,6 +77,32 @@
   box-shadow: none;
 }
 
+.inline-login-btn {
+  width: 100%;
+  height: 3.4rem;
+  border-radius: 14px;
+  font-weight: 700;
+  letter-spacing: .25px;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: #fff;
+  background: linear-gradient(180deg, #32c350 0%, #1b7a34 100%);
+  box-shadow: 0 14px 28px rgba(27, 122, 52, 0.28);
+}
+
+.inline-login-btn:disabled {
+  opacity: 0.6;
+  box-shadow: none;
+}
+
+.inline-spinner {
+  width: 22px;
+  height: 22px;
+}
+
 /* Inputs con fondo */
 .input-custom {
   --background: #f2f5f2;

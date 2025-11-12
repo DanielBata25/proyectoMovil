@@ -1,9 +1,9 @@
 [
   {
     "context": ["/api"],
-    "target": "http://192.168.20.28:5253",
-    "secure": false,
-    "changeOrigin": false,
+    "target": "https://pottiest-administrative-madaline.ngrok-free.dev",
+    "secure": true,
+    "changeOrigin": true,
     "logLevel": "info"
   }
 ]

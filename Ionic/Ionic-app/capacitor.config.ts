@@ -2,13 +2,15 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'io.ionic.starter',
-  appName: 'Ionic-app',
+  appName: 'portal-agro',
   webDir: 'www',
+  plugins: {
+    CapacitorHttp: { enabled: true },
+    CapacitorCookies: { enabled: true },
+  },
   server: {
-    cleartext: true, // permite http://
-    androidScheme: 'http',
-    hostname: '192.168.20.28',
+    cleartext: true
   }
 };
 
-export default config;
+export default config;

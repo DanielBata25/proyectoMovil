@@ -10,7 +10,7 @@ import {
   IonItem, IonLabel, IonInput, IonNote,
   IonButton, IonIcon
 } from '@ionic/angular/standalone';
-import { LoadingController, ToastController, NavController } from '@ionic/angular';
+import { LoadingController, ToastController, NavController, IonicModule } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { eye, eyeOff } from 'ionicons/icons';
 
@@ -19,6 +19,7 @@ import { AuthService } from 'src/app/core/services/auth/auth.service';
 import { AuthState } from 'src/app/core/services/auth/auth.state';
 import { RouterLink } from '@angular/router';
 import { ButtonComponent } from 'src/app/shared/components/button/button.component';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   standalone: true,
@@ -29,7 +30,8 @@ import { ButtonComponent } from 'src/app/shared/components/button/button.compone
     IonCard, IonCardContent,
     IonItem, IonInput, IonNote,
     IonButton, IonIcon,
-    ButtonComponent
+    ButtonComponent,
+    IonicModule
 ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
@@ -41,10 +43,9 @@ export class LoginComponent {
   private navCtrl = inject(NavController);
   private loadingCtrl = inject(LoadingController);
   private toastCtrl = inject(ToastController);
-
   loading = false;
   showPassword = false;
-
+  showInlineSpinner = false;
   constructor() {
     // registra iconos usados (evita warnings en algunos entornos)
     addIcons({ eye, eyeOff });
@@ -89,46 +90,53 @@ export class LoginComponent {
     await t.present();
   }
 
-  async login() {
-    if (this.loading) return;
+async login() {
+    if (this.loading) {
+      console.warn('[LoginComponent] login ignored because loading is true');
+      return;
+    }
+
     if (this.formLogin.invalid) {
       this.formLogin.markAllAsTouched();
       const err = this.getFirstLoginError();
-      if (err) await this.toast(err, 'danger');
+      if (err) {
+        console.warn('[LoginComponent] validation error', err);
+        await this.toast(err, 'danger');
+      }
       return;
     }
 
     const payload = this.formLogin.value as { email: string; password: string };
-    console.log(payload);
-    
+    console.log('[LoginComponent] submit', payload);
 
     this.loading = true;
-    const loading = await this.loadingCtrl.create({ message: 'Iniciando sesión...', spinner: 'circles' });
-    await loading.present();
+    this.showInlineSpinner = true;
+    console.log('[LoginComponent] inline spinner ON');
 
-    this.auth.Login(payload).pipe(
-      take(1),
-      switchMap(() => this.authState.loadMe()),
-      finalize(async () => {
-        this.loading = false;
-        await loading.dismiss();
-      })
-    ).subscribe({
-      next: async (me) => {
-        if (!me) {
-          await this.toast('No se pudo cargar tu sesión. Intenta nuevamente.', 'danger');
-          return;
-        }
-        await this.toast('Inicio de sesion exitoso.', 'success');
-        await this.navCtrl.navigateRoot('/home/inicio');
-      },
-      error: async (err) => {
-        const msg = err?.status === 401
+    try {
+      const user = await firstValueFrom(this.auth.Login(payload));
+      console.log('[LoginComponent] login success', user);
+
+      const me = await firstValueFrom(this.authState.loadMe());
+      console.log('[LoginComponent] loadMe success', me);
+
+      this.showInlineSpinner = false;
+      console.log('[LoginComponent] inline spinner OFF (success)');
+
+      await this.navCtrl.navigateRoot('/home/inicio');
+      await this.toast('Inicio de sesión exitoso.', 'success');
+    } catch (err: any) {
+      console.error('[LoginComponent] login error', err);
+      const msg =
+        err?.status === 401
           ? 'Credenciales inválidas.'
           : err?.error?.message || 'No se pudo iniciar sesión.';
-        await this.toast(msg, 'danger');
-      }
-    });
+      await this.toast(msg, 'danger');
+    } finally {
+      this.loading = false;
+      this.showInlineSpinner = false;
+      console.log('[LoginComponent] inline spinner OFF (finally)');
+    }
   }
 
   private getFirstLoginError(): string | null {
