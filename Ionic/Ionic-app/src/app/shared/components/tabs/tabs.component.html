@@ -1,22 +1,22 @@
 <!-- tabs.component.html -->
-<ion-tab-bar>
-  <ion-tab-button [routerLink]="['/home/inicio']" routerDirection="root">
-    <ion-icon name="home-outline"></ion-icon>
-    <ion-label>Inicio</ion-label>
+<ion-tab-bar class="app-tab-bar" slot="bottom">
+  <ion-tab-button class="app-tab-button" [routerLink]="['/home/inicio']" routerDirection="root">
+    <ion-icon class="app-tab-button__icon" name="home-outline"></ion-icon>
+    <ion-label class="app-tab-button__label">Inicio</ion-label>
   </ion-tab-button>
 
-  <ion-tab-button [routerLink]="['/account/favorite']" routerDirection="root">
-    <ion-icon name="heart-outline"></ion-icon>
-    <ion-label>Favoritos</ion-label>
+  <ion-tab-button class="app-tab-button" [routerLink]="['/account/favorite']" routerDirection="root">
+    <ion-icon class="app-tab-button__icon" name="heart-outline"></ion-icon>
+    <ion-label class="app-tab-button__label">Favoritos</ion-label>
   </ion-tab-button>
 
-  <ion-tab-button [routerLink]="['/home/pedidos']" routerDirection="root">
-    <ion-icon name="bag-handle-outline"></ion-icon>
-    <ion-label>Pedidos</ion-label>
+  <ion-tab-button class="app-tab-button" [routerLink]="['/home/pedidos']" routerDirection="root">
+    <ion-icon class="app-tab-button__icon" name="bag-handle-outline"></ion-icon>
+    <ion-label class="app-tab-button__label">Pedidos</ion-label>
   </ion-tab-button>
 
-  <ion-tab-button [routerLink]="['/account/info']" routerDirection="root">
-    <ion-icon name="person-outline"></ion-icon>
-    <ion-label>Mi Cuenta</ion-label>
+  <ion-tab-button class="app-tab-button" [routerLink]="['/account/info']" routerDirection="root">
+    <ion-icon class="app-tab-button__icon" name="person-outline"></ion-icon>
+    <ion-label class="app-tab-button__label">Mi Cuenta</ion-label>
   </ion-tab-button>
 </ion-tab-bar>

@@ -1,13 +1,106 @@
 :host {
   display: block;
   width: 100%;
+  position: relative;
+  z-index: 1000 !important;
+  background: transparent;
 }
 
-ion-tab-bar {
-  --background: #2e7d32;
-  --color: #ffffff;
-  --color-selected: #ffffff;
-}
-ion-tab-button {
-  --ripple-color: rgba(255,255,255,.2);
+// Estilos optimizados para mejor visibilidad
+:host ::ng-deep {
+  
+  // Contenedor principal más compacto
+  .app-tab-bar {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 1000 !important;
+    width: 100% !important;
+    background: #2e7d32 !important;
+    --background: #2e7d32 !important;
+    background-color: #2e7d32 !important;
+    margin: 0 !important;
+    padding: 0.4rem 1rem 0.6rem !important;
+    height: 3.5rem !important; // Altura reducida para mejor visibilidad
+    display: flex !important;
+    justify-content: space-between !important;
+    border-radius: 1rem 1rem 0 0 !important; // Radio más sutil
+    border: 1px solid rgba(0, 0, 0, 0.06) !important;
+    box-shadow: 0 -0.2rem 1rem rgba(0, 0, 0, 0.15) !important;
+  }
+
+  // Tab buttons más compactos
+  .app-tab-button {
+    --ripple-color: rgba(255, 255, 255, 0.2) !important;
+    --background: transparent !important;
+    --background-focused: transparent !important;
+    --background-hover: rgba(255, 255, 255, 0.1) !important;
+    border-radius: 0.8rem !important;
+    flex: 1 !important;
+    max-width: 4.5rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 0.1rem !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+    background: transparent !important;
+    position: relative !important;
+    transition: all 0.2s ease !important;
+  }
+
+  // Indicador visual cuando está seleccionado
+  .app-tab-button.tab-selected,
+  .app-tab-button.ion-tab-selected,
+  .app-tab-button[aria-selected="true"] {
+    background: rgba(255, 255, 255, 0.15) !important;
+  }
+
+  // Línea inferior como indicador de selección
+  .app-tab-button.tab-selected::after,
+  .app-tab-button.ion-tab-selected::after,
+  .app-tab-button[aria-selected="true"]::after {
+    content: '' !important;
+    position: absolute !important;
+    bottom: -1px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 60% !important;
+    height: 3px !important;
+    background: #ffffff !important;
+    border-radius: 2px !important;
+  }
+
+  .app-tab-button.ion-activated {
+    background: rgba(255, 255, 255, 0.2) !important;
+  }
+
+  .app-tab-button__icon {
+    font-size: 1.1rem !important; // Ligeramente más pequeño
+    color: rgba(255, 255, 255, 0.8) !important;
+    transition: color 0.2s ease !important;
+  }
+
+  .app-tab-button__label {
+    font-size: 0.65rem !important; // Más pequeño para optimizar espacio
+    font-weight: 600 !important;
+    letter-spacing: 0.01em !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+    transition: color 0.2s ease !important;
+  }
+
+  // Estados cuando está seleccionado
+  .app-tab-button.tab-selected .app-tab-button__icon,
+  .app-tab-button.ion-tab-selected .app-tab-button__icon,
+  .app-tab-button[aria-selected="true"] .app-tab-button__icon {
+    color: #ffffff !important;
+  }
+
+  .app-tab-button.tab-selected .app-tab-button__label,
+  .app-tab-button.ion-tab-selected .app-tab-button__label,
+  .app-tab-button[aria-selected="true"] .app-tab-button__label {
+    color: #ffffff !important;
+    font-weight: 700 !important;
+  }
 }
