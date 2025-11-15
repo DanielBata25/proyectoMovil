@@ -57,20 +57,24 @@
     background: rgba(255, 255, 255, 0.15) !important;
   }
 
-  // Línea inferior como indicador de selección
+  // Línea inferior como indicador de selección más prominente
   .app-tab-button.tab-selected::after,
   .app-tab-button.ion-tab-selected::after,
   .app-tab-button[aria-selected="true"]::after {
     content: '' !important;
     position: absolute !important;
-    bottom: -1px !important;
+    bottom: -2px !important;
     left: 50% !important;
     transform: translateX(-50%) !important;
-    width: 60% !important;
-    height: 3px !important;
+    width: 70% !important; // Más ancho
+    height: 4px !important; // Más alto
     background: #ffffff !important;
-    border-radius: 2px !important;
+    border-radius: 3px !important;
+    box-shadow: 0 2px 8px rgba(255, 255, 255, 0.4) !important; // Sombra de brillo
   }
+
+  // Indicador adicional en la parte superior removido por solicitud del usuario
+  // El puntito blanco ha sido eliminado
 
   .app-tab-button.ion-activated {
     background: rgba(255, 255, 255, 0.2) !important;
