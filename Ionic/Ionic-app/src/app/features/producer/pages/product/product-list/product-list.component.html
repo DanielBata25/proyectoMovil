@@ -122,9 +122,7 @@
     </div>
   </ng-template>
 
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-fab-button color="success" (click)="createProduct()">
-      <ion-icon name="add-outline"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
+  <button type="button" class="app-fab-add" (click)="createProduct()" aria-label="Agregar producto">
+    <ion-icon name="add-outline"></ion-icon>
+  </button>
 </ion-content>
