@@ -25,7 +25,7 @@ export const ACCOUNT_ROUTES: Routes = [
           },
           {
             path: 'form-change-password',
-            title: 'Cambiar Contraseña',
+            title: 'Cambiar ContraseÃ±a',
             component: FormChangePasswordComponent,
           },
           {

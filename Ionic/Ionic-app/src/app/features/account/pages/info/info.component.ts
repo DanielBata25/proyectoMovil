@@ -44,6 +44,10 @@ export class InfoComponent implements OnInit {
   loading = true;
   loggingOut = false;
 
+  get isProducer(): boolean {
+    return this.authState.hasRole('producer') || this.authState.hasRole('admin');
+  }
+
   constructor() {
     addIcons({
       mail, call, idCard, location,

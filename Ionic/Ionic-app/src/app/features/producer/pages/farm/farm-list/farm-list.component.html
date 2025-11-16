@@ -1,14 +1,5 @@
 <ion-content [fullscreen]="true" class="page-bg product-content">
   <div class="page-shell product-shell">
-    <div class="page-topbar">
-      <div class="topbar-pill">
-        <button type="button" class="pill-back-btn" (click)="goBack()" aria-label="Volver">
-          <ion-icon name="arrow-back"></ion-icon>
-        </button>
-        <span class="brand-name">Portal-AgroComercial</span>
-      </div>
-    </div>
-
     <section class="results-card">
       <h2 class="section-title">Mis fincas</h2>
       <ion-progress-bar *ngIf="loadingFarms" type="indeterminate"></ion-progress-bar>

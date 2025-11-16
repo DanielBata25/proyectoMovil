@@ -80,42 +80,36 @@
       </div>
 
       <!-- Productor -->
-      <h2 class="group-title">Productor</h2>
-      <div class="row-btn">
-        <div class="pill-icon"><ion-icon name="nutrition-outline"></ion-icon></div>
-        <button class="flat-btn" (click)="goto('/account/producer/summary')">
-          <span>Resumen</span>
-          <ion-icon name="chevron-forward"></ion-icon>
-        </button>
-      </div>
+      <ng-container *ngIf="isProducer">
+        <h2 class="group-title">Productor</h2>
+        <div class="row-btn">
+          <div class="pill-icon"><ion-icon name="nutrition-outline"></ion-icon></div>
+          <button class="flat-btn" (click)="goto('/account/producer/summary')">
+            <span>Resumen</span>
+            <ion-icon name="chevron-forward"></ion-icon>
+          </button>
+        </div>
 
-      <div class="row-btn">
-        <div class="pill-icon"><ion-icon name="reader-outline"></ion-icon></div>
-        <button class="flat-btn" (click)="goto('/account/producer/farm')">
-          <span>Gestion Fincas</span>
-          <ion-icon name="chevron-forward"></ion-icon>
-        </button>
-      </div>
+        <div class="row-btn">
+          <div class="pill-icon"><ion-icon name="reader-outline"></ion-icon></div>
+          <button class="flat-btn" (click)="goto('/account/producer/farm')">
+            <span>Gestion Fincas</span>
+            <ion-icon name="chevron-forward"></ion-icon>
+          </button>
+        </div>
 
 
-      <div class="row-btn">
-        <div class="pill-icon"><ion-icon name="reader-outline"></ion-icon></div>
-        <button class="flat-btn" (click)="goto('/account/producer/product')">
-          <span>Gestion Productos</span>
-          <ion-icon name="chevron-forward"></ion-icon>
-        </button>
-      </div>
+        <div class="row-btn">
+          <div class="pill-icon"><ion-icon name="reader-outline"></ion-icon></div>
+          <button class="flat-btn" (click)="goto('/account/producer/product')">
+            <span>Gestion Productos</span>
+            <ion-icon name="chevron-forward"></ion-icon>
+          </button>
+        </div>
+      </ng-container>
 
       <!-- Soporte -->
       <h2 class="group-title">Soporte</h2>
-      <div class="row-btn">
-        <div class="pill-icon"><ion-icon name="help-circle-outline"></ion-icon></div>
-        <button class="flat-btn" (click)="goto('/help')">
-          <span>Ayuda</span>
-          <ion-icon name="chevron-forward"></ion-icon>
-        </button>
-      </div>
-
       <div class="row-btn">
         <div class="pill-icon"><ion-icon name="mail-outline"></ion-icon></div>
         <button class="flat-btn" (click)="goto('account/support')">
