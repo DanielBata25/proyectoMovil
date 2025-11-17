@@ -5,6 +5,7 @@ import { SupportComponent } from './pages/support/support.component';
 import { FormChangePasswordComponent } from './components/form-change-password/form-change-password/form-change-password.component';
 import { UpdatePersonComponent } from './components/update-person/update-person/update-person.component';
 
+
 export const ACCOUNT_ROUTES: Routes = [
   {
     path: '',

@@ -12,7 +12,6 @@ import { CardComponent } from '../card/card.component';
   standalone: true,
   imports: [CommonModule, IonicModule, CardComponent],
   templateUrl: './container-card.component.html',
-  styleUrls: ['./container-card.component.scss'],
 })
 export class ContainerCardComponent {
   @Input() title = 'Últimos Agregados';

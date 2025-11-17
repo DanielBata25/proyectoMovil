@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { IonicModule, ToastController } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { addIcons } from 'ionicons';
@@ -15,29 +15,45 @@ import {
   logoInstagram,
   logoWhatsapp,
   logoTwitter,
+  checkmarkCircle,
+  alertCircleOutline,
 } from 'ionicons/icons';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ProducerSelectModel, SocialNetwork } from 'src/app/shared/models/producer/producer.model';
 import { ProducerService } from 'src/app/shared/services/producer/producer.service';
+import { ProductService } from 'src/app/shared/services/product/product.service';
+import { FarmService } from 'src/app/shared/services/farm/farm.service';
+import { ProductSelectModel } from 'src/app/shared/models/product/product.model';
+import { FarmSelectModel } from 'src/app/shared/models/farm/farm.model';
+import { CardComponent } from 'src/app/shared/components/cards/card/card.component';
+import { CardFarmComponent } from 'src/app/shared/components/cards/card-farm/card-farm.component';
 
 @Component({
   selector: 'app-profile-dialog',
   standalone: true,
-  imports: [CommonModule, IonicModule],
+  imports: [CommonModule, IonicModule, CardComponent, CardFarmComponent],
   templateUrl: './producer-profile.component.html',
   styleUrls: ['./producer-profile.component.scss'],
 })
 export class ProducerProfileComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private producerService = inject(ProducerService);
+  private productService = inject(ProductService);
+  private farmService = inject(FarmService);
   private toastCtrl = inject(ToastController);
+  private destroyRef = inject(DestroyRef);
 
   private currentCode = '';
   producer?: ProducerSelectModel;
+  products: ProductSelectModel[] = [];
+  famrs: FarmSelectModel[] = [];
+  saleNumber = 0;
   loading = true;
   errorMessage = '';
 
   readonly SocialNetwork = SocialNetwork;
+  trackByProduct = (_: number, p: ProductSelectModel) => p.id;
+  trackByFarm = (_: number, f: FarmSelectModel) => f.id;
 
   constructor() {
     addIcons({
@@ -52,34 +68,72 @@ export class ProducerProfileComponent implements OnInit {
       logoInstagram,
       logoWhatsapp,
       logoTwitter,
+      checkmarkCircle,
+      alertCircleOutline,
     });
   }
 
   ngOnInit(): void {
-    this.route.paramMap.pipe(takeUntilDestroyed()).subscribe((params) => {
+    this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
       const code = params.get('code');
       if (!code) {
         this.handleError('No se encontró el código del productor.');
         return;
       }
       this.currentCode = code;
-      this.loadProducer(code);
+      this.loadAllData(code);
     });
   }
 
-  private loadProducer(code: string): void {
+  private loadAllData(code: string): void {
     this.loading = true;
     this.errorMessage = '';
+
+    // Cargar productor
     this.producerService.getByCodeProducer(code).subscribe({
       next: (producer) => {
         this.producer = producer;
+        // this.loadSalesNumber(code);
         this.loading = false;
       },
       error: () => {
         this.handleError('No se pudo cargar la información del productor.');
       },
     });
+
+    // Cargar productos
+    this.productService.getProductByCodeProducer(code).subscribe({
+      next: (data) => {
+        this.products = data;
+      },
+      error: () => {
+        console.error('Error cargando productos');
+      },
+    });
+
+    // Cargar fincas
+    this.farmService.getFarmByCodeProducer(code).subscribe({
+      next: (data) => {
+        this.famrs = data;
+      },
+      error: () => {
+        console.error('Error cargando fincas');
+      },
+    });
   }
+
+  // private loadSalesNumber(code: string): void {
+  //   this.producerService.getSalesNumberByCode(code).subscribe({
+  //     next: (data: number) => {
+  //       this.saleNumber = data ?? 0;
+  //       this.loading = false;
+  //     },
+  //     error: () => {
+  //       this.saleNumber = 0;
+  //       this.loading = false;
+  //     },
+  //   });
+  // }
 
   private async handleError(message: string): Promise<void> {
     this.loading = false;
@@ -95,13 +149,41 @@ export class ProducerProfileComponent implements OnInit {
 
   retry(): void {
     if (this.currentCode) {
-      this.loadProducer(this.currentCode);
+      this.loadAllData(this.currentCode);
       return;
     }
     const code = this.route.snapshot.paramMap.get('code');
     if (code) {
-      this.loadProducer(code);
+      this.loadAllData(code);
     }
+  }
+
+  trustLevelClass(n: number): string {
+    if (n >= 50) return 'trust-high';
+    if (n >= 10) return 'trust-mid';
+    return 'trust-low';
+  }
+
+  compact(n: number): string {
+    try {
+      return new Intl.NumberFormat('es-CO', {
+        notation: 'compact',
+        maximumFractionDigits: 1,
+      }).format(n);
+    } catch {
+      if (n >= 1_000_000)
+        return (n / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
+      if (n >= 1_000) return (n / 1_000).toFixed(1).replace(/\.0$/, '') + 'k';
+      return String(n);
+    }
+  }
+
+  get avg(): number {
+    return this.producer?.averageRating ?? 0;
+  }
+
+  formatAvg(): string {
+    return this.avg.toFixed(1);
   }
 
   networkLabel(network: SocialNetwork): string {

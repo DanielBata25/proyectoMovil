@@ -134,6 +134,54 @@ ion-content {
   padding-left: 32px;
 }
 
+/* ===== Listas horizontales reutilizables (Home/Productor) ===== */
+.product-section {
+  background-color: #f9f6f1;
+  border-radius: 8px;
+  padding: 16px;
+  max-width: 1400px;
+  margin: 0 auto 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #6d4c41;
+  margin: 0 0 8px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 4px;
+}
+
+.product-container {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  min-height: 1px;
+  gap: 10px;
+  padding: 6px 0;
+  scroll-behavior: smooth;
+}
+
+.product-container::-webkit-scrollbar {
+  height: 8px;
+}
+.product-container::-webkit-scrollbar-thumb {
+  background-color: #4caf50;
+  border-radius: 4px;
+}
+
+@media (max-width: 480px) {
+  .product-section {
+    padding: 12px;
+  }
+  .product-container {
+    gap: 6px;
+    padding: 4px 0;
+  }
+}
+
 /* ===== Gestión Productor (Productos y Fincas) ===== */
 .product-content {
   --background: #f5f7fa;
