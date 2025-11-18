@@ -8,6 +8,13 @@ export const PRODUCER_ROUTES: Routes = [
       import('./pages/summary/summary.component').then((m) => m.SummaryPage),
   },
   {
+    path: 'orders',
+    loadComponent: () =>
+      import('./pages/producer-orders-list/producer-orders-list.component').then(
+        (m) => m.ProducerOrdersListComponent,
+      ),
+  },
+  {
     path: 'product',
     children: [
       {

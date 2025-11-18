@@ -185,20 +185,17 @@ ion-content {
 /* ===== Gestión Productor (Productos y Fincas) ===== */
 .product-content {
   --background: #f5f7fa;
-  --padding-start: 0 !important;
-  --padding-end: 0 !important;
-  --padding-top: calc(var(--app-shell-header-offset, 0px) + 0.1rem) !important;
-  --padding-bottom: calc(var(--app-shell-footer-offset, 0px) + env(safe-area-inset-bottom)) !important;
 }
 
 .page-shell.product-shell {
+  width: 100%;
   max-width: 1280px;
   margin: 0 auto;
-  padding: calc(var(--app-shell-header-offset, 0px) + 0.1rem) 1rem calc(var(--app-shell-footer-offset, 0px) + 1rem + env(safe-area-inset-bottom));
+  padding: calc(var(--app-shell-header-offset, 0px) + 1rem) 1rem calc(var(--app-shell-footer-offset, 0px) + 1rem + env(safe-area-inset-bottom));
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  margin-bottom: calc(88px + var(--ion-safe-area-bottom, 0px));
 }
 
 .product-shell .filters-card,

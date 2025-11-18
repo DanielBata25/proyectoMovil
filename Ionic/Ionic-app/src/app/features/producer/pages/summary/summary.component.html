@@ -1,70 +1,126 @@
-<ion-header collapse="fade">
-  <ion-toolbar color="light">
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/account/info"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Resumen</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content fullscreen class="page-bg summary-content">
+  <div class="page-shell summary-shell">
+    <!-- Perfil del productor -->
+    <section class="profile-section">
+      <h2 class="section-title">Resumen</h2>
+      <p class="subtext">
+        Vista general de tu desempeño como productor. Usa las tarjetas para navegar a
+        la lista filtrada.
+      </p>
 
-<ion-content fullscreen class="summary-content">
-  <section class="summary-section">
-    <h2 class="section-title">Productos</h2>
+      <div class="profile-buttons">
+        <ion-button 
+          expand="block" 
+          fill="outline" 
+          color="primary"
+          (click)="goProfile()"
+          [disabled]="!codeProducer">
+          <ion-icon slot="start" name="person-circle-outline"></ion-icon>
+          Ver mi perfil
+        </ion-button>
 
-    <div class="metrics-grid">
-      <div class="metric-card">
-        <span class="metric-value">{{ pendingOrders }}</span>
-        <span class="metric-label">Pedidos pendientes</span>
+        <ion-button 
+          expand="block" 
+          color="primary"
+          (click)="updateProfile()">
+          <ion-icon slot="start" name="create-outline"></ion-icon>
+          Actualizar mi perfil
+        </ion-button>
       </div>
-      <div class="metric-card">
-        <span class="metric-value">{{ publishedProducts || 0 }}</span>
-        <span class="metric-label">Productos publicados</span>
-      </div>
-      <div class="metric-card metric-card--wide">
-        <span class="metric-value">{{ totalOrders }}</span>
-        <span class="metric-label">Pedidos recibidos</span>
-      </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="summary-section">
-    <ion-segment [value]="range" (ionChange)="onRangeChange($event)">
-      <ion-segment-button value="day">
-        <ion-label>Dia</ion-label>
-      </ion-segment-button>
-      <ion-segment-button value="week">
-        <ion-label>Semana</ion-label>
-      </ion-segment-button>
-      <ion-segment-button value="month">
-        <ion-label>Mes</ion-label>
-      </ion-segment-button>
-    </ion-segment>
-  </section>
+    <!-- Estado de los pedidos -->
+    <section class="orders-section">
+      <header class="section-header">
+        <h2 class="subtitle">Estado de los pedidos</h2>
+        <div class="order-actions">
+          <ion-button 
+            fill="clear" 
+            size="small"
+            (click)="goToOrders('pending')">
+            Ver pendientes
+          </ion-button>
+          <ion-button 
+            fill="clear" 
+            size="small"
+            (click)="goToOrders('all')">
+            Ver todos
+          </ion-button>
+        </div>
+      </header>
+      <p class="text">Resumen rápido de pedidos totales y pendientes.</p>
 
-  <section class="summary-section">
-    <div class="orders-header">
-      <div>
-        <p class="orders-caption">Pedidos totales</p>
-        <h3 class="orders-total">{{ totalOrders }}</h3>
-        <p class="orders-delta">Este {{ rangeLabel }} <span class="positive">+15%</span></p>
-      </div>
-    </div>
+      <div class="cont-stat-card">
+        <app-stat-card
+          icon="inventory_2"
+          text="Total pedidos"
+          [count]="totalOrders"
+          color="info"
+          [loading]="loading"
+          [clickable]="true"
+          [to]="['/account/producer/orders']"
+          [queryParams]="{ status: 'all' }">
+        </app-stat-card>
 
-    <div class="chart-card" *ngIf="!chartLoading; else chartSkeleton">
-      <canvas
-        baseChart
-        [data]="barChartData"
-        [options]="barChartOptions"
-        [type]="'bar'">
-      </canvas>
-    </div>
-    <ng-template #chartSkeleton>
-      <div class="chart-card chart-card--loading">
-        <ion-skeleton-text animated style="height: 180px"></ion-skeleton-text>
+        <app-stat-card
+          icon="hourglass_empty"
+          text="Pendientes"
+          [count]="pendingOrders"
+          color="warning"
+          [loading]="loading"
+          [clickable]="true"
+          [to]="['/account/producer/orders']"
+          [queryParams]="{ status: 'pending' }">
+        </app-stat-card>
       </div>
-    </ng-template>
-  </section>
+    </section>
+
+    <!-- Filtros de tiempo -->
+    <section class="time-filters-section">
+      <ion-segment [value]="range" (ionChange)="onRangeChange($event)" scrollable="true">
+        <ion-segment-button value="day">
+          <ion-label>Día</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="week">
+          <ion-label>Semana</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="month">
+          <ion-label>Mes</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+    </section>
+
+    <!-- Productos más vendidos -->
+    <section class="products-section">
+      <header class="section-header">
+        <h2 class="subtitle">Productos más vendidos</h2>
+      </header>
+      <p class="text">
+        Productos con mayor número de pedidos completados. Útil para priorizar
+        inventario y promoción.
+      </p>
+
+      <div class="orders-header">
+        <div>
+          <p class="orders-caption">Pedidos totales</p>
+          <h3 class="orders-total">{{ totalOrders }}</h3>
+          <p class="orders-delta">Este {{ rangeLabel }} <span class="positive">+15%</span></p>
+        </div>
+      </div>
+
+      <div class="chart-card" *ngIf="!chartLoading; else chartSkeleton">
+        <canvas
+          baseChart
+          [data]="barChartData"
+          [options]="barChartOptions"
+          [type]="'bar'">
+        </canvas>
+      </div>
+      <ng-template #chartSkeleton>
+        <div class="chart-card chart-card--loading">
+          <ion-skeleton-text animated style="height: 180px"></ion-skeleton-text>
+        </div>
+      </ng-template>
+    </section>
+  </div>
 </ion-content>
-
-
-

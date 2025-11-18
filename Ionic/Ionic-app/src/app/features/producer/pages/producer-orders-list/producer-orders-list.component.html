@@ -1,3 +1,160 @@
-<p>
-  producer-orders-list works!
-</p>
+
+<ion-content [fullscreen]="true" class="page-bg producer-orders-content">
+  <div class="page-shell producer-orders-shell">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="title-wrap">
+      <h2 class="page-title">Pedidos</h2>
+      <ion-badge color="secondary">{{ items.length || 0 }}</ion-badge>
+    </div>
+
+    <div class="filters-section">
+      <div class="filter-chips">
+        <ion-chip 
+          class="filter-chip"
+          [class.active]="statusFilter === 'pending'"
+          (click)="goFilter('pending')"
+          fill="outline">
+          <ion-icon name="hourglass-outline"></ion-icon>
+          <ion-label>Pendientes</ion-label>
+          <ion-badge color="warning" *ngIf="statusFilter === 'pending'">{{ items.length || 0 }}</ion-badge>
+        </ion-chip>
+
+        <ion-chip 
+          class="filter-chip"
+          [class.active]="statusFilter === 'all'"
+          (click)="goFilter('all')"
+          fill="outline">
+          <ion-icon name="list-outline"></ion-icon>
+          <ion-label>Todos</ion-label>
+          <ion-badge color="primary" *ngIf="statusFilter === 'all'">{{ items.length || 0 }}</ion-badge>
+        </ion-chip>
+      </div>
+    </div>
+
+    <p class="hint">
+      Estás viendo: <strong>{{ statusFilter === 'pending' ? 'Pendientes' : 'Todos' }}</strong>. 
+      Cambia el filtro con los botones superiores.
+    </p>
+  </div>
+
+  <!-- Loading Skeleton -->
+  <div class="skeleton-container" *ngIf="isLoading">
+    <ion-card class="skeleton-card" *ngFor="let _ of [1,2,3]">
+      <ion-card-header>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <ion-skeleton-text animated style="width: 60%; height: 16px;"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width: 80px; height: 20px; border-radius: 999px;"></ion-skeleton-text>
+        </div>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="skeleton-row">
+          <ion-skeleton-text animated style="width: 30%; height: 12px;"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width: 40%; height: 12px;"></ion-skeleton-text>
+        </div>
+        <div class="skeleton-row">
+          <ion-skeleton-text animated style="width: 25%; height: 12px;"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width: 35%; height: 12px;"></ion-skeleton-text>
+        </div>
+        <div class="skeleton-row">
+          <ion-skeleton-text animated style="width: 30%; height: 12px;"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width: 45%; height: 12px;"></ion-skeleton-text>
+        </div>
+        <div class="skeleton-row total">
+          <ion-skeleton-text animated style="width: 20%; height: 14px;"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width: 50%; height: 14px;"></ion-skeleton-text>
+        </div>
+        <ion-skeleton-text animated style="width: 100%; height: 36px; margin-top: 12px; border-radius: 8px;"></ion-skeleton-text>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- Orders List -->
+  <div class="orders-list" *ngIf="!isLoading && items.length; else emptyTpl">
+    <ion-card class="order-card" *ngFor="let o of items">
+      <ion-card-header>
+        <div class="card-header">
+          <div class="order-title">
+            <ion-icon name="bag-outline" color="primary"></ion-icon>
+            <div class="title-content">
+              <div class="order-id">#{{ o.id }}</div>
+              <div class="product-name">{{ o.productName }}</div>
+            </div>
+          </div>
+          <ion-chip 
+            class="status-chip" 
+            [class]="'status-chip ' + statusChipColor(o.status)"
+            [color]="getStatusChipColor(o.status)">
+            {{ o.status | statusTranslatePipes }}
+          </ion-chip>
+        </div>
+      </ion-card-header>
+
+      <ion-card-content>
+        <div class="order-details">
+          <div class="detail-row">
+            <div class="detail-label">
+              <ion-icon name="calendar-outline" color="medium"></ion-icon>
+              <span>Fecha:</span>
+            </div>
+            <div class="detail-value">{{ o.createdAt | date : 'mediumDate' : '' : 'es-CO' }}</div>
+          </div>
+          
+          <div class="detail-row">
+            <div class="detail-label">
+              <ion-icon name="cube-outline" color="medium"></ion-icon>
+              <span>Cantidad:</span>
+            </div>
+            <div class="detail-value">{{ o.quantityRequested | number }} unidad(es)</div>
+          </div>
+          
+          <div class="detail-row">
+            <div class="detail-label">
+              <ion-icon name="calculator-outline" color="medium"></ion-icon>
+              <span>Subtotal:</span>
+            </div>
+            <div class="detail-value">{{ asCurrency(o.subtotal) }}</div>
+          </div>
+          
+          <div class="detail-row total-row">
+            <div class="detail-label">
+              <ion-icon name="cash-outline" color="success"></ion-icon>
+              <span>Total:</span>
+            </div>
+            <div class="detail-value total">{{ asCurrency(o.total) }}</div>
+          </div>
+        </div>
+      </ion-card-content>
+
+      <ion-card-content>
+        <ion-button 
+          expand="block" 
+          fill="outline" 
+          size="default"
+          (click)="goToOrderDetail(o.id)"
+          class="action-button">
+          <ion-icon slot="start" name="eye-outline"></ion-icon>
+          Ver detalle
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- Empty State -->
+  <ng-template #emptyTpl>
+    <div class="empty-state" *ngIf="!isLoading">
+      <div class="empty-icon">
+        <ion-icon name="inbox-outline" color="medium"></ion-icon>
+      </div>
+      <h3>No hay pedidos</h3>
+      <p>No hay pedidos para mostrar con el filtro seleccionado.</p>
+      <div class="empty-actions">
+        <ion-button fill="outline" (click)="goFilter('all')" color="primary" size="default">
+          <ion-icon slot="start" name="list-outline"></ion-icon>
+          Ver todos los pedidos
+        </ion-button>
+      </div>
+    </div>
+  </ng-template>
+  </div>
+</ion-content>

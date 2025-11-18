@@ -1,19 +1,21 @@
 import { Component, OnInit, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule, ToastController, AlertController } from '@ionic/angular';
+import { Router, RouterLink } from '@angular/router';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartOptions } from 'chart.js';
 
 import { AnalyticService } from 'src/app/shared/services/analytics/analytic.service';
 import { ProducerService } from 'src/app/shared/services/producer/producer.service';
 import { OrderService } from 'src/app/features/products/services/order/order.service';
+import { StatCardComponent } from 'src/app/shared/components/stat-card/stat-card.component';
 
 import { forkJoin, catchError, finalize, of } from 'rxjs';
 
 @Component({
   selector: 'app-summary',
   standalone: true,
-  imports: [IonicModule, CommonModule, BaseChartDirective],
+  imports: [IonicModule, CommonModule, BaseChartDirective, RouterLink, StatCardComponent],
   templateUrl: './summary.component.html',
   styleUrls: ['./summary.component.scss'],
 })
@@ -23,6 +25,7 @@ export class SummaryPage implements OnInit {
   private orderService = inject(OrderService);
   private analyticService = inject(AnalyticService);
   private producerService = inject(ProducerService);
+  private router = inject(Router);
   private toastCtrl = inject(ToastController);
   private alertCtrl = inject(AlertController);
 
@@ -74,9 +77,9 @@ export class SummaryPage implements OnInit {
   }
 
   private loadProducer(): void {
-    this.producerService.getByCodeProducer('someCode').subscribe((data) => {
-      this.codeProducer = data.code;
-    });
+    // For now, we'll use a placeholder or extract from user context
+    // In a real app, you might get this from user data, localStorage, or another service
+    this.codeProducer = 'PRD001'; // This should come from your authentication/user context
   }
 
   private loadSummary(): void {
@@ -130,11 +133,15 @@ export class SummaryPage implements OnInit {
       this.showToast('No se pudo cargar tu perfil.');
       return;
     }
-    window.location.href = `/home/product/profile/${this.codeProducer}`;
+    this.router.navigate(['/home/product/profile', this.codeProducer]);
   }
 
   async updateProfile(): Promise<void> {
-    this.showAlert('Actualizar perfil', 'Aquí abrirías un flujo de edición en Ionic.');
+    this.showAlert('Actualizar perfil', 'AquÃ­ abrirÃ­as un flujo de ediciÃ³n en Ionic.');
+  }
+
+  goToOrders(status: string): void {
+    this.router.navigate(['/account/producer/orders'], { queryParams: { status } });
   }
 
   private async showToast(message: string) {
@@ -147,4 +154,3 @@ export class SummaryPage implements OnInit {
     await a.present();
   }
 }
-

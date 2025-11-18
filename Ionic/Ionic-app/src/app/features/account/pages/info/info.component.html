@@ -19,7 +19,7 @@
       <h2 class="group-title">Pedidos</h2>
       <div class="row-btn">
         <div class="pill-icon"><ion-icon name="bag-handle-outline"></ion-icon></div>
-        <button class="flat-btn" (click)="goto('/orders/list')">
+        <button class="flat-btn" [routerLink]="['/account/producer/orders']">
           <span>Mis Pedidos</span>
           <ion-icon name="chevron-forward"></ion-icon>
         </button>
@@ -84,7 +84,7 @@
         <h2 class="group-title">Productor</h2>
         <div class="row-btn">
           <div class="pill-icon"><ion-icon name="nutrition-outline"></ion-icon></div>
-          <button class="flat-btn" (click)="goto('/account/producer/summary')">
+          <button class="flat-btn" [routerLink]="['/account/producer/summary']">
             <span>Resumen</span>
             <ion-icon name="chevron-forward"></ion-icon>
           </button>

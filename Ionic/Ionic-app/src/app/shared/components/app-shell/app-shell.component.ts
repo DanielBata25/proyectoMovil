@@ -48,6 +48,8 @@ export class AppShellComponent implements AfterViewInit {
     { pattern: /^\/account\/producer\/farm\/create/, backTo: '/account/producer/farm' },
     { pattern: /^\/account\/producer\/farm\/update\/.+/, backTo: '/account/producer/farm' },
     { pattern: /^\/account\/producer\/farm(?:\/)?$/, backTo: '/account/info' },
+    { pattern: /^\/account\/producer\/summary(?:\/)?$/, backTo: '/account/info' },
+    { pattern: /^\/account\/producer\/orders(?:\/.*)?$/, backTo: '/account/info' },
     { pattern: /^\/home\/product\/profile\/.+/, backTo: '/home/inicio' },
     
   ];

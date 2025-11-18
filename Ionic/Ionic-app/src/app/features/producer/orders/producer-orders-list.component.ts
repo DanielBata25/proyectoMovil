@@ -1,13 +1,12 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute, Router, Params } from '@angular/router';
+import { ActivatedRoute, Router, Params, RouterLink } from '@angular/router';
 import { IonicModule, ToastController } from '@ionic/angular';
 import { Subscription, switchMap } from 'rxjs';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
 
-import { OrderListItemModel } from '../../../../features/products/models/order/order.model';
-import { OrderService } from '../../../../features/products/services/order/order.service';
-import { StatusTranslatePipesPipe } from '../../../../shared/pipes/statusTranslate/status-translate.pipe';
+import { OrderListItemModel } from 'src/app/features/products/models/order/order.model';
+import { OrderService } from 'src/app/features/products/services/order/order.service';
+import { StatusTranslatePipesPipe } from 'src/app/shared/pipes/statusTranslate/status-translate.pipe';
 
 @Component({
   selector: 'app-producer-orders-list',
@@ -58,8 +57,21 @@ export class ProducerOrdersListComponent implements OnInit, OnDestroy{
     this.sub?.unsubscribe();
   }
 
-  // Navega con status específico (para botones)
-  goFilter(status: 'pending' | 'all'): void {
+  // Navega preservando la UX del filtro
+  goFilter(event: CustomEvent): void {
+    const newStatus = (event.detail.value as 'pending' | 'all');
+    if (this.statusFilter === newStatus) return;
+    
+    this.statusFilter = newStatus;
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { status: newStatus },
+      queryParamsHandling: 'merge',
+    });
+  }
+
+  // Navega con status específico (para botón)
+  goFilterByStatus(status: 'pending' | 'all'): void {
     if (this.statusFilter === status) return;
     
     this.statusFilter = status;
@@ -70,14 +82,7 @@ export class ProducerOrdersListComponent implements OnInit, OnDestroy{
     });
   }
 
-  // Navegar a detalle de pedido
-  goToOrderDetail(orderId: number): void {
-    this.router.navigate(['/account/producer/orders', orderId], {
-      queryParams: { view: 'for-producer' }
-    });
-  }
-
-  // Helper UI para formatear moneda
+  // Helper UI
   asCurrency(v: number): string {
     return new Intl.NumberFormat('es-CO', { 
       style: 'currency', 
@@ -86,7 +91,6 @@ export class ProducerOrdersListComponent implements OnInit, OnDestroy{
     }).format(v);
   }
 
-  // Color del status chip
   statusChipColor(status: string): 'warning' | 'info' | 'success' | 'danger' {
     const s = (status || '').toLowerCase();
     if (s.includes('pending')) return 'warning';
@@ -94,16 +98,6 @@ export class ProducerOrdersListComponent implements OnInit, OnDestroy{
     if (s.includes('completed')) return 'success';
     if (s.includes('rejected') || s.includes('disputed')) return 'danger';
     return 'info';
-  }
-
-  // Color del ion-chip de Ionic
-  getStatusChipColor(status: string): string {
-    const s = (status || '').toLowerCase();
-    if (s.includes('pending')) return 'warning';
-    if (s.includes('accepted')) return 'primary';
-    if (s.includes('completed')) return 'success';
-    if (s.includes('rejected') || s.includes('disputed')) return 'danger';
-    return 'medium';
   }
 
   private async showToast(message: string): Promise<void> {

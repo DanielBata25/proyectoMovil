@@ -1,66 +1,136 @@
+/* ==========================================================================
+   Producer Summary - Mobile Optimized Styles
+   ========================================================================== */
+
+/* Global Styles */
 ion-header {
   --background: #ffffff;
   box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
 }
 
+/* Main Content Container - Separated from header */
 .summary-content {
   --background: #f8f9fb;
-  padding: 0 16px 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
 }
 
-.summary-section {
+.summary-shell {
   background: #ffffff;
   border-radius: 18px;
-  padding: 16px;
+  padding: 20px;
   box-shadow: 0 6px 24px rgba(15, 23, 42, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 32px;
+}
+
+/* ==========================================================================
+   Profile Section
+   ========================================================================== */
+
+.profile-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .section-title {
-  margin: 0 0 14px;
+  margin: 0;
+  font-weight: 700;
+  font-size: 24px;
+  color: #1f2937;
+  line-height: 1.2;
+}
+
+.subtext {
+  margin: 0;
+  color: #6b7280;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.profile-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.profile-buttons ion-button {
+  --border-radius: 12px;
+  font-weight: 600;
+  height: 48px;
+}
+
+/* ==========================================================================
+   Orders Section
+   ========================================================================== */
+
+.orders-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.subtitle {
+  margin: 0;
   font-weight: 700;
   font-size: 18px;
   color: #1f2937;
 }
 
-.metrics-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+.text {
+  margin: 0;
+  font-size: 14px;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+.order-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.order-actions ion-button {
+  --padding-start: 8px;
+  --padding-end: 8px;
+  font-size: 12px;
+  color: #2563eb;
+  font-weight: 500;
+}
+
+/* ==========================================================================
+   Stat Cards
+   ========================================================================== */
+
+.cont-stat-card {
+  display: flex;
+  flex-direction: column;
   gap: 12px;
 }
 
-.metric-card {
-  background: #f3f5ff;
-  border-radius: 16px;
-  padding: 14px 12px;
+/* ==========================================================================
+   Time Filters Section
+   ========================================================================== */
+
+.time-filters-section {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 4px;
-  text-align: left;
-  color: #1f2937;
-}
-
-.metric-card--wide {
-  grid-column: span 2;
-  background: #e8f7f0;
-}
-
-.metric-value {
-  font-size: 26px;
-  font-weight: 700;
-}
-
-.metric-label {
-  font-size: 13px;
-  color: #5b6475;
+  gap: 12px;
 }
 
 ion-segment {
   --background: #eef1ff;
   border-radius: 16px;
+  padding: 4px;
+  width: 100%;
 }
 
 ion-segment-button {
@@ -68,6 +138,10 @@ ion-segment-button {
   --indicator-height: 0px;
   --background: transparent;
   border-radius: 12px;
+  font-size: 13px;
+  color: #666;
+  flex: 1;
+  min-width: 80px;
 }
 
 ion-segment-button.ion-activated {
@@ -75,11 +149,21 @@ ion-segment-button.ion-activated {
   color: #ffffff;
 }
 
+/* ==========================================================================
+   Products Section
+   ========================================================================== */
+
+.products-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 .orders-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
 }
 
 .orders-caption {
@@ -93,10 +177,11 @@ ion-segment-button.ion-activated {
   font-size: 32px;
   font-weight: 700;
   color: #1f2937;
+  line-height: 1;
 }
 
 .orders-delta {
-  margin: 0;
+  margin: 4px 0 0;
   font-size: 14px;
   color: #6b7280;
 }
@@ -108,24 +193,190 @@ ion-segment-button.ion-activated {
 
 .chart-card {
   background: #f3f5ff;
-  border-radius: 18px;
+  border-radius: 12px;
   padding: 12px;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .chart-card--loading {
   padding: 0;
 }
 
-@media (min-width: 600px) {
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+@media (min-width: 480px) {
   .summary-content {
-    padding: 12px 24px 32px;
+    padding: 20px;
   }
 
-  .metrics-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+  .main-container {
+    padding: 24px;
+    gap: 24px;
   }
 
-  .metric-card--wide {
-    grid-column: span 1;
+  .section-title {
+    font-size: 26px;
+  }
+
+  .profile-buttons {
+    flex-direction: row;
+  }
+
+  .profile-buttons ion-button {
+    flex: 1;
+  }
+
+  .order-actions {
+    gap: 12px;
+  }
+
+  .cont-stat-card {
+    flex-direction: row;
+    gap: 16px;
+  }
+
+  .orders-total {
+    font-size: 36px;
+  }
+
+  .chart-card {
+    padding: 16px;
+    min-height: 240px;
+  }
+}
+
+@media (min-width: 768px) {
+  .summary-content {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .main-container {
+    gap: 28px;
+  }
+
+  .section-title {
+    font-size: 28px;
+  }
+
+  .cont-stat-card {
+    gap: 20px;
+  }
+
+  .orders-total {
+    font-size: 40px;
+  }
+
+  .chart-card {
+    min-height: 280px;
+    padding: 20px;
+  }
+}
+
+/* ==========================================================================
+   Dark Mode Support
+   ========================================================================== */
+
+@media (prefers-color-scheme: dark) {
+  .summary-content {
+    --background: #0f172a;
+  }
+
+  .main-container {
+    --background: #1e293b;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
+  }
+
+  .section-title,
+  .subtitle,
+  .orders-total {
+    color: #f1f5f9;
+  }
+
+  .subtext,
+  .text,
+  .orders-caption,
+  .orders-delta {
+    color: #94a3b8;
+  }
+
+  .chart-card {
+    background: #0f172a;
+  }
+
+  .order-actions ion-button {
+    color: #60a5fa;
+  }
+}
+
+/* ==========================================================================
+   Animation Keyframes
+   ========================================================================== */
+
+@keyframes shimmer {
+  0% {
+    background-position: -468px 0;
+  }
+  100% {
+    background-position: 468px 0;
+  }
+}
+
+.skeleton-text {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 37%, #f0f0f0 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.2s ease-in-out infinite;
+}
+
+/* ==========================================================================
+   Accessibility Improvements
+   ========================================================================== */
+
+.profile-buttons ion-button:focus,
+.order-actions ion-button:focus,
+ion-segment-button:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .main-container {
+    border: 2px solid #3b82f6;
+  }
+  
+  .chart-card {
+    border: 1px solid #3b82f6;
+  }
+
+  .profile-buttons ion-button,
+  .order-actions ion-button {
+    border: 1px solid #3b82f6;
+  }
+}
+
+/* ==========================================================================
+   Print Styles
+   ========================================================================== */
+
+@media print {
+  .summary-content {
+    --background: #ffffff;
+  }
+
+  .main-container {
+    box-shadow: none;
+    border: 1px solid #e5e7eb;
+  }
+
+  ion-segment,
+  .profile-buttons,
+  .order-actions {
+    display: none;
   }
 }
