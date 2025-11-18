@@ -9,23 +9,19 @@
       </p>
 
       <div class="profile-buttons">
-        <ion-button 
-          expand="block" 
-          fill="outline" 
-          color="primary"
-          (click)="goProfile()"
-          [disabled]="!codeProducer">
-          <ion-icon slot="start" name="person-circle-outline"></ion-icon>
-          Ver mi perfil
-        </ion-button>
+        <app-button
+          color="secondary"
+          [text]="'Ver mi perfil'"
+          icon="person-circle-outline"
+          (clicked)="goProfile()">
+        </app-button>
 
-        <ion-button 
-          expand="block" 
+        <app-button
           color="primary"
-          (click)="updateProfile()">
-          <ion-icon slot="start" name="create-outline"></ion-icon>
-          Actualizar mi perfil
-        </ion-button>
+          [text]="'Actualizar mi perfil'"
+          icon="create-outline"
+          (clicked)="updateProfile()">
+        </app-button>
       </div>
     </section>
 
@@ -34,18 +30,20 @@
       <header class="section-header">
         <h2 class="subtitle">Estado de los pedidos</h2>
         <div class="order-actions">
-          <ion-button 
-            fill="clear" 
-            size="small"
-            (click)="goToOrders('pending')">
-            Ver pendientes
-          </ion-button>
-          <ion-button 
-            fill="clear" 
-            size="small"
-            (click)="goToOrders('all')">
-            Ver todos
-          </ion-button>
+        <app-button
+          class="order-btn btn-inline"
+          color="secondary"
+          [text]="'Ver pendientes'"
+          type="button"
+          (clicked)="goToOrders('pending')">
+        </app-button>
+        <app-button
+          class="order-btn btn-inline"
+          color="secondary"
+          [text]="'Ver todos'"
+          type="button"
+          (clicked)="goToOrders('all')">
+        </app-button>
         </div>
       </header>
       <p class="text">Resumen rápido de pedidos totales y pendientes.</p>

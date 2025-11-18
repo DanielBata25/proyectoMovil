@@ -1,0 +1,124 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-title>Mis pedidos</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!-- prueba cantidad de pedidos -->
+  <!-- <app-stat-card
+    icon="shopping_cart"
+    text="Pedidos"
+    [count]="numberOrders"
+    color="warning"
+    [loading]="loading">
+  </app-stat-card> -->
+  
+  <ng-container *ngIf="!loading; else loadingTpl">
+    <div *ngIf="items.length; else emptyTpl" class="orders-container">
+      <ion-card 
+        class="order-card" 
+        *ngFor="let o of items; trackBy: trackById"
+        mode="md">
+        
+        <ion-card-header>
+          <div class="card-header-content">
+            <ion-card-title class="product-name">{{ o.productName }}</ion-card-title>
+            <ion-chip 
+              class="status-chip"
+              [ngClass]="chipClass(o.status)"
+              mode="ios">
+              {{ o.status | statusTranslatePipes }}
+            </ion-chip>
+          </div>
+        </ion-card-header>
+
+        <ion-card-content>
+          <div class="order-info">
+            <div class="info-row">
+              <div class="info-item">
+                <span class="label">Cant.:</span>
+                <span class="value">{{ o.quantityRequested }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Total:</span>
+                <span class="value">{{ o.total | currency:'COP' }}</span>
+              </div>
+            </div>
+            
+            <div class="info-row">
+              <div class="info-item full-width">
+                <span class="label">Creado:</span>
+                <span class="value">{{ o.createdAt | date:'medium' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="actions-container">
+            <ion-button 
+              fill="outline" 
+              color="medium"
+              size="small"
+              (clicked)="view(o.id)"
+              class="action-button">
+              Ver detalle
+            </ion-button>
+
+            <!-- Subir comprobante -->
+            <input 
+              type="file" 
+              accept="image/*" 
+              #uploader 
+              hidden 
+              (change)="onPickPaymentFile(o.id, $event)" />
+            <ion-button
+              *ngIf="canUploadPayment(o.status)"
+              fill="solid"
+              color="primary"
+              size="small"
+              (clicked)="triggerFile(uploader)"
+              class="action-button">
+              Subir comprobante
+            </ion-button>
+
+            <!-- Cancelar pedido -->
+            <ion-button
+              *ngIf="canCancel(o.status)"
+              fill="solid"
+              color="danger"
+              size="small"
+              (clicked)="cancel(o.id)"
+              class="action-button">
+              Cancelar
+            </ion-button>
+
+            <!-- Confirmar recepción -->
+            <ion-button
+              *ngIf="canConfirm(o.status)"
+              fill="solid"
+              color="success"
+              size="small"
+              (clicked)="confirm(o.id)"
+              class="action-button">
+              Confirmar recepción
+            </ion-button>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </ng-container>
+
+  <ng-template #loadingTpl>
+    <div class="loading-container">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p class="muted">Cargando…</p>
+    </div>
+  </ng-template>
+  
+  <ng-template #emptyTpl>
+    <div class="empty-container">
+      <ion-icon name="file-text-outline" size="large" color="medium"></ion-icon>
+      <p class="muted">Aún no tienes pedidos.</p>
+    </div>
+  </ng-template>
+</ion-content>

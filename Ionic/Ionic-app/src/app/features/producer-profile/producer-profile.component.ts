@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { IonicModule, ToastController } from '@ionic/angular';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { addIcons } from 'ionicons';
 import {
   personCircleOutline,
@@ -37,6 +37,7 @@ import { CardFarmComponent } from 'src/app/shared/components/cards/card-farm/car
 })
 export class ProducerProfileComponent implements OnInit {
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private producerService = inject(ProducerService);
   private productService = inject(ProductService);
   private farmService = inject(FarmService);
@@ -74,26 +75,47 @@ export class ProducerProfileComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    const navState = this.router.getCurrentNavigation()?.extras?.state;
+    const stateCode = (navState?.['code'] ?? history.state?.code) as string | undefined;
+
     this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
-      const code = params.get('code');
-      if (!code) {
-        this.handleError('No se encontró el código del productor.');
-        return;
+      const code = params.get('code') ?? stateCode;
+      if (code) {
+        this.loadByCode(code);
+      } else {
+        this.loadMine();
       }
-      this.currentCode = code;
-      this.loadAllData(code);
     });
   }
 
-  private loadAllData(code: string): void {
+  private loadMine(): void {
     this.loading = true;
     this.errorMessage = '';
+    this.producerService.getMine().subscribe({
+      next: (producer) => {
+        if (!producer?.code) {
+          this.handleError('No se pudo cargar la información del productor.');
+          return;
+        }
+        this.producer = producer;
+        this.currentCode = producer.code;
+        this.loading = false;
+        this.loadRelatedData(producer.code);
+      },
+      error: () => {
+        this.handleError('No se pudo cargar la información del productor.');
+      },
+    });
+  }
 
-    // Cargar productor
+  private loadByCode(code: string): void {
+    this.loading = true;
+    this.errorMessage = '';
+    this.currentCode = code;
+
     this.producerService.getByCodeProducer(code).subscribe({
       next: (producer) => {
         this.producer = producer;
-        // this.loadSalesNumber(code);
         this.loading = false;
       },
       error: () => {
@@ -101,7 +123,12 @@ export class ProducerProfileComponent implements OnInit {
       },
     });
 
-    // Cargar productos
+    this.loadRelatedData(code);
+  }
+
+  private loadRelatedData(code: string): void {
+    if (!code) return;
+
     this.productService.getProductByCodeProducer(code).subscribe({
       next: (data) => {
         this.products = data;
@@ -148,14 +175,10 @@ export class ProducerProfileComponent implements OnInit {
   }
 
   retry(): void {
-    if (this.currentCode) {
-      this.loadAllData(this.currentCode);
-      return;
-    }
-    const code = this.route.snapshot.paramMap.get('code');
-    if (code) {
-      this.loadAllData(code);
-    }
+    const stateCode = (history.state?.code as string | undefined) ?? this.currentCode;
+    const codeParam = this.route.snapshot.paramMap.get('code');
+    if (codeParam || stateCode) this.loadByCode(codeParam ?? stateCode!);
+    else this.loadMine();
   }
 
   trustLevelClass(n: number): string {

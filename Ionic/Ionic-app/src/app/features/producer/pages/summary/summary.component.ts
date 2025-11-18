@@ -9,13 +9,22 @@ import { AnalyticService } from 'src/app/shared/services/analytics/analytic.serv
 import { ProducerService } from 'src/app/shared/services/producer/producer.service';
 import { OrderService } from 'src/app/features/products/services/order/order.service';
 import { StatCardComponent } from 'src/app/shared/components/stat-card/stat-card.component';
+import { ButtonComponent } from 'src/app/shared/components/button/button.component';
+import { ProductService } from 'src/app/shared/services/product/product.service';
 
 import { forkJoin, catchError, finalize, of } from 'rxjs';
 
 @Component({
   selector: 'app-summary',
   standalone: true,
-  imports: [IonicModule, CommonModule, BaseChartDirective, RouterLink, StatCardComponent],
+  imports: [
+    IonicModule,
+    CommonModule,
+    BaseChartDirective,
+    RouterLink,
+    StatCardComponent,
+    ButtonComponent,
+  ],
   templateUrl: './summary.component.html',
   styleUrls: ['./summary.component.scss'],
 })
@@ -25,6 +34,7 @@ export class SummaryPage implements OnInit {
   private orderService = inject(OrderService);
   private analyticService = inject(AnalyticService);
   private producerService = inject(ProducerService);
+  private productService = inject(ProductService);
   private router = inject(Router);
   private toastCtrl = inject(ToastController);
   private alertCtrl = inject(AlertController);
@@ -77,9 +87,26 @@ export class SummaryPage implements OnInit {
   }
 
   private loadProducer(): void {
-    // For now, we'll use a placeholder or extract from user context
-    // In a real app, you might get this from user data, localStorage, or another service
-    this.codeProducer = 'PRD001'; // This should come from your authentication/user context
+    this.producerService.getMine().subscribe({
+      next: (producer) => {
+        this.codeProducer = producer?.code ?? undefined;
+      },
+      error: () => {
+        this.resolveCodeFromProducts();
+      },
+    });
+  }
+
+  private resolveCodeFromProducts(): void {
+    this.productService.getByProducerId().subscribe({
+      next: (products) => {
+        const code = products?.[0]?.producerCode;
+        this.codeProducer = code ?? undefined;
+      },
+      error: () => {
+        this.codeProducer = undefined;
+      },
+    });
   }
 
   private loadSummary(): void {
@@ -133,7 +160,9 @@ export class SummaryPage implements OnInit {
       this.showToast('No se pudo cargar tu perfil.');
       return;
     }
-    this.router.navigate(['/home/product/profile', this.codeProducer]);
+    this.router.navigate(['/account/producer/profile'], {
+      state: { code: this.codeProducer },
+    });
   }
 
   async updateProfile(): Promise<void> {

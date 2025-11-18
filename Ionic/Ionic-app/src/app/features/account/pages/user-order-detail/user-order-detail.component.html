@@ -1,7 +1,7 @@
 <ion-header class="ion-no-border">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button default-href="/account/producer/orders"></ion-back-button>
+      <ion-back-button default-href="/account/orders"></ion-back-button>
     </ion-buttons>
     <ion-title>Detalle del Pedido</ion-title>
   </ion-toolbar>
@@ -57,6 +57,11 @@
             <ion-item class="detail-item total-item">
               <ion-label position="stacked">Total</ion-label>
               <ion-text class="total-amount">{{ detail!.total | currency:'COP' }}</ion-text>
+            </ion-item>
+            
+            <ion-item class="detail-item">
+              <ion-label position="stacked">Creado</ion-label>
+              <ion-text>{{ detail!.createdAt | date:'mediumDate':'':'es-CO' }}</ion-text>
             </ion-item>
           </ion-list>
         </ion-card-content>
@@ -115,9 +120,9 @@
                 class="receipt-image" 
                 [src]="detail!.paymentImageUrl!" 
                 alt="Comprobante"
-                (click)="openImage()" />
+                (click)="openImageModal()" />
               <div class="upload-date">
-                <small>Click para abrir en nueva pestaña</small>
+                Subido: {{ detail!.paymentUploadedAt | date:'medium' }}
               </div>
             </div>
           </ng-container>
@@ -125,87 +130,119 @@
           <ng-template #noImg>
             <div class="no-receipt">
               <ion-icon name="image-outline" color="medium" size="large"></ion-icon>
-              <ion-text color="medium">
-                Sin comprobante
-                <ng-container *ngIf="detail!.status === 'AcceptedAwaitingPayment'">
-                  (el cliente aún no lo ha subido).
-                </ng-container>
-              </ion-text>
+              <ion-text color="medium">No disponible.</ion-text>
             </div>
           </ng-template>
+
+          <!-- Upload Payment Action -->
+          <div class="upload-action" *ngIf="canUploadPayment">
+            <input 
+              type="file" 
+              accept="image/*" 
+              #paymentInput 
+              hidden 
+              (change)="onPickPaymentFile($event)" />
+            <ion-button 
+              expand="block" 
+              fill="solid" 
+              color="primary"
+              (click)="triggerFile(paymentInput)"
+              class="upload-button">
+              <ion-icon slot="start" name="cloud-upload-outline"></ion-icon>
+              Subir comprobante
+            </ion-button>
+            <div class="file-hint">
+              Formatos: JPG/PNG/WEBP · Máx {{ MAX_FILE_MB }} MB
+            </div>
+          </div>
         </ion-card-content>
       </ion-card>
 
-      <!-- Times Information -->
-      <ion-card class="order-section-card" mode="md">
+      <!-- Producer Decision -->
+      <ion-card class="order-section-card" mode="md" *ngIf="detail!.producerDecisionAt">
         <ion-card-header>
           <ion-card-title class="section-title">
-            <ion-icon name="time-outline"></ion-icon>
-            Tiempos
+            <ion-icon name="business-outline"></ion-icon>
+            Decisión del Productor
           </ion-card-title>
         </ion-card-header>
         
         <ion-card-content>
           <ion-list lines="none">
-            <ion-item class="detail-item">
-              <ion-label position="stacked">Creado</ion-label>
-              <ion-text>{{ detail!.createdAt | date:'mediumDate':'':'es-CO' }}</ion-text>
+            <ion-item class="detail-item" *ngIf="detail!.producerDecisionAt">
+              <ion-label position="stacked">Fecha decisión</ion-label>
+              <ion-text>{{ detail!.producerDecisionAt | date:'medium' }}</ion-text>
             </ion-item>
             
-            <ion-item class="detail-item" *ngIf="detail!.producerDecisionAt">
-              <ion-label position="stacked">Decisión productor</ion-label>
-              <ion-text>{{ detail!.producerDecisionAt | date:'mediumDate':'':'es-CO' }}</ion-text>
+            <ion-item class="detail-item" *ngIf="detail!.producerNotes">
+              <ion-label position="stacked">Notas del productor</ion-label>
+              <ion-text>{{ detail!.producerNotes }}</ion-text>
+            </ion-item>
+            
+            <ion-item class="detail-item" *ngIf="detail!.producerDecisionReason">
+              <ion-label position="stacked">Motivo</ion-label>
+              <ion-text>{{ detail!.producerDecisionReason }}</ion-text>
             </ion-item>
           </ion-list>
         </ion-card-content>
       </ion-card>
 
-      <!-- Producer Actions -->
-      <div class="producer-actions" *ngIf="canAcceptReject">
-        <ion-card class="action-card" mode="md">
-          <ion-card-header>
-            <ion-card-title class="section-title">
-              <ion-icon name="build-outline"></ion-icon>
-              Acciones Disponibles
-            </ion-card-title>
-          </ion-card-header>
-          
+      <!-- Confirmation Actions -->
+      <div class="confirmation-actions" *ngIf="canConfirm">
+        <ion-card class="confirmation-card" mode="md">
           <ion-card-content>
             <div class="action-buttons">
               <ion-button 
                 expand="block" 
                 fill="outline" 
                 color="danger"
-                [disabled]="processing"
-                (click)="reject()"
+                [disabled]="confirming"
+                (click)="confirm('no')"
                 class="action-button">
-                <ion-icon slot="start" name="close-circle-outline"></ion-icon>
-                Rechazar
+                <ion-icon slot="start" name="warning-outline"></ion-icon>
+                No, hubo problema
               </ion-button>
               
               <ion-button 
                 expand="block" 
                 fill="solid" 
-                color="primary"
-                [disabled]="processing"
-                (click)="accept()"
+                color="success"
+                [disabled]="confirming"
+                (click)="confirm('yes')"
                 class="action-button">
                 <ion-icon slot="start" name="checkmark-circle-outline"></ion-icon>
-                Aceptar
+                Sí, recibido
               </ion-button>
             </div>
           </ion-card-content>
         </ion-card>
       </div>
 
+      <!-- Cancel Action -->
+      <div class="cancel-actions" *ngIf="canCancel">
+        <ion-card class="cancel-card" mode="md">
+          <ion-card-content>
+            <ion-button 
+              expand="block" 
+              fill="solid" 
+              color="danger"
+              (click)="cancel()"
+              class="cancel-button">
+              <ion-icon slot="start" name="close-circle-outline"></ion-icon>
+              Cancelar pedido
+            </ion-button>
+          </ion-card-content>
+        </ion-card>
+      </div>
+
       <!-- Info Message -->
-      <div class="info-message" *ngIf="!canAcceptReject">
+      <div class="info-message" *ngIf="!canConfirm">
         <ion-card class="info-card" mode="md">
           <ion-card-content>
             <ion-item lines="none">
               <ion-icon name="information-circle-outline" color="medium" slot="start"></ion-icon>
               <ion-text color="medium">
-                No hay acciones disponibles para el estado actual.
+                La confirmación aparece cuando el productor marca tu pedido como entregado.
               </ion-text>
             </ion-item>
           </ion-card-content>
@@ -233,4 +270,29 @@
       </ion-card>
     </div>
   </ng-template>
+
+  <!-- Image Modal -->
+  <ion-modal [isOpen]="showImage" (ionModalDidDismiss)="showImage = false" class="image-modal">
+    <ng-template>
+      <ion-header class="ion-no-border">
+        <ion-toolbar>
+          <ion-title>Comprobante de Pago</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="showImage = false" color="light">
+              <ion-icon name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      
+      <ion-content class="modal-content">
+        <div class="image-container">
+          <img 
+            [src]="detail?.paymentImageUrl || ''" 
+            alt="Comprobante ampliado"
+            class="modal-image" />
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
 </ion-content>

@@ -1,4 +1,4 @@
-/* src/app/features/producer/pages/producer-order-detail/producer-order-detail.component.scss */
+/* src/app/features/account/pages/user-order-detail/user-order-detail.component.scss */
 .order-container {
   padding: 16px;
 }
@@ -148,12 +148,32 @@ ion-chip {
   text-align: center;
 }
 
-/* Producer Actions */
-.producer-actions {
+/* Upload Action */
+.upload-action {
+  margin-top: 16px;
+  text-align: center;
+}
+
+.upload-button {
+  margin-bottom: 8px;
+}
+
+.file-hint {
+  color: var(--ion-color-medium);
+  font-size: 12px;
+  text-align: center;
+}
+
+/* Action Cards */
+.confirmation-actions,
+.cancel-actions,
+.info-message {
   margin-top: 16px;
 }
 
-.action-card {
+.confirmation-card,
+.cancel-card,
+.info-card {
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   --background: var(--ion-color-light);
@@ -173,9 +193,11 @@ ion-chip {
   font-weight: 500;
 }
 
-/* Info Message */
-.info-message {
-  margin-top: 16px;
+.cancel-button {
+  width: 100%;
+  height: 44px;
+  font-size: 14px;
+  font-weight: 500;
 }
 
 .info-card ion-item {
@@ -202,6 +224,35 @@ ion-chip {
   }
 }
 
+/* Image Modal */
+.image-modal {
+  --height: 100%;
+  --width: 100%;
+}
+
+.modal-content {
+  --background: rgba(0, 0, 0, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.modal-image {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 8px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+}
+
 /* Responsive adjustments */
 @media (min-width: 768px) {
   .order-container {
@@ -215,7 +266,8 @@ ion-chip {
     justify-content: center;
   }
   
-  .action-button {
+  .action-button,
+  .cancel-button {
     width: auto;
     min-width: 140px;
     flex: 1;
@@ -235,6 +287,11 @@ ion-chip {
   
   .total-item .total-amount {
     font-size: 16px !important;
+  }
+  
+  .modal-image {
+    max-width: 95vw;
+    max-height: 80vh;
   }
 }
 
@@ -269,6 +326,10 @@ ion-chip {
   }
   
   .upload-date {
+    color: var(--ion-color-medium);
+  }
+  
+  .file-hint {
     color: var(--ion-color-medium);
   }
 }

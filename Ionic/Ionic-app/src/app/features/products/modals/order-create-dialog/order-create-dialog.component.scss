@@ -1,3 +1,15 @@
+/* ==========================================================================
+   Order Create Dialog - Mobile First (basado en tu código web)
+   ========================================================================== */
+
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: #f8f9fb;
+}
+
+// Variables basadas en tu código original
 :root {
   --primary: #28a745;
   --text-strong: #2c3e50;
@@ -5,174 +17,520 @@
   --line: #dfe3e8;
 }
 
-.content-pad {
-  padding: 16px 12px 24px;
-  background: #f4f7f5;
-}
+// ==========================================================================
+// Header Styles
+// ==========================================================================
 
-.steps {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 12px;
-  flex-wrap: wrap;
-
-  .step {
-    padding: 6px 12px;
-    border-radius: 12px;
-    border: 1px solid var(--line);
-    background: #fff;
-    font-size: 13px;
-    cursor: pointer;
-    transition: background 0.2s, border-color 0.2s;
+.order-header {
+  --background: #ffffff;
+  --border-color: #e9ecef;
+  border-bottom: 1px solid #e9ecef;
+  
+  ion-toolbar {
+    --padding-top: calc(env(safe-area-inset-top) + 8px);
+    --padding-bottom: 12px;
+    --padding-start: 16px;
+    --padding-end: 16px;
+    --min-height: 56px;
   }
 
-  .active {
-    background: #e9f7ef;
-    border-color: #c7ebd2;
+  .close-btn {
+    --border-radius: 12px;
+    --border-color: #e9ecef;
+    --border-width: 1px;
+    --color: #6c757d;
+    width: 40px;
+    height: 40px;
+    
+    ion-icon {
+      font-size: 20px;
+    }
+  }
+
+  .header-title {
+    font-size: 18px;
     font-weight: 600;
+    color: #212529;
+    text-align: center;
+  }
+
+  .step-counter {
+    --color: #6c757d;
+    font-size: 14px;
+    font-weight: 500;
   }
 }
 
-.card {
-  background: #fff;
+// ==========================================================================
+// Content Area
+// ==========================================================================
+
+.order-content {
+  --background: #f8f9fb;
+  --padding-top: 0;
+  --padding-bottom: 80px; // Space for fixed footer actions
+  --padding-start: 16px;
+  --padding-end: 16px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+// ==========================================================================
+// Stepper Indicator
+// ==========================================================================
+
+.stepper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 0;
+  margin-bottom: 8px;
+  background: #ffffff;
   border-radius: 16px;
-  padding: 16px;
-  box-shadow: 0 12px 28px rgba(15, 56, 28, 0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  margin: 16px 0;
 }
 
-.info h3 {
-  margin: 0 0 4px;
-  color: var(--text-strong);
-  font-weight: 700;
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  .step-number {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #e9ecef;
+    color: #6c757d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+
+  .step-label {
+    font-size: 11px;
+    color: #6c757d;
+    font-weight: 500;
+    text-align: center;
+  }
+
+  &.active {
+    .step-number {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: 0 0 0 4px rgba(40, 167, 69, 0.1);
+    }
+
+    .step-label {
+      color: var(--primary);
+      font-weight: 600;
+    }
+  }
+
+  &.completed {
+    .step-number {
+      background: #20c997;
+      color: #ffffff;
+    }
+
+    .step-label {
+      color: #20c997;
+    }
+  }
 }
 
-.info span {
-  color: var(--text-muted);
-  font-size: 13px;
+.step-line {
+  height: 2px;
+  width: 40px;
+  background: #e9ecef;
+  margin: 0 8px;
+  transition: background 0.3s ease;
+
+  &.active {
+    background: var(--primary);
+  }
+}
+
+// ==========================================================================
+// Content Wrapper & Steps
+// ==========================================================================
+
+.content-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.step-content {
+  display: none;
+  
+  &.active {
+    display: block;
+    animation: slideInRight 0.3s ease-out;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+// ==========================================================================
+// Form Sections
+// ==========================================================================
+
+// Siguiendo tu estructura original
+.info {
+  text-align: center;
+  margin-bottom: 20px;
+
+  h3 {
+    margin: 0 0 4px;
+    color: var(--text-strong);
+    font-weight: 700;
+    font-size: 20px;
+  }
+  
+  span {
+    color: var(--text-muted);
+    font-size: 14px;
+  }
 }
 
 .product-summary {
   border: 1px solid var(--line);
-  border-radius: 14px;
-  padding: 12px;
-  margin: 12px 0 18px;
+  border-radius: 16px;
+  padding: 16px;
+  margin: 16px 0 20px;
   background: #fbfdfb;
 }
 
-.label {
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #e9ecef;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  .label {
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+  
+  .value {
+    font-size: 14px;
+    color: var(--text-strong);
+    text-align: right;
+  }
+  
+  .value.strong {
+    font-weight: 600;
+    color: var(--text-strong);
+  }
+}
+
+// Siguiendo tu estructura original: row-2
+.row-2 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+@media (max-width: 900px) {
+  .row-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.input-group {
+  margin-bottom: 16px;
+
+  .input-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-strong);
+    margin-bottom: 8px;
+    display: block;
+  }
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  --background: #ffffff;
+  --border-radius: 12px;
+  --border-color: #dee2e6;
+  --border-width: 1px;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  --placeholder-color: #adb5bd;
+  font-size: 16px;
+  min-height: 48px;
+  border: 1px solid #dee2e6;
+  border-radius: 12px;
+  background: #ffffff;
+  padding: 12px 16px;
+  width: 100%;
+
+  &.ion-focused,
+  &.ng-valid.ng-touched {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
+  }
+
+  &.ion-invalid.ng-touched {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+  }
+}
+
+.input-hint {
   font-size: 12px;
   color: var(--text-muted);
+  margin-top: 4px;
 }
 
-.value {
-  font-size: 14px;
-}
-
-.value.strong {
-  font-weight: 600;
-  color: var(--text-strong);
-}
-
-.row-2 {
-  margin-top: 8px;
-}
-
-.form-item {
-  --background: #f6faf7;
-  --padding-start: 12px;
-  --inner-padding-end: 12px;
-  border-radius: 12px;
-  margin-bottom: 10px;
-}
-
-.form-item ion-label {
-  color: var(--text-muted);
-}
+// ==========================================================================
+// Totals Box (de tu código original)
+// ==========================================================================
 
 .totals-box {
   border: 1px dashed var(--line);
-  border-radius: 12px;
-  padding: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+  border-radius: 16px;
+  padding: 16px;
+  display: flex; 
+  flex-direction: column; 
+  gap: 8px;
   background: #fefefe;
 }
 
-.totals-box .total {
-  font-weight: 700;
-  font-size: 18px;
-  color: var(--text-strong);
+.totals-box .total { 
+  font-weight: 700; 
+  font-size: 20px; 
+  color: var(--text-strong); 
 }
 
-.muted {
-  color: var(--text-muted);
+.muted { 
+  color: var(--text-muted); 
+  font-size: 12px;
 }
 
-.actions,
-.actions.space-between {
-  display: flex;
-  gap: 12px;
-  margin-top: 16px;
-}
+// ==========================================================================
+// Actions
+// ==========================================================================
 
-.actions {
+.actions { 
+  display: flex; 
+  gap: 12px; 
+  margin-top: 20px;
   justify-content: flex-end;
 }
 
-.actions.space-between {
+.actions.space-between { 
   justify-content: space-between;
 }
 
-/* Zona para subir archivo */
-.drop-zone {
-  border: 2px dashed #9ccc9c;
-  border-radius: 12px;
-  padding: 20px;
-  text-align: center;
-  cursor: pointer;
-  transition: background 0.2s, border-color 0.2s;
-  background: #f8fff8;
-  margin-top: 14px;
+// ==========================================================================
+// Footer Actions (Fixed)
+// ==========================================================================
 
-  ion-icon {
-    font-size: 42px;
-    color: var(--primary);
-    display: block;
-    margin: 0 auto 8px;
-  }
-
-  &:hover {
-    background: #f1fbf1;
-    border-color: #6fcf97;
-  }
+.footer-actions {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  padding: 16px;
+  padding-bottom: calc(16px + env(safe-area-inset-bottom));
+  border-top: 1px solid #e9ecef;
+  display: flex;
+  justify-content: center;
+  z-index: 10;
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08);
 }
 
-/* Preview del comprobante */
-.preview {
-  margin-top: 16px;
-  width: 100%;
-  max-height: 260px;
-  overflow: hidden;
-  border-radius: 12px;
-  border: 1px solid #e0e0e0;
-  position: relative;
-
-  img {
-    width: 100%;
-    height: auto;
-    display: block;
-  }
-
-  .remove-btn {
-    position: absolute;
-    top: 6px;
-    right: 6px;
-  }
-}
+// ==========================================================================
+// Desktop Responsive (manteniendo tu estructura original)
+// ==========================================================================
 
 @media (min-width: 768px) {
-  .card {
-    padding: 20px;
+  .order-content {
+    --padding-start: 24px;
+    --padding-end: 24px;
+    --padding-bottom: 80px;
+  }
+
+  .form-row {
+    display: grid; 
+    grid-template-columns: 1fr 1fr; 
+    gap: 16px;
+  }
+
+  .footer-actions {
+    max-width: 400px;
+    left: 50%;
+    transform: translateX(-50%);
+    right: auto;
+    border-radius: 16px 16px 0 0;
+    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.12);
+  }
+}
+
+@media (min-width: 900px) {
+  // Como en tu código original, en pantallas grandes vuelve a 2 columnas
+  .form-row {
+    display: grid; 
+    grid-template-columns: 1fr 1fr; 
+    gap: 16px;
+  }
+}
+
+// ==========================================================================
+// Dark Mode Support
+// ==========================================================================
+
+@media (prefers-color-scheme: dark) {
+  :host {
+    background: #0f1419;
+  }
+
+  .order-header {
+    --background: #1a1d23;
+    --border-color: #2d3238;
+
+    .close-btn {
+      --color: #8b949e;
+      --border-color: #2d3238;
+    }
+
+    .header-title {
+      color: #f0f6fc;
+    }
+
+    .step-counter {
+      --color: #8b949e;
+    }
+  }
+
+  .order-content {
+    --background: #0f1419;
+  }
+
+  .stepper {
+    background: #1a1d23;
+  }
+
+  .step {
+    .step-number {
+      background: #2d3238;
+      color: #8b949e;
+    }
+
+    .step-label {
+      color: #8b949e;
+    }
+
+    &.active {
+      .step-number {
+        background: var(--primary);
+        color: #ffffff;
+      }
+
+      .step-label {
+        color: var(--primary);
+      }
+    }
+  }
+
+  .info h3 {
+    color: #f0f6fc;
+  }
+
+  .info span {
+    color: #8b949e;
+  }
+
+  .product-summary {
+    background: #21262d;
+    border-color: #30363d;
+  }
+
+  .info-row {
+    border-color: #30363d;
+
+    .label {
+      color: #8b949e;
+    }
+
+    .value {
+      color: #f0f6fc;
+    }
+  }
+
+  .form-input,
+  .form-select,
+  .form-textarea {
+    --background: #21262d;
+    --border-color: #30363d;
+    --placeholder-color: #6e7681;
+    color: #f0f6fc;
+    background: #21262d;
+    border-color: #30363d;
+  }
+
+  .totals-box {
+    background: #21262d;
+    border-color: #30363d;
+  }
+
+  .footer-actions {
+    background: #1a1d23;
+    border-color: #2d3238;
+  }
+}
+
+// ==========================================================================
+// Accessibility Improvements
+// ==========================================================================
+
+@media (prefers-reduced-motion: reduce) {
+  .step,
+  .step-number,
+  .step-line {
+    transition: none;
+  }
+
+  .step-content.active {
+    animation: none;
+  }
+}
+
+@media (prefers-contrast: high) {
+  .product-summary,
+  .totals-box {
+    border-width: 2px;
   }
 }

@@ -14,4 +14,9 @@ export class ProducerService {
     const safe = encodeURIComponent(codeProducer ?? '');
     return from(ApiNative.get<ProducerSelectModel>(`${this.base}/by-code/${safe}`));
   }
+
+  /** Obtener la información del productor autenticado */
+  getMine(): Observable<ProducerSelectModel> {
+    return from(ApiNative.get<ProducerSelectModel>(`${this.base}/me`));
+  }
 }
