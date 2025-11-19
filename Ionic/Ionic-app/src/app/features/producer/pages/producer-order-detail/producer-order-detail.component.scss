@@ -1,72 +1,38 @@
 /* src/app/features/producer/pages/producer-order-detail/producer-order-detail.component.scss */
 
-/* Global Styles */
 :host {
   display: block;
   height: 100%;
 }
 
 .producer-order-detail-content {
-  --padding-top: 0 !important;
-  --padding-bottom: 0 !important;
-  --padding-start: 0 !important;
-  --padding-end: 0 !important;
-  min-height: 100vh !important;
-  display: flex !important;
-  flex-direction: column !important;
-  background: var(--ion-background-color, #f8f9fa) !important;
+  --background: var(--ion-background-color, #f8f9fa);
 }
 
-.order-detail-container {
-  flex: 1 !important;
-  height: auto !important;
-  display: block !important;
-  background: var(--ion-background-color, #f8f9fa) !important;
-  width: 100% !important;
-  box-sizing: border-box !important;
-  position: relative !important;
-  z-index: 10 !important;
-  padding: 0 !important;
-  margin: 0 !important;
+.order-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  min-height: 100%;
 }
 
 .order-container {
-  padding: 16px 16px 80px 16px !important;
-  background: var(--ion-background-color, #f8f9fa) !important;
-  width: 100% !important;
-  box-sizing: border-box !important;
-  position: relative !important;
-  z-index: 11 !important;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.order-header-card,
+.order-section-card,
+.action-card {
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --background: var(--ion-color-light);
+  border: 1px solid var(--ion-color-light-shade);
 }
 
 .order-header-card {
-  margin-bottom: 16px !important;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  --background: var(--ion-color-light);
-  border: 1px solid var(--ion-color-light-shade);
-  position: relative !important;
-  z-index: 12 !important;
-  width: 100% !important;
-  display: block !important;
-  box-sizing: border-box !important;
-}
-
-.order-section-card {
-  margin-bottom: 16px !important;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  --background: var(--ion-color-light);
-  border: 1px solid var(--ion-color-light-shade);
-  position: relative !important;
-  z-index: 12 !important;
-  width: 100% !important;
-  display: block !important;
-  box-sizing: border-box !important;
-
-  &:last-child {
-    margin-bottom: 32px !important;
-  }
+  margin-bottom: 0.5rem;
 }
 
 .section-title {
@@ -76,7 +42,7 @@
   font-size: 16px;
   font-weight: 600;
   color: var(--ion-color-dark);
-  
+
   ion-icon {
     color: var(--ion-color-primary);
     font-size: 18px;
@@ -88,18 +54,18 @@
   --inner-padding-end: 0;
   margin-bottom: 12px;
   border: none;
-  
+
   &:last-child {
     margin-bottom: 0;
   }
-  
+
   ion-label {
     color: var(--ion-color-medium);
     font-size: 12px;
     font-weight: 500;
     margin-bottom: 4px;
   }
-  
+
   ion-text {
     color: var(--ion-color-dark);
     font-size: 14px;
@@ -111,21 +77,20 @@
   border-top: 1px solid var(--ion-color-light-shade);
   padding-top: 12px;
   margin-top: 12px;
-  
+
   ion-label {
     color: var(--ion-color-dark);
     font-size: 14px;
     font-weight: 600;
   }
-  
+
   .total-amount {
-    font-size: 18px !important;
-    font-weight: 700 !important;
-    color: var(--ion-color-success) !important;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--ion-color-success);
   }
 }
 
-/* Status Chip Styling */
 ion-chip {
   font-size: 11px;
   font-weight: 700;
@@ -133,34 +98,33 @@ ion-chip {
   border-radius: 12px;
   margin: 0;
   min-height: 20px;
-  
+
   &.info {
     --background: #e8f0fe;
     --color: #0d47a1;
   }
-  
+
   &.warning {
     --background: #fff4cc;
     --color: #8a6d00;
   }
-  
+
   &.success {
     --background: #e8f5e9;
     --color: #1b5e20;
   }
-  
+
   &.danger {
     --background: #fdecea;
     --color: #b71c1c;
   }
-  
+
   &.neutral {
     --background: #f2f4f7;
     --color: #445;
   }
 }
 
-/* Receipt Section */
 .receipt-container {
   text-align: center;
   margin-bottom: 12px;
@@ -173,7 +137,7 @@ ion-chip {
   border: 1px solid var(--ion-color-light-shade);
   cursor: pointer;
   transition: transform 0.2s ease;
-  
+
   &:hover {
     transform: scale(1.02);
   }
@@ -194,23 +158,9 @@ ion-chip {
   text-align: center;
 }
 
-/* Producer Actions */
-.producer-actions {
-  margin-top: 16px !important;
-  margin-bottom: 32px !important;
-  position: relative !important;
-  z-index: 12 !important;
-}
-
-.action-card {
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  --background: var(--ion-color-light);
-  border: 1px solid var(--ion-color-light-shade);
-  width: 100% !important;
-  position: relative !important;
-  z-index: 13 !important;
-  box-sizing: border-box !important;
+.producer-actions,
+.info-message {
+  margin-top: 16px;
 }
 
 .action-buttons {
@@ -226,140 +176,60 @@ ion-chip {
   font-weight: 500;
 }
 
-/* Info Message */
-.info-message {
-  margin-top: 16px !important;
-  margin-bottom: 32px !important;
-  position: relative !important;
-  z-index: 12 !important;
-}
-
-.info-card ion-item {
-  --background: transparent;
-  --border-color: transparent;
-}
-
-/* Loading Skeleton */
 .loading-container {
-  padding: 16px !important;
-  position: relative !important;
-  z-index: 11 !important;
+  padding: 0;
 }
 
 .skeleton-card {
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   --background: var(--ion-color-light);
-  width: 100% !important;
-  position: relative !important;
-  z-index: 12 !important;
-  box-sizing: border-box !important;
-  
-  ion-card-header {
-    padding-bottom: 0;
-  }
-  
-  ion-card-content {
-    padding-top: 8px;
-  }
 }
 
-/* Responsive adjustments */
 @media (min-width: 768px) {
   .order-container {
-    padding: 20px;
-    max-width: 600px;
+    max-width: 640px;
     margin: 0 auto;
   }
-  
+
   .action-buttons {
     flex-direction: row;
     justify-content: center;
   }
-  
+
   .action-button {
     width: auto;
     min-width: 140px;
     flex: 1;
-    max-width: 200px;
+    max-width: 220px;
   }
 }
 
-@media (max-width: 480px) {
-  .order-container {
-    padding: 12px !important;
-  }
-  
-  .order-section-card,
-  .order-header-card {
-    margin-bottom: 12px !important;
-  }
-  
-  .total-item .total-amount {
-    font-size: 16px !important;
-  }
-}
-
-/* Dark mode support */
 @media (prefers-color-scheme: dark) {
   .order-header-card,
-  .order-section-card {
+  .order-section-card,
+  .action-card {
     --background: var(--ion-color-dark);
     border-color: var(--ion-color-dark-shade);
   }
-  
+
   .section-title {
     color: var(--ion-color-light);
   }
-  
-  .detail-item {
-    ion-label {
-      color: var(--ion-color-medium);
-    }
-    
-    ion-text {
-      color: var(--ion-color-light);
-    }
+
+  .detail-item ion-text {
+    color: var(--ion-color-light);
   }
-  
+
   .total-item {
     border-top-color: var(--ion-color-dark-shade);
-    
+
     ion-label {
       color: var(--ion-color-light);
     }
   }
-  
+
   .upload-date {
     color: var(--ion-color-medium);
   }
-}
-
-/* Force visibility overrides */
-.producer-order-detail-content {
-  --offset-top: 0px !important;
-  --offset-bottom: 0px !important;
-}
-
-/* Prevent parent container interference */
-.order-detail-container {
-  margin: 0 !important;
-  padding: 0 !important;
-}
-
-/* Ensure all cards are visible */
-.order-header-card,
-.order-section-card,
-.action-card,
-.info-card,
-.skeleton-card {
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-}
-
-/* Fix potential overflow issues */
-.order-container {
-  overflow: visible !important;
-  position: relative !important;
 }

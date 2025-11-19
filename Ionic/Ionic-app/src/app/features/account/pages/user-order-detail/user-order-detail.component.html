@@ -7,7 +7,8 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content [fullscreen]="true" class="page-bg order-detail-content">
+  <div class="page-shell product-shell order-shell">
   <ng-container *ngIf="!loading && detail; else loadingTpl">
     <div class="order-container">
       <!-- Order Header -->
@@ -295,4 +296,5 @@
       </ion-content>
     </ng-template>
   </ion-modal>
+  </div>
 </ion-content>
