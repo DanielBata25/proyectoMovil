@@ -1,6 +1,26 @@
 /* src/app/features/account/pages/user-order-detail/user-order-detail.component.scss */
+
+/* Global Styles */
+:host {
+  display: block;
+  height: 100%;
+}
+
+ion-content {
+  --padding-top: 0 !important;
+  --padding-bottom: 0 !important;
+  --padding-start: 0 !important;
+  --padding-end: 0 !important;
+  --background: var(--ion-background-color, #f8f9fa) !important;
+}
+
 .order-container {
-  padding: 16px;
+  padding: 16px 16px 120px 16px !important;
+  background: var(--ion-background-color, #f8f9fa);
+  width: 100%;
+  box-sizing: border-box;
+  position: relative;
+  min-height: 100vh;
 }
 
 .order-header-card {
@@ -19,7 +39,7 @@
   border: 1px solid var(--ion-color-light-shade);
 
   &:last-child {
-    margin-bottom: 0;
+    margin-bottom: 32px;
   }
 }
 
@@ -169,6 +189,7 @@ ion-chip {
 .cancel-actions,
 .info-message {
   margin-top: 16px;
+  margin-bottom: 32px;
 }
 
 .confirmation-card,
@@ -256,7 +277,7 @@ ion-chip {
 /* Responsive adjustments */
 @media (min-width: 768px) {
   .order-container {
-    padding: 20px;
+    padding: 20px 20px 120px 20px !important;
     max-width: 600px;
     margin: 0 auto;
   }
@@ -277,7 +298,7 @@ ion-chip {
 
 @media (max-width: 480px) {
   .order-container {
-    padding: 12px;
+    padding: 12px 12px 100px 12px !important;
   }
   
   .order-section-card,

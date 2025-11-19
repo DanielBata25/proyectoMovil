@@ -7,9 +7,9 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content [fullscreen]="true" class="producer-order-detail-content">
   <ng-container *ngIf="!loading && detail; else loadingTpl">
-    <div class="order-container">
+    <div class="order-container order-detail-container">
       <!-- Order Header -->
       <ion-card class="order-header-card" mode="md">
         <ion-card-header>

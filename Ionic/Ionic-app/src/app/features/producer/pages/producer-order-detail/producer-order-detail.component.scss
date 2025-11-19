@@ -1,25 +1,71 @@
 /* src/app/features/producer/pages/producer-order-detail/producer-order-detail.component.scss */
+
+/* Global Styles */
+:host {
+  display: block;
+  height: 100%;
+}
+
+.producer-order-detail-content {
+  --padding-top: 0 !important;
+  --padding-bottom: 0 !important;
+  --padding-start: 0 !important;
+  --padding-end: 0 !important;
+  min-height: 100vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  background: var(--ion-background-color, #f8f9fa) !important;
+}
+
+.order-detail-container {
+  flex: 1 !important;
+  height: auto !important;
+  display: block !important;
+  background: var(--ion-background-color, #f8f9fa) !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  position: relative !important;
+  z-index: 10 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
 .order-container {
-  padding: 16px;
+  padding: 16px 16px 80px 16px !important;
+  background: var(--ion-background-color, #f8f9fa) !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  position: relative !important;
+  z-index: 11 !important;
 }
 
 .order-header-card {
-  margin-bottom: 16px;
+  margin-bottom: 16px !important;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   --background: var(--ion-color-light);
   border: 1px solid var(--ion-color-light-shade);
+  position: relative !important;
+  z-index: 12 !important;
+  width: 100% !important;
+  display: block !important;
+  box-sizing: border-box !important;
 }
 
 .order-section-card {
-  margin-bottom: 16px;
+  margin-bottom: 16px !important;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   --background: var(--ion-color-light);
   border: 1px solid var(--ion-color-light-shade);
+  position: relative !important;
+  z-index: 12 !important;
+  width: 100% !important;
+  display: block !important;
+  box-sizing: border-box !important;
 
   &:last-child {
-    margin-bottom: 0;
+    margin-bottom: 32px !important;
   }
 }
 
@@ -150,7 +196,10 @@ ion-chip {
 
 /* Producer Actions */
 .producer-actions {
-  margin-top: 16px;
+  margin-top: 16px !important;
+  margin-bottom: 32px !important;
+  position: relative !important;
+  z-index: 12 !important;
 }
 
 .action-card {
@@ -158,6 +207,10 @@ ion-chip {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   --background: var(--ion-color-light);
   border: 1px solid var(--ion-color-light-shade);
+  width: 100% !important;
+  position: relative !important;
+  z-index: 13 !important;
+  box-sizing: border-box !important;
 }
 
 .action-buttons {
@@ -175,7 +228,10 @@ ion-chip {
 
 /* Info Message */
 .info-message {
-  margin-top: 16px;
+  margin-top: 16px !important;
+  margin-bottom: 32px !important;
+  position: relative !important;
+  z-index: 12 !important;
 }
 
 .info-card ion-item {
@@ -185,13 +241,19 @@ ion-chip {
 
 /* Loading Skeleton */
 .loading-container {
-  padding: 16px;
+  padding: 16px !important;
+  position: relative !important;
+  z-index: 11 !important;
 }
 
 .skeleton-card {
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   --background: var(--ion-color-light);
+  width: 100% !important;
+  position: relative !important;
+  z-index: 12 !important;
+  box-sizing: border-box !important;
   
   ion-card-header {
     padding-bottom: 0;
@@ -225,12 +287,12 @@ ion-chip {
 
 @media (max-width: 480px) {
   .order-container {
-    padding: 12px;
+    padding: 12px !important;
   }
   
   .order-section-card,
   .order-header-card {
-    margin-bottom: 12px;
+    margin-bottom: 12px !important;
   }
   
   .total-item .total-amount {
@@ -271,4 +333,33 @@ ion-chip {
   .upload-date {
     color: var(--ion-color-medium);
   }
+}
+
+/* Force visibility overrides */
+.producer-order-detail-content {
+  --offset-top: 0px !important;
+  --offset-bottom: 0px !important;
+}
+
+/* Prevent parent container interference */
+.order-detail-container {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Ensure all cards are visible */
+.order-header-card,
+.order-section-card,
+.action-card,
+.info-card,
+.skeleton-card {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Fix potential overflow issues */
+.order-container {
+  overflow: visible !important;
+  position: relative !important;
 }

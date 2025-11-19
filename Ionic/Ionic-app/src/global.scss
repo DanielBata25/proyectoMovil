@@ -191,7 +191,7 @@ ion-content {
   width: 100%;
   max-width: 1280px;
   margin: 0 auto;
-  padding: calc(var(--app-shell-header-offset, 0px) + 1rem) 1rem calc(var(--app-shell-footer-offset, 0px) + 1rem + env(safe-area-inset-bottom));
+  padding: var(--app-content-padding-top) var(--app-content-padding-x) calc(var(--app-content-padding-bottom) + env(safe-area-inset-bottom));
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -311,7 +311,7 @@ ion-content {
 
 @media (max-width: 768px) {
   .page-shell.product-shell {
-    padding: 1rem;
+    padding: var(--app-content-padding-top) 1rem calc(var(--app-content-padding-bottom) + env(safe-area-inset-bottom));
   }
 
   .product-shell .filters-card,
