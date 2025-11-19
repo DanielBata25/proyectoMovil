@@ -1,17 +1,48 @@
 /* src/app/features/account/pages/user-orders-list/user-orders-list.component.scss */
+:host {
+  display: block;
+  height: 100%;
+}
+
+.orders-page-content {
+  --padding-top: 0 !important;
+  --padding-bottom: 0 !important;
+  --padding-start: 0 !important;
+  --padding-end: 0 !important;
+  height: 100vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  background: var(--ion-background-color, #f8f9fa) !important;
+}
+
 .orders-container {
-  padding: 16px;
+  padding: 16px !important;
+  flex: 1 !important;
+  height: auto !important;
+  min-height: 100% !important;
+  display: block !important;
+  overflow-y: auto !important;
+  background: var(--ion-background-color, #f8f9fa) !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  position: relative !important;
+  z-index: 10 !important;
 }
 
 .order-card {
-  margin-bottom: 16px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  --background: var(--ion-color-light);
-  border: 1px solid var(--ion-color-light-shade);
+  margin-bottom: 16px !important;
+  border-radius: 12px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+  --background: var(--ion-color-light) !important;
+  border: 1px solid var(--ion-color-light-shade) !important;
+  width: 100% !important;
+  display: block !important;
+  box-sizing: border-box !important;
+  position: relative !important;
+  z-index: 11 !important;
 
   &:last-child {
-    margin-bottom: 0;
+    margin-bottom: 0 !important;
   }
 }
 
@@ -125,6 +156,7 @@
   padding: 40px 20px;
   text-align: center;
   gap: 16px;
+  flex: 1;
 }
 
 .loading-container {
@@ -182,4 +214,19 @@
   .value {
     color: var(--ion-color-light);
   }
+}
+
+/* Force visibility overrides */
+ion-content.orders-page-content {
+  --offset-top: 0px !important;
+  --offset-bottom: 0px !important;
+}
+
+/* Prevent parent container interference */
+.orders-container {
+  margin: 0 !important;
+  padding-top: 16px !important;
+  padding-bottom: 16px !important;
+  padding-left: 16px !important;
+  padding-right: 16px !important;
 }

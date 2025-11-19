@@ -4,7 +4,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content [fullscreen]="true" class="orders-page-content">
   <!-- prueba cantidad de pedidos -->
   <!-- <app-stat-card
     icon="shopping_cart"
@@ -59,7 +59,7 @@
               fill="outline" 
               color="medium"
               size="small"
-              (clicked)="view(o.code)"
+              (click)="view(o.code)"
               class="action-button">
               Ver detalle
             </ion-button>
@@ -76,7 +76,7 @@
               fill="solid"
               color="primary"
               size="small"
-              (clicked)="triggerFile(uploader)"
+              (click)="triggerFile(uploader)"
               class="action-button">
               Subir comprobante
             </ion-button>
@@ -87,7 +87,7 @@
               fill="solid"
               color="danger"
               size="small"
-              (clicked)="cancel(o.code)"
+              (click)="cancel(o.code)"
               class="action-button">
               Cancelar
             </ion-button>
@@ -98,7 +98,7 @@
               fill="solid"
               color="success"
               size="small"
-              (clicked)="confirm(o.code)"
+              (click)="confirm(o.code)"
               class="action-button">
               Confirmar recepción
             </ion-button>
