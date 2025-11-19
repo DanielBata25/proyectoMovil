@@ -66,19 +66,16 @@
     <section class="results-card">
       <ion-progress-bar *ngIf="isLoadingFarms" type="indeterminate"></ion-progress-bar>
 
-      <ng-container *ngIf="pagedFarms.length > 0; else emptyState">
-        <app-container-card-flex
-          [type]="'farm'"
-          [items]="pagedFarms">
-        </app-container-card-flex>
-      </ng-container>
+      <app-container-card-flex
+        [type]="'farm'"
+        [items]="pagedFarms"
+        [loading]="isLoadingFarms">
+      </app-container-card-flex>
 
-      <ng-template #emptyState>
-        <div *ngIf="!isLoadingFarms" class="empty-state">
-          <ion-icon name="home-outline"></ion-icon>
-          <p>Sin fincas que coincidan con los filtros.</p>
-        </div>
-      </ng-template>
+      <div *ngIf="!isLoadingFarms && pagedFarms.length === 0" class="empty-state">
+        <ion-icon name="home-outline"></ion-icon>
+        <p>Sin fincas que coincidan con los filtros.</p>
+      </div>
 
       <div class="pager" *ngIf="totalPages >= 1">
         <ion-button fill="clear" size="small" (click)="onPrevPage()" [disabled]="isFirstPage || isLoadingFarms">

@@ -48,6 +48,10 @@ export class InfoComponent implements OnInit {
     return this.authState.hasRole('producer') || this.authState.hasRole('admin');
   }
 
+  get ordersRoute(): string {
+    return this.isProducer ? '/account/producer/orders' : '/account/orders';
+  }
+
   constructor() {
     addIcons({
       mail, call, idCard, location,

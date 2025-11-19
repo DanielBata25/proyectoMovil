@@ -18,6 +18,18 @@ export class ContainerCardComponent {
   @Input() showHeader = true;
   @Input() showFavorite = true;
   @Input({ required: true }) products: ProductSelectModel[] = [];
+  @Input() loading = false;
+  @Input() skeletonCount = 4;
+
+  private readonly placeholderProduct = {} as ProductSelectModel;
 
   trackById = (_: number, p: ProductSelectModel) => p.id;
+
+  get skeletonItems(): number[] {
+    return Array.from({ length: this.skeletonCount }, (_, i) => i);
+  }
+
+  get placeholder(): ProductSelectModel {
+    return this.placeholderProduct;
+  }
 }

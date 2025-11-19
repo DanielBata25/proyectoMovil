@@ -28,7 +28,7 @@ export class UserOrderDetailComponent implements OnInit {
   private alertController = inject(AlertController);
   private toastController = inject(ToastController);
 
-  id!: number;
+  code!: string;
   loading = true;
   confirming = false;
   detail?: OrderDetailModel;
@@ -41,8 +41,8 @@ export class UserOrderDetailComponent implements OnInit {
   readonly MAX_FILE_BYTES = this.MAX_FILE_MB * 1024 * 1024;
 
   ngOnInit(): void {
-    this.id = Number(this.route.snapshot.paramMap.get('id'));
-    if (!this.id) {
+    this.code = String(this.route.snapshot.paramMap.get('code'));
+    if (!this.code) {
       this.router.navigateByUrl('/account/orders');
       return;
     }
@@ -53,7 +53,7 @@ export class UserOrderDetailComponent implements OnInit {
     this.loading = true;
     try {
       this.detail = await firstValueFrom(
-        this.ordersSrv.getDetailForUser(this.id)
+        this.ordersSrv.getDetailForUser(this.code)
       );
     } catch (err: any) {
       const alert = await this.alertController.create({
@@ -173,7 +173,7 @@ export class UserOrderDetailComponent implements OnInit {
       rowVersion: this.detail.rowVersion,
     };
 
-    this.ordersSrv.confirmReceived(this.id, body).subscribe({
+    this.ordersSrv.confirmReceived(this.code, body).subscribe({
       next: async () => {
         await loadingAlert.dismiss();
         const successAlert = await this.alertController.create({
@@ -238,7 +238,7 @@ export class UserOrderDetailComponent implements OnInit {
     await loadingAlert.present();
 
     try {
-      await firstValueFrom(this.ordersSrv.cancelByUser(this.id, this.detail.rowVersion));
+      await firstValueFrom(this.ordersSrv.cancelByUser(this.code, this.detail.rowVersion));
       
       await loadingAlert.dismiss();
       const successAlert = await this.alertController.create({
@@ -312,7 +312,7 @@ export class UserOrderDetailComponent implements OnInit {
     });
     await loadingAlert.present();
 
-    this.ordersSrv.uploadPayment(this.id, req).subscribe({
+    this.ordersSrv.uploadPayment(this.code, req).subscribe({
       next: async () => {
         await loadingAlert.dismiss();
         await this.showToast('Comprobante subido.', 'success');

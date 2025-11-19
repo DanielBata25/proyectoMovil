@@ -1,6 +1,6 @@
 // src/app/shared/services/order/order.service.ts
 import { Injectable } from '@angular/core';
-import { from, Observable } from 'rxjs';
+import { from, map, Observable } from 'rxjs';
 import {
   OrderCreateModel,
   CreateOrderResponse,
@@ -12,6 +12,7 @@ import {
   UploadPaymentRequest
 } from '../../models/order/order.model';
 import { ApiNative } from 'src/app/core/services/http/api.native';
+import { ConsumerRatingCreateModel, ConsumerRatingModel } from '../../models/consumerRating/consumerRating.model';
 
 @Injectable({ providedIn: 'root' })
 export class OrderService {
@@ -27,14 +28,13 @@ export class OrderService {
 
   /** ------------------------------- USER ------------------------------------ */
   // POST /OrderUser/{id}/payment
-  uploadPayment(id: number, req: UploadPaymentRequest): Observable<any> {
-    if (!Number.isFinite(id) || id <= 0) throw new Error('ID inválido');
+  uploadPayment(code: string, req: UploadPaymentRequest): Observable<any> {
     const fd = new FormData();
     fd.append('RowVersion', req.rowVersion);
     const file = req.paymentImage;
     const fileName = (file as any)?.name ?? 'payment.jpg';
     fd.append('PaymentImage', file, fileName);
-    return from(ApiNative.post<any>(`${this.userBase}/${id}/payment`, fd));
+    return from(ApiNative.post<any>(`${this.userBase}/${code}/payment`, fd));
   }
 
   // GET /OrderUser/mine
@@ -43,23 +43,20 @@ export class OrderService {
   }
 
   // GET /OrderUser/{id}/detail
-  getDetailForUser(id: number): Observable<OrderDetailModel> {
-    if (!Number.isFinite(id) || id <= 0) throw new Error('ID inválido');
-    return from(ApiNative.get<OrderDetailModel>(`${this.userBase}/${id}/detail`));
+  getDetailForUser(code: string): Observable<OrderDetailModel> {
+    return from(ApiNative.get<OrderDetailModel>(`${this.userBase}/${code}/detail`));
   }
 
   // POST /OrderUser/{id}/confirm-received
-  confirmReceived(id: number, body: OrderConfirmRequest): Observable<any> {
-    if (!Number.isFinite(id) || id <= 0) throw new Error('ID inválido');
-    return from(ApiNative.post<any>(`${this.userBase}/${id}/confirm-received`, body));
+  confirmReceived(code: string, body: OrderConfirmRequest): Observable<any> {
+    return from(ApiNative.post<any>(`${this.userBase}/${code}/confirm-received`, body));
   }
 
   // POST /OrderUser/{id}/cancel
-  cancelByUser(id: number, rowVersion: string): Observable<any> {
-    if (!Number.isFinite(id) || id <= 0) throw new Error('ID inválido');
+  cancelByUser(code: string, rowVersion: string): Observable<any> {
     return from(
       ApiNative.post<any>(
-        `${this.userBase}/${id}/cancel`,
+        `${this.userBase}/${code}/cancel`,
         JSON.stringify(rowVersion)
       )
     );
@@ -77,54 +74,81 @@ export class OrderService {
   }
 
   // GET /OrderProducer/{id}/detail
-  getDetailForProducer(id: number): Observable<OrderDetailModel> {
-    if (!Number.isFinite(id) || id <= 0) throw new Error('ID inválido');
-    return from(ApiNative.get<OrderDetailModel>(`${this.producerBase}/${id}/detail`));
+  getDetailForProducer(code: string): Observable<OrderDetailModel> {
+    return from(ApiNative.get<OrderDetailModel>(`${this.producerBase}/${code}/detail`));
   }
 
   /** -------------------------- PRODUCER ACTIONS ------------------------------ */
   // POST /OrderProducer/{id}/accept
-  acceptOrder(id: number, dto: OrderAcceptRequest): Observable<void> {
-    if (!Number.isFinite(id) || id <= 0) throw new Error('ID inválido');
-    return from(ApiNative.post<void>(`${this.producerBase}/${id}/accept`, dto));
+  acceptOrder(code: string, dto: OrderAcceptRequest): Observable<void> {
+    return from(ApiNative.post<void>(`${this.producerBase}/${code}/accept`, dto));
   }
 
   // POST /OrderProducer/{id}/reject
-  rejectOrder(id: number, dto: OrderRejectRequest): Observable<void> {
-    if (!Number.isFinite(id) || id <= 0) throw new Error('ID inválido');
-    return from(ApiNative.post<void>(`${this.producerBase}/${id}/reject`, dto));
+  rejectOrder(code: string, dto: OrderRejectRequest): Observable<void> {
+    return from(ApiNative.post<void>(`${this.producerBase}/${code}/reject`, dto));
   }
 
   // POST /OrderProducer/{id}/preparing
-  markPreparing(id: number, rowVersion: string): Observable<any> {
-    if (!Number.isFinite(id) || id <= 0) throw new Error('ID inválido');
+  markPreparing(code: string, rowVersion: string): Observable<any> {
     return from(
       ApiNative.post<any>(
-        `${this.producerBase}/${id}/preparing`,
+        `${this.producerBase}/${code}/preparing`,
         JSON.stringify(rowVersion)
       )
     );
   }
 
-  // POST /OrderProducer/{id}/dispatched
-  markDispatched(id: number, rowVersion: string): Observable<any> {
-    if (!Number.isFinite(id) || id <= 0) throw new Error('ID inválido');
+  // POST /OrderProducer/{code}/dispatched
+  markDispatched(code: string, rowVersion: string): Observable<any> {
     return from(
       ApiNative.post<any>(
-        `${this.producerBase}/${id}/dispatched`,
+        `${this.producerBase}/${code}/dispatched`,
         JSON.stringify(rowVersion)
       )
     );
   }
 
-  // POST /OrderProducer/{id}/delivered
-  markDelivered(id: number, rowVersion: string): Observable<any> {
-    if (!Number.isFinite(id) || id <= 0) throw new Error('ID inválido');
+  // POST /OrderProducer/{code}/delivered
+  markDelivered(code: string, rowVersion: string): Observable<any> {
     return from(
       ApiNative.post<any>(
-        `${this.producerBase}/${id}/delivered`,
+        `${this.producerBase}/${code}/delivered`,
         JSON.stringify(rowVersion)
       )
     );
   }
+  // ========== CALIFICACIÓN DEL CLIENTE (PRODUCTOR) ==========
+
+/**
+ * POST /Producer/{code}/rate-customer
+ * Crea o actualiza la calificación del cliente hecha por el productor
+ */
+rateCustomer(
+  code: string,
+  dto: ConsumerRatingCreateModel
+): Observable<{ isSuccess: boolean; data: ConsumerRatingModel }> {
+  return from(
+    ApiNative.post<{ isSuccess: boolean; data: ConsumerRatingModel }>(
+      `${this.producerBase}/${code}/rate-customer`,
+      dto
+    )
+  );
 }
+
+/**
+ * GET /Producer/{code}/rate-customer
+ * Obtiene la calificación del cliente hecha por el productor
+ */
+getCustomerRating(code: string): Observable<ConsumerRatingModel | null> {
+  return from(
+    ApiNative.get<{ isSuccess: boolean; data: ConsumerRatingModel | null }>(
+      `${this.producerBase}/${code}/rate-customer`
+    )
+  ).pipe(map(r => r.data));
+}
+
+}
+
+ 
+

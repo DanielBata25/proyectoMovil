@@ -56,7 +56,8 @@
       <app-container-card-flex
         [items]="pagedProducts"
         [type]="'product'"
-        [showFavorite]="true">
+        [showFavorite]="true"
+        [loading]="isLoadingProducts">
       </app-container-card-flex>
 
       <div *ngIf="!isLoadingProducts && filteredProducts.length === 0" class="empty-state">

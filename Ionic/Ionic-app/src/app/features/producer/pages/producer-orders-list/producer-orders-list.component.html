@@ -97,7 +97,7 @@
               <ion-icon name="calendar-outline" color="medium"></ion-icon>
               <span>Fecha:</span>
             </div>
-            <div class="detail-value">{{ o.createdAt | date : 'mediumDate' : '' : 'es-CO' }}</div>
+            <div class="detail-value">{{ o.createAt | date : 'mediumDate' : '' : 'es-CO' }}</div>
           </div>
           
           <div class="detail-row">
@@ -131,7 +131,7 @@
           expand="block" 
           fill="outline" 
           size="default"
-          (click)="goToOrderDetail(o.id)"
+          (click)="goToOrderDetail(o.code)"
           class="action-button">
           <ion-icon slot="start" name="eye-outline"></ion-icon>
           Ver detalle

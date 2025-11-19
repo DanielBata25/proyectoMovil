@@ -31,6 +31,8 @@ export class ContainerCardFlexComponent {
   @Input() showActions = false;
   @Input() showFavorite = false; // solo aplica a product
   @Input() togglingId: number | null = null; // solo aplica a product
+  @Input() loading = false;
+  @Input() skeletonCount = 6;
 
   /** Eventos comunes */
   @Output() editProduct = new EventEmitter<ProductSelectModel>();
@@ -42,6 +44,7 @@ export class ContainerCardFlexComponent {
   @Output() toggleFavorite = new EventEmitter<ProductSelectModel>(); // solo product
 
   trackById = (_: number, it: Item) => (it as any).id;
+  private readonly placeholderProduct = {} as ProductSelectModel;
 
   // Helpers de tipado
   isProduct(it: Item): it is ProductSelectModel {
@@ -56,5 +59,13 @@ export class ContainerCardFlexComponent {
     return this.type === 'farm'
       ? ['card-grid', 'card-grid--farm']
       : ['card-grid', 'card-grid--product'];
+  }
+
+  get skeletonItems(): number[] {
+    return Array.from({ length: this.skeletonCount }, (_, i) => i);
+  }
+
+  get placeholder(): ProductSelectModel {
+    return this.placeholderProduct;
   }
 }

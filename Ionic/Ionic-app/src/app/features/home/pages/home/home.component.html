@@ -8,14 +8,16 @@
       <app-container-card
         [title]="'Últimos Agregados'"
         [showHeader]="true"
-        [products]="products">
+        [products]="products"
+        [loading]="loadingProducts">
       </app-container-card>
 
       <!-- Productos destacados -->
       <app-container-card
         [title]="'Productos Destacados'"
         [showHeader]="true"
-        [products]="productFeatured">
+        [products]="productFeatured"
+        [loading]="loadingFeatured">
       </app-container-card>
 
       <!-- Botón explorar -->

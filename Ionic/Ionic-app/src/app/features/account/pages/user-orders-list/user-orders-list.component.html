@@ -49,7 +49,7 @@
             <div class="info-row">
               <div class="info-item full-width">
                 <span class="label">Creado:</span>
-                <span class="value">{{ o.createdAt | date:'medium' }}</span>
+                <span class="value">{{ o.createAt | date:'medium' }}</span>
               </div>
             </div>
           </div>
@@ -59,7 +59,7 @@
               fill="outline" 
               color="medium"
               size="small"
-              (clicked)="view(o.id)"
+              (clicked)="view(o.code)"
               class="action-button">
               Ver detalle
             </ion-button>
@@ -70,7 +70,7 @@
               accept="image/*" 
               #uploader 
               hidden 
-              (change)="onPickPaymentFile(o.id, $event)" />
+              (change)="onPickPaymentFile(o.code, $event)" />
             <ion-button
               *ngIf="canUploadPayment(o.status)"
               fill="solid"
@@ -87,7 +87,7 @@
               fill="solid"
               color="danger"
               size="small"
-              (clicked)="cancel(o.id)"
+              (clicked)="cancel(o.code)"
               class="action-button">
               Cancelar
             </ion-button>
@@ -98,7 +98,7 @@
               fill="solid"
               color="success"
               size="small"
-              (clicked)="confirm(o.id)"
+              (clicked)="confirm(o.code)"
               class="action-button">
               Confirmar recepción
             </ion-button>

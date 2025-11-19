@@ -61,17 +61,17 @@
     <section class="results-card">
       <ion-progress-bar *ngIf="loading" type="indeterminate"></ion-progress-bar>
 
-      <ng-container *ngIf="!loading && paginatedProducts.length; else emptyState">
-        <app-container-card-flex
-          [type]="'product'"
-          [items]="paginatedProducts"
-          [showActions]="true"
-          (viewProduct)="viewProduct($event)"
-          (editProduct)="onEdit($event)"
-          (deleteProduct)="onDelete($event)">
-        </app-container-card-flex>
+      <app-container-card-flex
+        [type]="'product'"
+        [items]="paginatedProducts"
+        [showActions]="true"
+        [loading]="loading"
+        (viewProduct)="viewProduct($event)"
+        (editProduct)="onEdit($event)"
+        (deleteProduct)="onDelete($event)">
+      </app-container-card-flex>
 
-        <div class="pagination-container" *ngIf="totalPages > 1">
+      <div class="pagination-container" *ngIf="!loading && totalPages > 1">
         <div class="pagination">
           <app-button
             class="btn-inline"
@@ -93,25 +93,21 @@
             (clicked)="nextPage()">
           </app-button>
         </div>
-        </div>
-      </ng-container>
+      </div>
     </section>
-  </div>
 
-  <ng-template #emptyState>
-    <div class="empty">
-      <ion-icon name="layers-outline"></ion-icon>
-      <p *ngIf="!loading">No tienes productos todavia.</p>
-      <p *ngIf="loading">Cargando productos...</p>
-      <app-button
-        class="btn-inline"
-        color="secondary"
-        [text]="'Crear el primero'"
-        type="button"
-        (clicked)="createProduct()">
-      </app-button>
+    <div class="empty" *ngIf="!loading && paginatedProducts.length === 0">
+    <ion-icon name="layers-outline"></ion-icon>
+    <p>No tienes productos todavia.</p>
+    <app-button
+      class="btn-inline"
+      color="secondary"
+      [text]="'Crear el primero'"
+      type="button"
+      (clicked)="createProduct()">
+    </app-button>
     </div>
-  </ng-template>
+  </div>
 
   <button type="button" class="app-fab-add" (click)="createProduct()" aria-label="Agregar producto">
     <ion-icon name="add-outline"></ion-icon>

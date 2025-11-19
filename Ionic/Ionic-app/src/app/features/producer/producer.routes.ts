@@ -15,6 +15,13 @@ export const PRODUCER_ROUTES: Routes = [
       ),
   },
   {
+    path: 'orders/:code',
+    loadComponent: () =>
+      import('./pages/producer-order-detail/producer-order-detail.component').then(
+        (m) => m.ProducerOrderDetailComponent,
+      ),
+  },
+  {
     path: 'orders',
     loadComponent: () =>
       import('./pages/producer-orders-list/producer-orders-list.component').then(

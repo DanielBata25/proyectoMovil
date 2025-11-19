@@ -26,6 +26,8 @@ export class HomeComponent implements OnInit {
 
   products: ProductSelectModel[] = [];
   productFeatured: ProductSelectModel[] = [];
+  loadingProducts = true;
+  loadingFeatured = true;
 
   ngOnInit(): void {
     this.loadProduct();
@@ -33,16 +35,30 @@ export class HomeComponent implements OnInit {
   }
 
 private loadProduct(): void {
-  this.productService.getAllHome().subscribe(data => {
-    this.products = data;
-    console.log('HomeComponent - productos cargados:', this.products);
+  this.loadingProducts = true;
+  this.productService.getAllHome().subscribe({
+    next: (data) => {
+      this.products = data;
+      console.log('HomeComponent - productos cargados:', this.products);
+      this.loadingProducts = false;
+    },
+    error: () => {
+      this.loadingProducts = false;
+    }
   });
 }
 
 private loadProductFeatured(): void {
-  this.productService.getFeatured().subscribe(data => {
-    this.productFeatured = data;
-    console.log('HomeComponent - productos destacados:', this.productFeatured);
+  this.loadingFeatured = true;
+  this.productService.getFeatured().subscribe({
+    next: (data) => {
+      this.productFeatured = data;
+      console.log('HomeComponent - productos destacados:', this.productFeatured);
+      this.loadingFeatured = false;
+    },
+    error: () => {
+      this.loadingFeatured = false;
+    }
   });
 }
 }

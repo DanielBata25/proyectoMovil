@@ -4,16 +4,15 @@
       <h2 class="section-title">Mis fincas</h2>
       <ion-progress-bar *ngIf="loadingFarms" type="indeterminate"></ion-progress-bar>
 
-      <ng-container *ngIf="!loadingFarms && pagedFarms.length; else emptyState">
-        <app-container-card-flex
-          [type]="'farm'"
-          [items]="pagedFarms"
-          [showActions]="true"
-          (editFarm)="onEdit($event)"
-          (deleteFarm)="onDelete($event)"
-          (viewFarm)="onView($event)">
-        </app-container-card-flex>
-      </ng-container>
+      <app-container-card-flex
+        [type]="'farm'"
+        [items]="pagedFarms"
+        [showActions]="true"
+        [loading]="loadingFarms"
+        (editFarm)="onEdit($event)"
+        (deleteFarm)="onDelete($event)"
+        (viewFarm)="onView($event)">
+      </app-container-card-flex>
 
       <div class="pager" *ngIf="!loadingFarms && totalPages > 1">
         <app-button
@@ -40,13 +39,9 @@
         </app-button>
       </div>
     </section>
-  </div>
-
-  <ng-template #emptyState>
-    <div class="empty-state">
+    <div class="empty-state" *ngIf="!loadingFarms && pagedFarms.length === 0">
       <ion-icon name="home-outline"></ion-icon>
-      <p *ngIf="!loadingFarms">Aun no registras fincas.</p>
-      <p *ngIf="loadingFarms">Cargando fincas...</p>
+      <p>Aun no registras fincas.</p>
       <app-button
         class="btn-inline"
         color="secondary"
@@ -55,7 +50,7 @@
         (clicked)="onCreate()">
       </app-button>
     </div>
-  </ng-template>
+  </div>
 
   <button type="button" class="app-fab-add" (click)="onCreate()" aria-label="Crear finca">
     <ion-icon name="add-outline"></ion-icon>

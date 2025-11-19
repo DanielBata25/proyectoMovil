@@ -71,8 +71,8 @@ export class ProducerOrdersListComponent implements OnInit, OnDestroy{
   }
 
   // Navegar a detalle de pedido
-  goToOrderDetail(orderId: number): void {
-    this.router.navigate(['/account/producer/orders', orderId], {
+  goToOrderDetail(OrderCode: string): void {
+    this.router.navigate([`/account/producer/orders/${OrderCode}`], {
       queryParams: { view: 'for-producer' }
     });
   }

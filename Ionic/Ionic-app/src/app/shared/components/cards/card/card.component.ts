@@ -23,6 +23,7 @@ export class CardComponent {
   @Input({ required: true }) product!: ProductSelectModel;
   @Input() showActions = false;
   @Input() showFavorite = false;
+  @Input() loading = false;
 
   @Output() edit = new EventEmitter<ProductSelectModel>();
   @Output() delete = new EventEmitter<ProductSelectModel>();

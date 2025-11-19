@@ -26,14 +26,14 @@ export class ProducerOrderDetailComponent implements OnInit {
   private alertController = inject(AlertController);
   private toastController = inject(ToastController);
 
-  id!: number;
+  code!: string;
   loading = true;
   processing = false;
   detail?: OrderDetailModel;
 
   ngOnInit(): void {
-    this.id = Number(this.route.snapshot.paramMap.get('id'));
-    if (!this.id) {
+    this.code = String(this.route.snapshot.paramMap.get('code'));
+    if (!this.code) {
       this.router.navigateByUrl('/account/producer/orders');
       return;
     }
@@ -44,7 +44,7 @@ export class ProducerOrderDetailComponent implements OnInit {
     this.loading = true;
     try {
       this.detail = await firstValueFrom(
-        this.ordersSrv.getDetailForProducer(this.id)
+        this.ordersSrv.getDetailForProducer(this.code)
       );
     } catch (err: any) {
       const alert = await this.alertController.create({
@@ -172,7 +172,7 @@ export class ProducerOrderDetailComponent implements OnInit {
     });
     await loadingAlert.present();
 
-    this.ordersSrv.acceptOrder(this.id, {
+    this.ordersSrv.acceptOrder(this.code, {
       notes: notes?.trim() || undefined,
       rowVersion: this.detail.rowVersion,
     }).subscribe({
@@ -255,7 +255,7 @@ export class ProducerOrderDetailComponent implements OnInit {
     });
     await loadingAlert.present();
 
-    this.ordersSrv.rejectOrder(this.id, {
+    this.ordersSrv.rejectOrder(this.code, {
       reason,
       rowVersion: this.detail.rowVersion,
     }).subscribe({
@@ -291,7 +291,7 @@ export class ProducerOrderDetailComponent implements OnInit {
       message: 'Confirmarás que ya estás preparando el pedido.',
       confirmText: 'Sí, preparar',
       successMessage: 'Pedido marcado como preparando.',
-      actionFactory: () => this.ordersSrv.markPreparing(this.id, this.detail!.rowVersion),
+      actionFactory: () => this.ordersSrv.markPreparing(this.code, this.detail!.rowVersion),
     });
   }
 
@@ -302,7 +302,7 @@ export class ProducerOrderDetailComponent implements OnInit {
       message: 'Indica que el pedido ya salió a entrega.',
       confirmText: 'Sí, despachar',
       successMessage: 'Pedido marcado como despachado.',
-      actionFactory: () => this.ordersSrv.markDispatched(this.id, this.detail!.rowVersion),
+      actionFactory: () => this.ordersSrv.markDispatched(this.code, this.detail!.rowVersion),
     });
   }
 
@@ -313,7 +313,7 @@ export class ProducerOrderDetailComponent implements OnInit {
       message: 'Confirmarás que el pedido se entregó al comprador.',
       confirmText: 'Sí, entregado',
       successMessage: 'Pedido marcado como entregado.',
-      actionFactory: () => this.ordersSrv.markDelivered(this.id, this.detail!.rowVersion),
+      actionFactory: () => this.ordersSrv.markDelivered(this.code, this.detail!.rowVersion),
     });
   }
 

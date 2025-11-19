@@ -59,7 +59,7 @@ export const ACCOUNT_ROUTES: Routes = [
               ),
           },
           {
-            path: ':id',
+            path: ':code',
             title: 'Detalle del pedido',
             loadComponent: () =>
               import('./pages/user-order-detail/user-order-detail.component').then(

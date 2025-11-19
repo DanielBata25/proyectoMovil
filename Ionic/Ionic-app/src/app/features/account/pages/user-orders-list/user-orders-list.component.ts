@@ -64,8 +64,8 @@ export class UserOrdersListComponent implements OnInit {
       });
   }
 
-  view(id: number): void {
-    this.router.navigate(['/account/orders', id]);
+  view(code: string): void {
+    this.router.navigate(['/account/orders', code]);
   }
 
   /* ======= Guards por estado ======= */
@@ -104,10 +104,10 @@ export class UserOrdersListComponent implements OnInit {
   }
 
   /* ======= Confirmar recepción (Sí/No) ======= */
-  async confirm(id: number): Promise<void> {
+  async confirm(code: string): Promise<void> {
     let detail: OrderDetailModel;
     try {
-      detail = await firstValueFrom(this.ordersSrv.getDetailForUser(id));
+      detail = await firstValueFrom(this.ordersSrv.getDetailForUser(code));
     } catch (err: any) {
       await this.showToast('No se pudo cargar el pedido.');
       return;
@@ -125,7 +125,7 @@ export class UserOrdersListComponent implements OnInit {
         {
           text: 'Sí, recibido',
           handler: async () => {
-            await this.processConfirmation(id, detail, 'yes');
+            await this.processConfirmation(code, detail, 'yes');
           }
         }
       ],
@@ -134,13 +134,13 @@ export class UserOrdersListComponent implements OnInit {
     await alert.present();
   }
 
-  private async processConfirmation(id: number, detail: OrderDetailModel, answer: 'yes' | 'no'): Promise<void> {
+  private async processConfirmation(code: string, detail: OrderDetailModel, answer: 'yes' | 'no'): Promise<void> {
     const body: OrderConfirmRequest = {
       answer: answer,
       rowVersion: detail.rowVersion,
     };
 
-    this.ordersSrv.confirmReceived(id, body).subscribe({
+    this.ordersSrv.confirmReceived(code, body).subscribe({
       next: async () => {
         await this.showToast(answer === 'yes' ? '¡Gracias por confirmar!' : 'Hemos registrado tu reporte.', 'success');
         this.load();
@@ -152,10 +152,10 @@ export class UserOrdersListComponent implements OnInit {
   }
 
   /* ======= Cancelar pedido (PendingReview) ======= */
-  async cancel(id: number): Promise<void> {
+  async cancel(code: string): Promise<void> {
     let detail: OrderDetailModel;
     try {
-      detail = await firstValueFrom(this.ordersSrv.getDetailForUser(id));
+      detail = await firstValueFrom(this.ordersSrv.getDetailForUser(code));
     } catch (err: any) {
       await this.showToast('No se pudo cargar el pedido.');
       return;
@@ -173,7 +173,7 @@ export class UserOrdersListComponent implements OnInit {
         {
           text: 'Sí, cancelar',
           handler: () => {
-            this.ordersSrv.cancelByUser(id, detail.rowVersion).subscribe({
+            this.ordersSrv.cancelByUser(code, detail.rowVersion).subscribe({
               next: async () => {
                 await this.showToast('Pedido cancelado.', 'success');
                 this.load();
@@ -195,7 +195,7 @@ export class UserOrdersListComponent implements OnInit {
     el.click();
   }
 
-  async onPickPaymentFile(id: number, ev: Event) {
+  async onPickPaymentFile(code: string, ev: Event) {
     const input = ev.target as HTMLInputElement;
     const file = input.files?.[0];
     input.value = ''; 
@@ -212,14 +212,14 @@ export class UserOrdersListComponent implements OnInit {
 
     let detail: OrderDetailModel;
     try {
-      detail = await firstValueFrom(this.ordersSrv.getDetailForUser(id));
+      detail = await firstValueFrom(this.ordersSrv.getDetailForUser(code));
     } catch (err: any) {
       await this.showToast('No se pudo cargar el pedido.');
       return;
     }
 
     const req: UploadPaymentRequest = { rowVersion: detail.rowVersion, paymentImage: file };
-    const action$ = this.ordersSrv.uploadPayment(id, req);
+    const action$ = this.ordersSrv.uploadPayment(code, req);
 
     const loadingAlert = await this.alertController.create({
       header: 'Subiendo comprobante…',
