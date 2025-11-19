@@ -96,13 +96,14 @@
 
     <!-- Siguiendo tu estructura: actions -->
     <div class="actions">
-      <ion-button 
-        color="primary" 
-        (click)="goNext()" 
-        [disabled]="productGroup.invalid">
-        Siguiente
-        <ion-icon name="chevron-forward" slot="end"></ion-icon>
-      </ion-button>
+      <app-button
+        text="Siguiente"
+        color="primary"
+        icon="chevron-forward"
+        [disabled]="productGroup.invalid"
+        stepperAction="next"
+        (clicked)="goNext()">
+      </app-button>
     </div>
   </div>
 
@@ -153,7 +154,8 @@
         <ion-label class="input-label">Departamento</ion-label>
         <ion-select
           class="form-select"
-          interface="action-sheet"
+          interface="popover"
+          [interfaceOptions]="selectInterfaceOpts"
           formControlName="departmentId"
           (ionChange)="onDepartmentChange($event.detail.value)">
           <ion-select-option *ngFor="let d of departments" [value]="d.id">
@@ -169,7 +171,10 @@
         <ion-label class="input-label">Ciudad</ion-label>
         <ion-select
           class="form-select"
-          interface="action-sheet"
+          interface="popover"
+          [interfaceOptions]="selectInterfaceOpts"
+          [disabled]="!cities.length"
+          placeholder="Selecciona una ciudad"
           formControlName="cityId">
           <ion-select-option *ngFor="let c of cities" [value]="c.id">
             {{ c.name }}
@@ -219,31 +224,36 @@
     </div>
 
     <!-- Siguiendo tu estructura: actions space-between -->
-    <div class="actions space-between">
-      <ion-button 
-        fill="outline" 
-        color="medium" 
-        (click)="goPrev()">
-        <ion-icon name="chevron-back" slot="start"></ion-icon>
-        Anterior
-      </ion-button>
-      <ion-button 
-        color="primary" 
-        (click)="submit()"
-        [disabled]="isSubmitting || deliveryGroup.invalid">
-        <ion-icon name="checkmark" slot="start"></ion-icon>
-        Crear pedido
-      </ion-button>
-    </div>
-  </div>
+    <div class="actions triple">
+      <app-button
+        class="trio-btn"
+        text="Anterior"
+        color="primary"
+        icon="chevron-back"
+        stepperAction="previous"
+        style="--app-button-margin:0"
+        (clicked)="goPrev()">
+      </app-button>
 
-  <!-- Fixed Bottom Cancel Button -->
-  <div class="footer-actions">
-    <ion-button 
-      fill="outline" 
-      color="medium" 
-      (click)="close()">
-      Cancelar
-    </ion-button>
+      <app-button
+        class="trio-btn"
+        text="Cancelar"
+        color="secondary"
+        icon="close-outline"
+        style="--app-button-margin:0"
+        (clicked)="close()">
+      </app-button>
+
+      <app-button
+        class="trio-btn"
+        text="Crear pedido"
+        color="primary"
+        icon="bag-check-outline"
+        [loading]="isSubmitting"
+        [disabled]="isSubmitting || currentStep !== 2 || productGroup.invalid || deliveryGroup.invalid"
+        style="--app-button-margin:0"
+        (clicked)="submit()">
+      </app-button>
+    </div>
   </div>
 </ion-content>

@@ -1,3 +1,4 @@
+import { OrderCreateModel } from './../../models/order/order.model';
 import { Component, Input, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
@@ -17,11 +18,12 @@ import {
 import { ModalController, ToastController, LoadingController } from '@ionic/angular';
 
 import { addIcons } from 'ionicons';
-import { arrowBack, checkmark, chevronBack, chevronForward } from 'ionicons/icons';
+import { arrowBack, checkmark, chevronBack, chevronForward, bagCheckOutline } from 'ionicons/icons';
 
 import { DepartmentModel, CityModel } from '../../../../shared/models/location/location.model';
 import { LocationService } from '../../../../shared/services/location/location.service';
 import { OrderService } from '../../services/order/order.service';
+import { ButtonComponent } from '../../../../shared/components/button/button.component';
 
 // === Props desde el padre ===
 export interface OrderCreateDialogData {
@@ -83,7 +85,7 @@ const phoneCoMobile = (label: string): ValidatorFn => (c: AbstractControl): Vali
     CommonModule, ReactiveFormsModule,
     IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonIcon,
     IonContent, IonItem, IonLabel, IonInput, IonSelect, IonSelectOption, IonTextarea,
-    IonNote
+    IonNote, ButtonComponent
   ],
   templateUrl: './order-create-dialog.component.html',
   styleUrls: ['./order-create-dialog.component.scss'],
@@ -112,8 +114,11 @@ export class OrderCreateModalComponent implements OnInit {
   departments: DepartmentModel[] = [];
   cities: CityModel[] = [];
 
+  // Opciones de interfaz para selects (popover compacto)
+  readonly selectInterfaceOpts = { cssClass: 'select-popover' };
+
   constructor() {
-    addIcons({ arrowBack, checkmark, chevronBack, chevronForward });
+    addIcons({ arrowBack, checkmark, chevronBack, chevronForward, bagCheckOutline });
   }
 
   ngOnInit(): void {
@@ -215,53 +220,42 @@ export class OrderCreateModalComponent implements OnInit {
   }
 
   // ---------- Submit (exactamente como tu código) ----------
-  submit(): void {
-    if (this.isSubmitting) return;
+  async submit() {
+  console.log('%c ---> SUBMIT EJECUTADO', 'color: #28a745; font-weight: bold;');
 
-    this.productGroup.markAllAsTouched();
-    this.deliveryGroup.markAllAsTouched();
+  this.productGroup.markAllAsTouched();
+  this.deliveryGroup.markAllAsTouched();
 
-    if (this.productGroup.invalid || this.deliveryGroup.invalid) return;
-
-    const qty = Number(this.productGroup.value.quantityRequested);
-    const d = this.deliveryGroup.value;
-
-    const dto: any = {
-      productId: this.data.productId,
-      quantityRequested: qty,
-      recipientName: (d.recipientName ?? '').trim(),
-      contactPhone: (d.contactPhone ?? '').trim(),
-      addressLine1: (d.addressLine1 ?? '').trim(),
-      addressLine2: (d.addressLine2 ?? '').trim() || undefined,
-      cityId: Number(d.cityId),
-      additionalNotes: (d.additionalNotes ?? '').trim() || undefined,
-    };
-
-    this.isSubmitting = true;
-
-    this.toast('Creando pedido...', 'loading');
-
-    this.orderSrv.create(dto).subscribe({
-      next: (resp: any) => {
-        this.isSubmitting = false;
-
-        if (resp && resp.isSuccess) {
-          this.toast(`Pedido #${resp.orderId} creado exitosamente`, 'success');
-          this.modalCtrl.dismiss({ isSuccess: true, orderId: resp.orderId });
-        } else {
-          const msg = resp?.message || 'Ocurrió un error al crear el pedido.';
-          this.toast(msg, 'error');
-          this.modalCtrl.dismiss({ isSuccess: false, message: msg });
-        }
-      },
-      error: (err) => {
-        this.isSubmitting = false;
-        const msg = err?.error?.message || err?.message || 'No se pudo crear el pedido.';
-        this.toast(msg, 'error');
-        this.modalCtrl.dismiss({ isSuccess: false, message: msg });
-      }
-    });
+  if (this.productGroup.invalid || this.deliveryGroup.invalid) {
+    console.log('❌ Formulario inválido');
+    return;
   }
+
+  const dto : OrderCreateModel = {
+    productId: this.data.productId,
+    quantityRequested: Number(this.productGroup.value.quantityRequested),
+    recipientName: this.deliveryGroup.value.recipientName,
+    contactPhone: this.deliveryGroup.value.contactPhone,
+    addressLine1: this.deliveryGroup.value.addressLine1,
+    addressLine2: this.deliveryGroup.value.addressLine2,
+    cityId: Number(this.deliveryGroup.value.cityId),
+    additionalNotes: this.deliveryGroup.value.additionalNotes,
+  };
+
+  console.log('%c DTO a enviar:', 'color: #00aaff; font-weight: bold;', dto);
+
+  console.log('%c ---> LLAMANDO SERVICIO...', 'color: orange; font-weight: bold;');
+
+  this.orderSrv.create(dto).subscribe({
+    next: (resp) => {
+      console.log('%c ✔ RESPUESTA OK:', 'color: #00d26a; font-weight: bold;', resp);
+    },
+    error: (err) => {
+      console.log('%c ❌ ERROR:', 'color: red; font-weight: bold;', err);
+    },
+  });
+}
+
 
   close(): void {
     this.modalCtrl.dismiss();

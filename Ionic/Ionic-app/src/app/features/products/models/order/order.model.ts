@@ -1,7 +1,6 @@
 export interface OrderCreateModel {
   productId: number;
   quantityRequested: number;
-  paymentImage: File;
 
   recipientName: string;
   contactPhone: string;
@@ -30,9 +29,15 @@ export interface OrderListItemModel {
 
 export type OrderStatus =
   | 'PendingReview'
-  | 'AcceptedAwaitingUser'
-  | 'Rejected'
+  | 'AcceptedAwaitingPayment'
+  | 'PaymentSubmitted'
+  | 'Preparing'
+  | 'Dispatched'
+  | 'DeliveredPendingBuyerConfirm'
   | 'Completed'
+  | 'Rejected'
+  | 'Expired'
+  | 'CancelledByUser'
   | 'Disputed'
   | string;
 
@@ -79,5 +84,10 @@ export interface OrderRejectRequest {
 export interface OrderConfirmRequest {
   answer: 'yes' | 'no';
   rowVersion: string;
+}
+
+export interface UploadPaymentRequest {
+  rowVersion: string;
+  paymentImage: File;
 }
 

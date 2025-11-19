@@ -8,87 +8,123 @@ import {
   OrderConfirmRequest,
   OrderDetailModel,
   OrderListItemModel,
-  OrderRejectRequest
+  OrderRejectRequest,
+  UploadPaymentRequest
 } from '../../models/order/order.model';
 import { ApiNative } from 'src/app/core/services/http/api.native';
 
 @Injectable({ providedIn: 'root' })
 export class OrderService {
-  /** Base relativa (ApiNative resuelve contra environment.apiUrl) */
-  private readonly base = '/Order';
+  /** Bases relativas (ApiNative resuelve contra environment.apiUrl) */
+  private readonly userBase = 'OrderUser';
+  private readonly producerBase = 'OrderProducer';
 
   /** ------------------------------- CREATE ----------------------------------- */
   create(dto: OrderCreateModel): Observable<CreateOrderResponse> {
+    // POST /OrderUser
+    return from(ApiNative.post<CreateOrderResponse>(`${this.userBase}`, dto));
+  }
+
+  /** ------------------------------- USER ------------------------------------ */
+  // POST /OrderUser/{id}/payment
+  uploadPayment(id: number, req: UploadPaymentRequest): Observable<any> {
+    if (!Number.isFinite(id) || id <= 0) throw new Error('ID inválido');
     const fd = new FormData();
+    fd.append('RowVersion', req.rowVersion);
+    const file = req.paymentImage;
+    const fileName = (file as any)?.name ?? 'payment.jpg';
+    fd.append('PaymentImage', file, fileName);
+    return from(ApiNative.post<any>(`${this.userBase}/${id}/payment`, fd));
+  }
 
-    // Requeridos (PascalCase como en el backend)
-    fd.append('ProductId', String(dto.productId));
-    fd.append('QuantityRequested', String(dto.quantityRequested));
-    fd.append('CityId', String(dto.cityId));
+  // GET /OrderUser/mine
+  getMine(): Observable<OrderListItemModel[]> {
+    return from(ApiNative.get<OrderListItemModel[]>(`${this.userBase}/mine`));
+  }
 
-    // Archivo (opcional)
-    if (dto.paymentImage) {
-      const file = dto.paymentImage as File; // File o Blob compatible
-      const name = (file as any)?.name ?? 'payment.jpg';
-      fd.append('PaymentImage', file, name);
-    }
+  // GET /OrderUser/{id}/detail
+  getDetailForUser(id: number): Observable<OrderDetailModel> {
+    if (!Number.isFinite(id) || id <= 0) throw new Error('ID inválido');
+    return from(ApiNative.get<OrderDetailModel>(`${this.userBase}/${id}/detail`));
+  }
 
-    // Texto
-    fd.append('RecipientName', (dto.recipientName ?? '').trim());
-    fd.append('ContactPhone', (dto.contactPhone ?? '').trim());
-    fd.append('AddressLine1', (dto.addressLine1 ?? '').trim());
-    if (dto.addressLine2)    fd.append('AddressLine2', dto.addressLine2.trim());
-    if (dto.additionalNotes) fd.append('AdditionalNotes', dto.additionalNotes.trim());
+  // POST /OrderUser/{id}/confirm-received
+  confirmReceived(id: number, body: OrderConfirmRequest): Observable<any> {
+    if (!Number.isFinite(id) || id <= 0) throw new Error('ID inválido');
+    return from(ApiNative.post<any>(`${this.userBase}/${id}/confirm-received`, body));
+  }
 
-    // POST /Order
-    return from(ApiNative.post<CreateOrderResponse>(`${this.base}`, fd));
+  // POST /OrderUser/{id}/cancel
+  cancelByUser(id: number, rowVersion: string): Observable<any> {
+    if (!Number.isFinite(id) || id <= 0) throw new Error('ID inválido');
+    return from(
+      ApiNative.post<any>(
+        `${this.userBase}/${id}/cancel`,
+        JSON.stringify(rowVersion)
+      )
+    );
   }
 
   /** ------------------------------ PRODUCER ---------------------------------- */
-  // GET /Order
+  // GET /OrderProducer
   getProducerOrders(): Observable<OrderListItemModel[]> {
-    return from(ApiNative.get<OrderListItemModel[]>(`${this.base}`));
+    return from(ApiNative.get<OrderListItemModel[]>(`${this.producerBase}`));
   }
 
-  // GET /Order/pending
+  // GET /OrderProducer/pending
   getProducerPendingOrders(): Observable<OrderListItemModel[]> {
-    return from(ApiNative.get<OrderListItemModel[]>(`${this.base}/pending`));
+    return from(ApiNative.get<OrderListItemModel[]>(`${this.producerBase}/pending`));
   }
 
-  // GET /Order/{id}/for-producer
+  // GET /OrderProducer/{id}/detail
   getDetailForProducer(id: number): Observable<OrderDetailModel> {
     if (!Number.isFinite(id) || id <= 0) throw new Error('ID inválido');
-    return from(ApiNative.get<OrderDetailModel>(`${this.base}/${id}/for-producer`));
-  }
-
-  /** --------------------------------- USER ----------------------------------- */
-  // GET /Order/mine
-  getMine(): Observable<OrderListItemModel[]> {
-    return from(ApiNative.get<OrderListItemModel[]>(`${this.base}/mine`));
-  }
-
-  // GET /Order/{id}/for-user
-  getDetailForUser(id: number): Observable<OrderDetailModel> {
-    if (!Number.isFinite(id) || id <= 0) throw new Error('ID inválido');
-    return from(ApiNative.get<OrderDetailModel>(`${this.base}/${id}/for-user`));
-  }
-
-  // POST /Order/{id}/confirm-received
-  confirmReceived(id: number, body: OrderConfirmRequest): Observable<any> {
-    if (!Number.isFinite(id) || id <= 0) throw new Error('ID inválido');
-    return from(ApiNative.post<any>(`${this.base}/${id}/confirm-received`, body));
+    return from(ApiNative.get<OrderDetailModel>(`${this.producerBase}/${id}/detail`));
   }
 
   /** -------------------------- PRODUCER ACTIONS ------------------------------ */
-  // POST /Order/{id}/accept
+  // POST /OrderProducer/{id}/accept
   acceptOrder(id: number, dto: OrderAcceptRequest): Observable<void> {
     if (!Number.isFinite(id) || id <= 0) throw new Error('ID inválido');
-    return from(ApiNative.post<void>(`${this.base}/${id}/accept`, dto));
+    return from(ApiNative.post<void>(`${this.producerBase}/${id}/accept`, dto));
   }
 
-  // POST /Order/{id}/reject
+  // POST /OrderProducer/{id}/reject
   rejectOrder(id: number, dto: OrderRejectRequest): Observable<void> {
     if (!Number.isFinite(id) || id <= 0) throw new Error('ID inválido');
-    return from(ApiNative.post<void>(`${this.base}/${id}/reject`, dto));
+    return from(ApiNative.post<void>(`${this.producerBase}/${id}/reject`, dto));
+  }
+
+  // POST /OrderProducer/{id}/preparing
+  markPreparing(id: number, rowVersion: string): Observable<any> {
+    if (!Number.isFinite(id) || id <= 0) throw new Error('ID inválido');
+    return from(
+      ApiNative.post<any>(
+        `${this.producerBase}/${id}/preparing`,
+        JSON.stringify(rowVersion)
+      )
+    );
+  }
+
+  // POST /OrderProducer/{id}/dispatched
+  markDispatched(id: number, rowVersion: string): Observable<any> {
+    if (!Number.isFinite(id) || id <= 0) throw new Error('ID inválido');
+    return from(
+      ApiNative.post<any>(
+        `${this.producerBase}/${id}/dispatched`,
+        JSON.stringify(rowVersion)
+      )
+    );
+  }
+
+  // POST /OrderProducer/{id}/delivered
+  markDelivered(id: number, rowVersion: string): Observable<any> {
+    if (!Number.isFinite(id) || id <= 0) throw new Error('ID inválido');
+    return from(
+      ApiNative.post<any>(
+        `${this.producerBase}/${id}/delivered`,
+        JSON.stringify(rowVersion)
+      )
+    );
   }
 }

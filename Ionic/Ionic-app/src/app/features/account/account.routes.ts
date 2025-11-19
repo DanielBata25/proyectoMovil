@@ -47,6 +47,28 @@ export const ACCOUNT_ROUTES: Routes = [
         component: SupportComponent,
       },
       {
+        path: 'orders',
+        children: [
+          {
+            path: '',
+            pathMatch: 'full',
+            title: 'Mis pedidos',
+            loadComponent: () =>
+              import('./pages/user-orders-list/user-orders-list.component').then(
+                (m) => m.UserOrdersListComponent
+              ),
+          },
+          {
+            path: ':id',
+            title: 'Detalle del pedido',
+            loadComponent: () =>
+              import('./pages/user-order-detail/user-order-detail.component').then(
+                (m) => m.UserOrderDetailComponent
+              ),
+          },
+        ],
+      },
+      {
         path: 'become-producer',
         title: 'Convertirme en productor',
         loadComponent: () =>

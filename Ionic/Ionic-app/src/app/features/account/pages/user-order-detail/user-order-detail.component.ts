@@ -7,6 +7,7 @@ import {
   OrderDetailModel,
   OrderStatus,
   OrderConfirmRequest,
+  UploadPaymentRequest,
 } from '../../../products/models/order/order.model';
 import { OrderService } from '../../../products/services/order/order.service';
 
@@ -237,8 +238,7 @@ export class UserOrderDetailComponent implements OnInit {
     await loadingAlert.present();
 
     try {
-      // Note: This method may not exist in the service
-      // await firstValueFrom(this.ordersSrv.cancelByUser(this.id, this.detail.rowVersion));
+      await firstValueFrom(this.ordersSrv.cancelByUser(this.id, this.detail.rowVersion));
       
       await loadingAlert.dismiss();
       const successAlert = await this.alertController.create({
@@ -298,7 +298,12 @@ export class UserOrderDetailComponent implements OnInit {
       return;
     }
 
-    // Note: This method may not exist in the service
+    if (!this.detail) {
+      await this.showToast('No se pudo validar el pedido.');
+      return;
+    }
+
+    const req: UploadPaymentRequest = { rowVersion: this.detail.rowVersion, paymentImage: file };
     const loadingAlert = await this.alertController.create({
       header: 'Subiendo comprobante…',
       message: 'Por favor espera...',
@@ -307,22 +312,17 @@ export class UserOrderDetailComponent implements OnInit {
     });
     await loadingAlert.present();
 
-    // const req: UploadPaymentRequest = { rowVersion: this.detail!.rowVersion, paymentImage: file };
-    
-    // this.ordersSrv.uploadPayment(this.id, req).subscribe({
-    //   next: async () => {
-    //     await loadingAlert.dismiss();
-    //     await this.showToast('Comprobante subido.', 'success');
-    //     this.load();
-    //   },
-    //   error: async (err) => {
-    //     await loadingAlert.dismiss();
-    //     await this.showToast('No se pudo subir el comprobante.');
-    //   },
-    // });
-
-    await loadingAlert.dismiss();
-    await this.showToast('Función de subir comprobante aún no implementada.');
+    this.ordersSrv.uploadPayment(this.id, req).subscribe({
+      next: async () => {
+        await loadingAlert.dismiss();
+        await this.showToast('Comprobante subido.', 'success');
+        this.load();
+      },
+      error: async () => {
+        await loadingAlert.dismiss();
+        await this.showToast('No se pudo subir el comprobante.');
+      },
+    });
   }
 
   private async showToast(message: string, color: 'success' | 'danger' = 'danger'): Promise<void> {

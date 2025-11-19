@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IonicModule, AlertController, ToastController } from '@ionic/angular';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, Observable } from 'rxjs';
 import {
   OrderDetailModel,
   OrderStatus
@@ -63,6 +63,22 @@ export class ProducerOrderDetailComponent implements OnInit {
   /* ======= Guards por estado ======= */
   get canAcceptReject(): boolean {
     return this.detail?.status === 'PendingReview';
+  }
+
+  get canMarkPreparing(): boolean {
+    return this.detail?.status === 'PaymentSubmitted';
+  }
+
+  get canMarkDispatched(): boolean {
+    return this.detail?.status === 'Preparing';
+  }
+
+  get canMarkDelivered(): boolean {
+    return this.detail?.status === 'Dispatched';
+  }
+
+  get canManageLogistics(): boolean {
+    return this.canMarkPreparing || this.canMarkDispatched || this.canMarkDelivered;
   }
 
   /* ======= Chip de estado (texto + clase) ======= */
@@ -263,6 +279,94 @@ export class ProducerOrderDetailComponent implements OnInit {
           cssClass: 'error-alert'
         });
         await errorAlert.present();
+      },
+      complete: () => (this.processing = false),
+    });
+  }
+
+  async markPreparing(): Promise<void> {
+    if (!this.canMarkPreparing || !this.detail) return;
+    await this.confirmLogisticsAction({
+      header: 'Marcar como preparando',
+      message: 'Confirmarás que ya estás preparando el pedido.',
+      confirmText: 'Sí, preparar',
+      successMessage: 'Pedido marcado como preparando.',
+      actionFactory: () => this.ordersSrv.markPreparing(this.id, this.detail!.rowVersion),
+    });
+  }
+
+  async markDispatched(): Promise<void> {
+    if (!this.canMarkDispatched || !this.detail) return;
+    await this.confirmLogisticsAction({
+      header: 'Marcar como despachado',
+      message: 'Indica que el pedido ya salió a entrega.',
+      confirmText: 'Sí, despachar',
+      successMessage: 'Pedido marcado como despachado.',
+      actionFactory: () => this.ordersSrv.markDispatched(this.id, this.detail!.rowVersion),
+    });
+  }
+
+  async markDelivered(): Promise<void> {
+    if (!this.canMarkDelivered || !this.detail) return;
+    await this.confirmLogisticsAction({
+      header: 'Marcar como entregado',
+      message: 'Confirmarás que el pedido se entregó al comprador.',
+      confirmText: 'Sí, entregado',
+      successMessage: 'Pedido marcado como entregado.',
+      actionFactory: () => this.ordersSrv.markDelivered(this.id, this.detail!.rowVersion),
+    });
+  }
+
+  private async confirmLogisticsAction(opts: {
+    header: string;
+    message: string;
+    confirmText?: string;
+    successMessage: string;
+    actionFactory: () => Observable<any>;
+  }): Promise<void> {
+    const alert = await this.alertController.create({
+      header: opts.header,
+      message: opts.message,
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'secondary',
+        },
+        {
+          text: opts.confirmText ?? 'Confirmar',
+          handler: () => {
+            this.executeLogisticsAction(opts.actionFactory, opts.successMessage);
+          },
+        },
+      ],
+      cssClass: 'confirm-alert',
+    });
+    await alert.present();
+  }
+
+  private async executeLogisticsAction(
+    actionFactory: () => Observable<any>,
+    successMessage: string
+  ): Promise<void> {
+    this.processing = true;
+    const loadingAlert = await this.alertController.create({
+      header: 'Procesando...',
+      message: 'Actualizando estado del pedido.',
+      buttons: [],
+      cssClass: 'loading-alert',
+    });
+    await loadingAlert.present();
+
+    actionFactory().subscribe({
+      next: async () => {
+        await loadingAlert.dismiss();
+        await this.showToast(successMessage, 'success');
+        this.loadDetail();
+      },
+      error: async (err: any) => {
+        await loadingAlert.dismiss();
+        await this.showToast(err?.error?.message ?? 'No se pudo actualizar el pedido.');
       },
       complete: () => (this.processing = false),
     });

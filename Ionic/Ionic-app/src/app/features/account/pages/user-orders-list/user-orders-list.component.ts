@@ -7,6 +7,7 @@ import {
   OrderListItemModel,
   OrderDetailModel,
   OrderConfirmRequest,
+  UploadPaymentRequest,
 } from '../../../products/models/order/order.model';
 import { OrderService } from '../../../products/services/order/order.service';
 import { StatusTranslatePipesPipe } from '../../../../shared/pipes/statusTranslate/status-translate.pipe';
@@ -172,17 +173,15 @@ export class UserOrdersListComponent implements OnInit {
         {
           text: 'Sí, cancelar',
           handler: () => {
-            // Note: This method may not exist in the service
-            // this.ordersSrv.cancelByUser(id, detail.rowVersion).subscribe({
-            //   next: async () => {
-            //     await this.showToast('Pedido cancelado.', 'success');
-            //     this.load();
-            //   },
-            //   error: async (err) => {
-            //     await this.showToast('No se pudo cancelar el pedido.');
-            //   },
-            // });
-            this.showToast('Función de cancelar aún no implementada.');
+            this.ordersSrv.cancelByUser(id, detail.rowVersion).subscribe({
+              next: async () => {
+                await this.showToast('Pedido cancelado.', 'success');
+                this.load();
+              },
+              error: async () => {
+                await this.showToast('No se pudo cancelar el pedido.');
+              },
+            });
           }
         }
       ],
@@ -219,9 +218,9 @@ export class UserOrdersListComponent implements OnInit {
       return;
     }
 
-    // Note: This method may not exist in the service
-    // const req: UploadPaymentRequest = { rowVersion: detail.rowVersion, paymentImage: file };
-    
+    const req: UploadPaymentRequest = { rowVersion: detail.rowVersion, paymentImage: file };
+    const action$ = this.ordersSrv.uploadPayment(id, req);
+
     const loadingAlert = await this.alertController.create({
       header: 'Subiendo comprobante…',
       message: 'Por favor espera...',
@@ -229,21 +228,18 @@ export class UserOrdersListComponent implements OnInit {
       cssClass: 'loading-alert'
     });
     await loadingAlert.present();
-
-    // this.ordersSrv.uploadPayment(id, req).subscribe({
-    //   next: async () => {
-    //     await loadingAlert.dismiss();
-    //     await this.showToast('Comprobante subido.', 'success');
-    //     this.load();
-    //   },
-    //   error: async (err) => {
-    //     await loadingAlert.dismiss();
-    //     await this.showToast('No se pudo subir el comprobante.');
-    //   },
-    // });
     
-    await loadingAlert.dismiss();
-    this.showToast('Función de subir comprobante aún no implementada.');
+    action$.subscribe({
+      next: async () => {
+        await loadingAlert.dismiss();
+        await this.showToast('Comprobante subido.', 'success');
+        this.load();
+      },
+      error: async () => {
+        await loadingAlert.dismiss();
+        await this.showToast('No se pudo subir el comprobante.');
+      },
+    });
   }
 
   trackById = (_: number, it: OrderListItemModel) => it.id;

@@ -198,8 +198,59 @@
         </ion-card>
       </div>
 
+      <div class="producer-actions" *ngIf="canManageLogistics">
+        <ion-card class="action-card" mode="md">
+          <ion-card-header>
+            <ion-card-title class="section-title">
+              <ion-icon name="navigate-outline"></ion-icon>
+              Actualizar estado
+            </ion-card-title>
+          </ion-card-header>
+          
+          <ion-card-content>
+            <div class="action-buttons">
+              <ion-button 
+                *ngIf="canMarkPreparing"
+                expand="block" 
+                fill="outline" 
+                color="warning"
+                [disabled]="processing"
+                (click)="markPreparing()"
+                class="action-button">
+                <ion-icon slot="start" name="construct-outline"></ion-icon>
+                Marcar preparando
+              </ion-button>
+
+              <ion-button 
+                *ngIf="canMarkDispatched"
+                expand="block" 
+                fill="outline" 
+                color="tertiary"
+                [disabled]="processing"
+                (click)="markDispatched()"
+                class="action-button">
+                <ion-icon slot="start" name="rocket-outline"></ion-icon>
+                Marcar despachado
+              </ion-button>
+
+              <ion-button 
+                *ngIf="canMarkDelivered"
+                expand="block" 
+                fill="solid" 
+                color="success"
+                [disabled]="processing"
+                (click)="markDelivered()"
+                class="action-button">
+                <ion-icon slot="start" name="checkmark-done-outline"></ion-icon>
+                Marcar entregado
+              </ion-button>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </div>
+
       <!-- Info Message -->
-      <div class="info-message" *ngIf="!canAcceptReject">
+      <div class="info-message" *ngIf="!canAcceptReject && !canManageLogistics">
         <ion-card class="info-card" mode="md">
           <ion-card-content>
             <ion-item lines="none">
