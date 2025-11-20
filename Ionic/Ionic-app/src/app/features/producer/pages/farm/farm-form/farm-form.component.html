@@ -1,6 +1,7 @@
-<ion-content [fullscreen]="true" class="form-content">
+<ion-content [fullscreen]="true" class="page-bg form-content">
   <ion-progress-bar *ngIf="isLoadingFarm" type="indeterminate"></ion-progress-bar>
 
+  <div class="page-shell product-shell form-shell">
   <div class="form-wrapper">
     <form class="section-card" [formGroup]="form" (ngSubmit)="onSubmit()">
       <h2 class="section-title">Datos de la Finca</h2>
@@ -155,6 +156,7 @@
         </app-button>
       </div>
     </form>
+  </div>
   </div>
 </ion-content>
 

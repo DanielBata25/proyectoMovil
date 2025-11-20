@@ -1,14 +1,17 @@
 .form-content {
   --background: #f6f7fb;
-  --padding-bottom: calc(env(safe-area-inset-bottom) + 160px);
+}
+
+.form-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .form-wrapper {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 16px;
-  padding-bottom: calc(env(safe-area-inset-bottom) + 160px);
 }
 
 .section-card {
@@ -48,7 +51,6 @@ ion-textarea {
   flex-direction: column;
   gap: 12px;
   margin-top: 24px;
-  margin-bottom: calc(env(safe-area-inset-bottom) + 40px);
 }
 
 .inline-actions ion-button[color='medium'],
@@ -139,9 +141,7 @@ ion-textarea {
 
 @media (max-width: 480px) {
   .form-wrapper {
-    padding: 12px;
     gap: 12px;
-    padding-bottom: calc(env(safe-area-inset-bottom) + 140px);
   }
 
   .section-card {

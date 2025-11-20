@@ -7,15 +7,18 @@ ion-header {
 
 .form-content {
   --background: #f6f7fb;
-  --padding-bottom: calc(env(safe-area-inset-bottom) + 160px);
+}
+
+.form-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .form-wrapper {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 16px;
-  padding-bottom: calc(env(safe-area-inset-bottom) + 160px);
 }
 
 .section-card {
@@ -112,7 +115,6 @@ ion-select {
   flex-direction: column;
   gap: 12px;
   margin-top: 24px;
-  margin-bottom: calc(env(safe-area-inset-bottom) + 40px);
 
   app-button {
     --app-button-margin: 0;
@@ -196,9 +198,7 @@ ion-select {
 
 @media (max-width: 480px) {
   .form-wrapper {
-    padding: 12px;
     gap: 12px;
-    padding-bottom: calc(env(safe-area-inset-bottom) + 140px);
   }
 
   .section-card {
