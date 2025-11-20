@@ -10,13 +10,15 @@ import {
   UploadPaymentRequest,
 } from '../../../products/models/order/order.model';
 import { OrderService } from '../../../products/services/order/order.service';
+import { ButtonComponent } from 'src/app/shared/components/button/button.component';
 
 @Component({
   selector: 'app-user-order-detail',
   standalone: true,
   imports: [
     CommonModule, 
-    IonicModule
+    IonicModule,
+    ButtonComponent
   ],
   templateUrl: './user-order-detail.component.html',
   styleUrls: ['./user-order-detail.component.scss'],

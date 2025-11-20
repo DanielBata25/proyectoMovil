@@ -8,13 +8,15 @@ import {
   OrderStatus
 } from '../../../products/models/order/order.model';
 import { OrderService } from '../../../products/services/order/order.service';
+import { ButtonComponent } from 'src/app/shared/components/button/button.component';
 
 @Component({
   selector: 'app-producer-order-detail',
   standalone: true,
   imports: [
     CommonModule,
-    IonicModule
+    IonicModule,
+    ButtonComponent
   ],
   templateUrl: './producer-order-detail.component.html',
   styleUrls: ['./producer-order-detail.component.scss'],

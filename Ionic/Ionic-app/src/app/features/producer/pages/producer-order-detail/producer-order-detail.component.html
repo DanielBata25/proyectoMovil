@@ -11,258 +11,208 @@
   <div class="page-shell product-shell order-shell">
   <ng-container *ngIf="!loading && detail; else loadingTpl">
     <div class="order-container">
-      <!-- Order Header -->
-      <ion-card class="order-header-card" mode="md">
+      <ion-card class="order-detail-card" mode="md">
         <ion-card-header>
-          <ion-card-title>Pedido #{{ detail!.id }}</ion-card-title>
-          <ion-chip 
-            [class]="statusChip.cls"
-            mode="ios"
-            slot="end">
-            {{ statusChip.text }}
-          </ion-chip>
+          <div class="card-header">
+            <ion-card-title>Pedido #{{ detail!.id }}</ion-card-title>
+            <ion-chip [class]="statusChip.cls" mode="ios">
+              {{ statusChip.text }}
+            </ion-chip>
+          </div>
         </ion-card-header>
-      </ion-card>
 
-      <!-- Order Summary -->
-      <ion-card class="order-section-card" mode="md">
-        <ion-card-header>
-          <ion-card-title class="section-title">
-            <ion-icon name="receipt-outline"></ion-icon>
-            Resumen
-          </ion-card-title>
-        </ion-card-header>
-        
         <ion-card-content>
-          <ion-list lines="none">
-            <ion-item class="detail-item">
-              <ion-label position="stacked">Producto</ion-label>
-              <ion-text>{{ detail!.productName }}</ion-text>
-            </ion-item>
-            
-            <ion-item class="detail-item">
-              <ion-label position="stacked">Precio unitario</ion-label>
-              <ion-text>{{ detail!.unitPrice | currency:'COP' }}</ion-text>
-            </ion-item>
-            
-            <ion-item class="detail-item">
-              <ion-label position="stacked">Cantidad</ion-label>
-              <ion-text>{{ detail!.quantityRequested }}</ion-text>
-            </ion-item>
-            
-            <ion-item class="detail-item">
-              <ion-label position="stacked">Subtotal</ion-label>
-              <ion-text>{{ detail!.subtotal | currency:'COP' }}</ion-text>
-            </ion-item>
-            
-            <ion-item class="detail-item total-item">
-              <ion-label position="stacked">Total</ion-label>
-              <ion-text class="total-amount">{{ detail!.total | currency:'COP' }}</ion-text>
-            </ion-item>
-          </ion-list>
-        </ion-card-content>
-      </ion-card>
+          <section class="detail-section">
+            <div class="section-heading">
+              <ion-icon name="receipt-outline"></ion-icon>
+              <span>Resumen</span>
+            </div>
 
-      <!-- Delivery Information -->
-      <ion-card class="order-section-card" mode="md">
-        <ion-card-header>
-          <ion-card-title class="section-title">
-            <ion-icon name="location-outline"></ion-icon>
-            Entrega
-          </ion-card-title>
-        </ion-card-header>
-        
-        <ion-card-content>
-          <ion-list lines="none">
-            <ion-item class="detail-item">
-              <ion-label position="stacked">Destinatario</ion-label>
-              <ion-text>{{ detail!.recipientName }}</ion-text>
-            </ion-item>
-            
-            <ion-item class="detail-item">
-              <ion-label position="stacked">Teléfono</ion-label>
-              <ion-text>{{ detail!.contactPhone }}</ion-text>
-            </ion-item>
-            
-            <ion-item class="detail-item">
-              <ion-label position="stacked">Dirección</ion-label>
-              <ion-text>
-                {{ detail!.addressLine1 }}
-                <ng-container *ngIf="detail!.addressLine2">, {{ detail!.addressLine2 }}</ng-container>
-              </ion-text>
-            </ion-item>
-            
-            <ion-item class="detail-item">
-              <ion-label position="stacked">Ciudad</ion-label>
-              <ion-text>{{ detail!.cityName || ('#' + detail!.cityId) }}</ion-text>
-            </ion-item>
-          </ion-list>
-        </ion-card-content>
-      </ion-card>
+            <div class="detail-grid">
+              <div class="detail-field">
+                <span class="field-label">Producto</span>
+                <span class="field-value">{{ detail!.productName }}</span>
+              </div>
 
-      <!-- Payment Receipt -->
-      <ion-card class="order-section-card" mode="md">
-        <ion-card-header>
-          <ion-card-title class="section-title">
-            <ion-icon name="card-outline"></ion-icon>
-            Comprobante de Pago
-          </ion-card-title>
-        </ion-card-header>
-        
-        <ion-card-content>
-          <ng-container *ngIf="detail!.paymentImageUrl; else noImg">
-            <div class="receipt-container">
-              <img 
-                class="receipt-image" 
-                [src]="detail!.paymentImageUrl!" 
-                alt="Comprobante"
-                (click)="openImage()" />
-              <div class="upload-date">
-                <small>Click para abrir en nueva pestaña</small>
+              <div class="detail-field">
+                <span class="field-label">Precio unitario</span>
+                <span class="field-value">{{ detail!.unitPrice | currency:'COP' }}</span>
+              </div>
+
+              <div class="detail-field">
+                <span class="field-label">Cantidad</span>
+                <span class="field-value">{{ detail!.quantityRequested }}</span>
+              </div>
+
+              <div class="detail-field">
+                <span class="field-label">Subtotal</span>
+                <span class="field-value">{{ detail!.subtotal | currency:'COP' }}</span>
+              </div>
+
+              <div class="detail-field total-field">
+                <span class="field-label">Total</span>
+                <span class="field-value highlighted">{{ detail!.total | currency:'COP' }}</span>
               </div>
             </div>
-          </ng-container>
-          
-          <ng-template #noImg>
-            <div class="no-receipt">
-              <ion-icon name="image-outline" color="medium" size="large"></ion-icon>
-              <ion-text color="medium">
-                Sin comprobante
-                <ng-container *ngIf="detail!.status === 'AcceptedAwaitingPayment'">
-                  (el cliente aún no lo ha subido).
-                </ng-container>
-              </ion-text>
-            </div>
-          </ng-template>
-        </ion-card-content>
-      </ion-card>
+          </section>
 
-      <!-- Times Information -->
-      <ion-card class="order-section-card" mode="md">
-        <ion-card-header>
-          <ion-card-title class="section-title">
-            <ion-icon name="time-outline"></ion-icon>
-            Tiempos
-          </ion-card-title>
-        </ion-card-header>
-        
-        <ion-card-content>
-          <ion-list lines="none">
-            <ion-item class="detail-item">
-              <ion-label position="stacked">Creado</ion-label>
-              <ion-text>{{ detail!.createAt | date:'mediumDate':'':'es-CO' }}</ion-text>
-            </ion-item>
+          <section class="detail-section">
+            <div class="section-heading">
+              <ion-icon name="location-outline"></ion-icon>
+              <span>Entrega</span>
+            </div>
+
+            <div class="detail-grid">
+              <div class="detail-field">
+                <span class="field-label">Destinatario</span>
+                <span class="field-value">{{ detail!.recipientName }}</span>
+              </div>
+
+              <div class="detail-field">
+                <span class="field-label">Teléfono</span>
+                <span class="field-value">{{ detail!.contactPhone }}</span>
+              </div>
+
+              <div class="detail-field">
+                <span class="field-label">Dirección</span>
+                <span class="field-value">
+                  {{ detail!.addressLine1 }}
+                  <ng-container *ngIf="detail!.addressLine2">, {{ detail!.addressLine2 }}</ng-container>
+                </span>
+              </div>
+
+              <div class="detail-field">
+                <span class="field-label">Ciudad</span>
+                <span class="field-value">{{ detail!.cityName || ('#' + detail!.cityId) }}</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="detail-section">
+            <div class="section-heading">
+              <ion-icon name="card-outline"></ion-icon>
+              <span>Comprobante de Pago</span>
+            </div>
+
+            <ng-container *ngIf="detail!.paymentImageUrl; else noImg">
+              <div class="receipt-container">
+                <div class="receipt-preview" (click)="openImage()">
+                  <img 
+                    class="receipt-image" 
+                    [src]="detail!.paymentImageUrl!" 
+                    alt="Comprobante" />
+                  <div class="preview-overlay">
+                    <ion-icon name="expand-outline"></ion-icon>
+                    <span>Ver comprobante</span>
+                  </div>
+                </div>
+                <div class="upload-date">
+                  <small>Click para abrir en nueva pestaña</small>
+                </div>
+              </div>
+            </ng-container>
             
-            <ion-item class="detail-item" *ngIf="detail!.producerDecisionAt">
-              <ion-label position="stacked">Decisión productor</ion-label>
-              <ion-text>{{ detail!.producerDecisionAt | date:'mediumDate':'':'es-CO' }}</ion-text>
-            </ion-item>
-          </ion-list>
+            <ng-template #noImg>
+              <div class="no-receipt">
+                <ion-icon name="image-outline" color="medium" size="large"></ion-icon>
+                <ion-text color="medium">
+                  Sin comprobante
+                  <ng-container *ngIf="detail!.status === 'AcceptedAwaitingPayment'">
+                    (el cliente aún no lo ha subido).
+                  </ng-container>
+                </ion-text>
+              </div>
+            </ng-template>
+          </section>
+
+          <section class="detail-section">
+            <div class="section-heading">
+              <ion-icon name="time-outline"></ion-icon>
+              <span>Tiempos</span>
+            </div>
+
+            <div class="detail-grid">
+              <div class="detail-field">
+                <span class="field-label">Creado</span>
+                <span class="field-value">{{ detail!.createAt | date:'mediumDate':'':'es-CO' }}</span>
+              </div>
+
+              <div class="detail-field" *ngIf="detail!.producerDecisionAt">
+                <span class="field-label">Decisión productor</span>
+                <span class="field-value">{{ detail!.producerDecisionAt | date:'mediumDate':'':'es-CO' }}</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="detail-section" *ngIf="canAcceptReject">
+            <div class="section-heading">
+              <ion-icon name="build-outline"></ion-icon>
+              <span>Acciones disponibles</span>
+            </div>
+
+            <div class="action-buttons">
+              <app-button
+                text="Rechazar"
+                color="danger"
+                icon="close-circle-outline"
+                [disabled]="processing"
+                (clicked)="reject()"
+                style="--app-button-margin:0"></app-button>
+
+              <app-button
+                text="Aceptar"
+                color="primary"
+                icon="checkmark-circle-outline"
+                [disabled]="processing"
+                (clicked)="accept()"
+                style="--app-button-margin:0"></app-button>
+            </div>
+          </section>
+
+          <section class="detail-section" *ngIf="canManageLogistics">
+            <div class="section-heading">
+              <ion-icon name="navigate-outline"></ion-icon>
+              <span>Actualizar estado</span>
+            </div>
+
+            <div class="action-buttons">
+              <app-button
+                *ngIf="canMarkPreparing"
+                text="Marcar preparando"
+                color="warning"
+                icon="construct-outline"
+                [disabled]="processing"
+                (clicked)="markPreparing()"
+                style="--app-button-margin:0"></app-button>
+
+              <app-button
+                *ngIf="canMarkDispatched"
+                text="Marcar despachado"
+                color="tertiary"
+                icon="rocket-outline"
+                [disabled]="processing"
+                (clicked)="markDispatched()"
+                style="--app-button-margin:0"></app-button>
+
+              <app-button
+                *ngIf="canMarkDelivered"
+                text="Marcar entregado"
+                color="success"
+                icon="checkmark-done-outline"
+                [disabled]="processing"
+                (clicked)="markDelivered()"
+                style="--app-button-margin:0"></app-button>
+            </div>
+          </section>
+
+          <section class="detail-section info-section" *ngIf="!canAcceptReject && !canManageLogistics">
+            <div class="info-message">
+              <ion-icon name="information-circle-outline"></ion-icon>
+              <p>No hay acciones disponibles para el estado actual.</p>
+            </div>
+          </section>
         </ion-card-content>
       </ion-card>
-
-      <!-- Producer Actions -->
-      <div class="producer-actions" *ngIf="canAcceptReject">
-        <ion-card class="action-card" mode="md">
-          <ion-card-header>
-            <ion-card-title class="section-title">
-              <ion-icon name="build-outline"></ion-icon>
-              Acciones Disponibles
-            </ion-card-title>
-          </ion-card-header>
-          
-          <ion-card-content>
-            <div class="action-buttons">
-              <ion-button 
-                expand="block" 
-                fill="outline" 
-                color="danger"
-                [disabled]="processing"
-                (click)="reject()"
-                class="action-button">
-                <ion-icon slot="start" name="close-circle-outline"></ion-icon>
-                Rechazar
-              </ion-button>
-              
-              <ion-button 
-                expand="block" 
-                fill="solid" 
-                color="primary"
-                [disabled]="processing"
-                (click)="accept()"
-                class="action-button">
-                <ion-icon slot="start" name="checkmark-circle-outline"></ion-icon>
-                Aceptar
-              </ion-button>
-            </div>
-          </ion-card-content>
-        </ion-card>
-      </div>
-
-      <div class="producer-actions" *ngIf="canManageLogistics">
-        <ion-card class="action-card" mode="md">
-          <ion-card-header>
-            <ion-card-title class="section-title">
-              <ion-icon name="navigate-outline"></ion-icon>
-              Actualizar estado
-            </ion-card-title>
-          </ion-card-header>
-          
-          <ion-card-content>
-            <div class="action-buttons">
-              <ion-button 
-                *ngIf="canMarkPreparing"
-                expand="block" 
-                fill="outline" 
-                color="warning"
-                [disabled]="processing"
-                (click)="markPreparing()"
-                class="action-button">
-                <ion-icon slot="start" name="construct-outline"></ion-icon>
-                Marcar preparando
-              </ion-button>
-
-              <ion-button 
-                *ngIf="canMarkDispatched"
-                expand="block" 
-                fill="outline" 
-                color="tertiary"
-                [disabled]="processing"
-                (click)="markDispatched()"
-                class="action-button">
-                <ion-icon slot="start" name="rocket-outline"></ion-icon>
-                Marcar despachado
-              </ion-button>
-
-              <ion-button 
-                *ngIf="canMarkDelivered"
-                expand="block" 
-                fill="solid" 
-                color="success"
-                [disabled]="processing"
-                (click)="markDelivered()"
-                class="action-button">
-                <ion-icon slot="start" name="checkmark-done-outline"></ion-icon>
-                Marcar entregado
-              </ion-button>
-            </div>
-          </ion-card-content>
-        </ion-card>
-      </div>
-
-      <!-- Info Message -->
-      <div class="info-message" *ngIf="!canAcceptReject && !canManageLogistics">
-        <ion-card class="info-card" mode="md">
-          <ion-card-content>
-            <ion-item lines="none">
-              <ion-icon name="information-circle-outline" color="medium" slot="start"></ion-icon>
-              <ion-text color="medium">
-                No hay acciones disponibles para el estado actual.
-              </ion-text>
-            </ion-item>
-          </ion-card-content>
-        </ion-card>
-      </div>
     </div>
   </ng-container>
 

@@ -52,6 +52,31 @@
   background-color: #c82333;
 }
 
+/* Success (verde oscuro) */
+.custom-btn.btn-success {
+  background-color: #198754;
+}
+.custom-btn.btn-success:hover:not(:disabled) {
+  background-color: #146c43;
+}
+
+/* Warning (amarillo) */
+.custom-btn.btn-warning {
+  background-color: #ffc107;
+  color: #1f2f25;
+}
+.custom-btn.btn-warning:hover:not(:disabled) {
+  background-color: #e0a800;
+}
+
+/* Tertiary (morado) */
+.custom-btn.btn-tertiary {
+  background-color: #6f42c1;
+}
+.custom-btn.btn-tertiary:hover:not(:disabled) {
+  background-color: #6133b2;
+}
+
 .icon-btn {
   display: inline-flex;
   align-items: center;
