@@ -1,9 +1,9 @@
 import { Injectable, NgZone } from '@angular/core';
 import {
-  HubConnection,
-  HubConnectionBuilder,
-  HubConnectionState,
-  LogLevel,
+    HubConnection,
+    HubConnectionBuilder,
+    HubConnectionState,
+    LogLevel,
 } from '@microsoft/signalr';
 import { BehaviorSubject, Subject, Observable } from 'rxjs';
 import { Capacitor } from '@capacitor/core';
@@ -13,108 +13,108 @@ import { NotificationListItemDto } from 'src/app/shared/models/notificacions/not
 type ConnectionStatus = 'disconnected' | 'connecting' | 'connected' | 'reconnecting';
 
 @Injectable({
-  providedIn: 'root',
+    providedIn: 'root',
 })
 export class NotificationHubService {
-  private hub?: HubConnection;
+    private hub?: HubConnection;
 
-  private readonly status$ = new BehaviorSubject<ConnectionStatus>('disconnected');
-  private readonly notifications$ = new Subject<NotificationListItemDto>();
+    private readonly status$ = new BehaviorSubject<ConnectionStatus>('disconnected');
+    private readonly notifications$ = new Subject<NotificationListItemDto>();
 
-  constructor(private readonly zone: NgZone) {}
+    constructor(private readonly zone: NgZone) { }
 
-  /** Estado actual de la conexión */
-  connectionStatus(): Observable<ConnectionStatus> {
-    return this.status$.asObservable();
-  }
-
-  /** Flujo de notificaciones entrantes */
-  onNotification(): Observable<NotificationListItemDto> {
-    return this.notifications$.asObservable();
-  }
-
-  /** Inicializa la conexión */
-  async connect(): Promise<void> {
-    if (!this.hub) {
-      this.hub = this.buildConnection();
+    /** Estado actual de la conexión */
+    connectionStatus(): Observable<ConnectionStatus> {
+        return this.status$.asObservable();
     }
 
-    if (!this.hub) return;
-
-    if (
-      this.hub.state === HubConnectionState.Connected ||
-      this.hub.state === HubConnectionState.Connecting
-    ) {
-      return;
+    /** Flujo de notificaciones entrantes */
+    onNotification(): Observable<NotificationListItemDto> {
+        return this.notifications$.asObservable();
     }
 
-    this.zone.run(() => this.status$.next('connecting'));
+    /** Inicializa la conexión */
+    async connect(): Promise<void> {
+        if (!this.hub) {
+            this.hub = this.buildConnection();
+        }
 
-    try {
-      await this.hub.start();
-      this.zone.run(() => this.status$.next('connected'));
-    } catch (error) {
-      console.error('Error al conectar con el hub de notificaciones', error);
-      this.zone.run(() => this.status$.next('disconnected'));
-      throw error;
-    }
-  }
+        if (!this.hub) return;
 
-  /** Detiene la conexión */
-  async disconnect(): Promise<void> {
-    if (!this.hub) return;
+        if (
+            this.hub.state === HubConnectionState.Connected ||
+            this.hub.state === HubConnectionState.Connecting
+        ) {
+            return;
+        }
 
-    try {
-      await this.hub.stop();
-    } finally {
-      this.zone.run(() => this.status$.next('disconnected'));
-      this.hub = undefined;
-    }
-  }
+        this.zone.run(() => this.status$.next('connecting'));
 
-  /** Construye la conexión */
-  private buildConnection(): HubConnection {
-    const hubUrl = this.buildHubUrl();
-
-    const connection = new HubConnectionBuilder()
-      .withUrl(hubUrl, {
-        withCredentials: true,
-      })
-      .withAutomaticReconnect()
-      .configureLogging(LogLevel.Information)
-      .build();
-
-    connection.on('NewNotification', (notification: NotificationListItemDto) => {
-      this.zone.run(() => this.notifications$.next(notification));
-    });
-
-    connection.onreconnecting(() => {
-      this.zone.run(() => this.status$.next('reconnecting'));
-    });
-
-    connection.onreconnected(() => {
-      this.zone.run(() => this.status$.next('connected'));
-    });
-
-    connection.onclose(() => {
-      this.zone.run(() => this.status$.next('disconnected'));
-    });
-
-    return connection;
-  }
-
-  /** Construye la URL del hub al estilo ApiNative */
-  private buildHubUrl(): string {
-    const isNative = Capacitor.isNativePlatform();
-
-    // 1) Si es nativo → **SIEMPRE** usar URL absoluta real
-    if (isNative) {
-      return `${environment.apiUrl.replace(/\/+$/, '')}/hubs/notifications`;
+        try {
+            await this.hub.start();
+            this.zone.run(() => this.status$.next('connected'));
+        } catch (error) {
+            console.error('Error al conectar con el hub de notificaciones', error);
+            this.zone.run(() => this.status$.next('disconnected'));
+            throw error;
+        }
     }
 
-    // 2) Si es navegador → usar proxy si existe
-    const base = environment.apiUrlBrowser || environment.apiUrl;
+    /** Detiene la conexión */
+    async disconnect(): Promise<void> {
+        if (!this.hub) return;
 
-    return `${base.replace(/\/+$/, '')}/hubs/notifications`;
-  }
+        try {
+            await this.hub.stop();
+        } finally {
+            this.zone.run(() => this.status$.next('disconnected'));
+            this.hub = undefined;
+        }
+    }
+
+    /** Construye la conexión */
+    private buildConnection(): HubConnection {
+        const hubUrl = this.buildHubUrl();
+
+        const connection = new HubConnectionBuilder()
+            .withUrl(hubUrl, {
+                withCredentials: true,
+            })
+            .withAutomaticReconnect()
+            .configureLogging(LogLevel.Information)
+            .build();
+
+        connection.on('NewNotification', (notification: NotificationListItemDto) => {
+            this.zone.run(() => this.notifications$.next(notification));
+        });
+
+        connection.onreconnecting(() => {
+            this.zone.run(() => this.status$.next('reconnecting'));
+        });
+
+        connection.onreconnected(() => {
+            this.zone.run(() => this.status$.next('connected'));
+        });
+
+        connection.onclose(() => {
+            this.zone.run(() => this.status$.next('disconnected'));
+        });
+
+        return connection;
+    }
+
+    /** Construye la URL del hub al estilo ApiNative */
+    private buildHubUrl(): string {
+        const isNative = Capacitor.isNativePlatform();
+
+        // 1) Si es nativo → **SIEMPRE** usar URL absoluta real
+        if (isNative) {
+            return `${environment.apiUrl.replace(/\/+$/, '')}/hubs/notifications`;
+        }
+
+        // 2) Si es navegador → usar proxy si existe
+        const base = environment.apiUrlBrowser || environment.apiUrl;
+
+        return `${base.replace(/\/+$/, '')}/hubs/notifications`;
+    }
 }

@@ -45,6 +45,11 @@ export const routes: Routes = [
 
       /** Páginas de sistema que SÍ deben verse con barras (si aplica) */
       { path: 'forbidden', component: ForbiddenComponent },
+      {
+        path: 'notifications-menu',
+        loadComponent: () =>
+          import('./shared/components/notifications-menu/notifications-page.component').then(m => m.NotificationsPageComponent),
+      },
       //{ path: 'notFound', component: NotFoundComponent },
     ],
   },

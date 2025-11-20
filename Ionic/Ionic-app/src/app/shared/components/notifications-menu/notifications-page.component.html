@@ -1,0 +1,120 @@
+<ion-header class="notifications-header" [translucent]="false">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button fill="clear" (click)="goBack()">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Notificaciones</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="notifications-content">
+  <!-- Filter Buttons Section -->
+  <div class="filter-section">
+    <div class="filter-buttons">
+      <ion-button
+        fill="outline"
+        size="small"
+        [class.active]="currentFilter === 'all'"
+        (click)="setFilter('all')"
+        class="filter-btn">
+        Todas
+        <ion-badge color="primary" class="filter-badge">{{ filterCounts.all }}</ion-badge>
+      </ion-button>
+
+      <ion-button
+        fill="outline"
+        size="small"
+        [class.active]="currentFilter === 'unread'"
+        (click)="setFilter('unread')"
+        class="filter-btn unread-btn">
+        No Leídas
+        <ion-badge color="danger" class="filter-badge">{{ filterCounts.unread }}</ion-badge>
+      </ion-button>
+
+      <!-- Removed "Leídas" filter button -->
+    </div>
+
+    <!-- Mark All Button -->
+    <ion-button
+      fill="clear"
+      size="small"
+      *ngIf="showMarkAllButton"
+      (click)="markAllAsRead()"
+      [disabled]="loading"
+      class="mark-all-btn">
+      <ion-icon name="checkmark-done"></ion-icon>
+      Marcar todas como leídas
+    </ion-button>
+  </div>
+
+  <!-- Content Section -->
+  <div class="content-section">
+    <!-- Loading State -->
+    <div class="loading-container" *ngIf="loading">
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
+      <p>Cargando notificaciones...</p>
+    </div>
+
+    <!-- Filtered Notifications -->
+    <div class="notifications-list" *ngIf="!loading">
+      <!-- Empty State for current filter -->
+      <div class="empty-state" *ngIf="filteredNotifications.length === 0">
+        <ion-icon name="notifications-off-outline" size="large"></ion-icon>
+        <h3>Sin {{ currentFilterTitle.toLowerCase() }}</h3>
+        <p *ngIf="currentFilter === 'all'">No tienes notificaciones por ahora</p>
+        <p *ngIf="currentFilter === 'unread'">No tienes notificaciones sin leer</p>
+        <!-- Empty state message adapted for 2-filter system -->
+      </div>
+
+      <!-- Notifications List -->
+      <ion-list *ngIf="filteredNotifications.length > 0" class="notification-ion-list">
+        <ion-item
+          *ngFor="let notification of filteredNotifications; trackBy: trackByFn"
+          class="notification-item"
+          [class.unread]="!notification.isRead"
+          (click)="openNotification(notification)">
+          
+          <div class="notification-content">
+            <!-- Accent indicator for unread -->
+            <div class="unread-indicator" *ngIf="!notification.isRead"></div>
+            
+            <!-- Notification Icon -->
+            <div class="notification-icon">
+              <ion-icon 
+                [name]="notification.isRead ? 'notifications-outline' : 'notifications'" 
+                [color]="notification.isRead ? 'medium' : 'primary'">
+              </ion-icon>
+            </div>
+            
+            <!-- Notification Text -->
+            <div class="notification-text">
+              <h4 class="notification-title" [class.unread]="!notification.isRead">
+                {{ notification.title }}
+              </h4>
+              <p class="notification-message" *ngIf="notification.message">
+                {{ notification.message }}
+              </p>
+              <div class="notification-meta">
+                <span class="notification-time">{{ getTimeAgo(notification.createAt) }}</span>
+              </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="notification-actions">
+              <ion-button
+                fill="clear"
+                size="small"
+                (click)="markAsRead(notification); $event.stopPropagation()"
+                [disabled]="notification.isRead"
+                aria-label="Marcar como leído">
+                <ion-icon name="checkmark"></ion-icon>
+              </ion-button>
+            </div>
+          </div>
+        </ion-item>
+      </ion-list>
+    </div>
+  </div>
+</ion-content>

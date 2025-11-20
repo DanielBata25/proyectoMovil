@@ -33,6 +33,13 @@ export class NotificationService {
         );
     }
 
+    /** Obtiene todas las notificaciones (leídas + no leídas) */
+    getAll(take: number = 50): Observable<NotificationListItemDto[]> {
+        return from(
+            ApiNative.get<NotificationListItemDto[]>(`${this.base}/all?take=${take}`)
+        );
+    }
+
     /** Marca una notificación como leída */
     markAsRead(id: number): Observable<void> {
         return from(

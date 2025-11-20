@@ -101,6 +101,19 @@ $blanco: #ffffff;
   --ion-button-min-height: 40px;
 }
 
+.notification-badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  min-width: 18px;
+  height: 18px;
+  font-size: 10px;
+  line-height: 18px;
+  padding: 0;
+  border-radius: 9px;
+  z-index: 10;
+}
+
 /* Iconos blancos */
 ion-button,
 ion-icon {

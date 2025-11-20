@@ -16,10 +16,13 @@
 
       <div class="nb-center" [class.nb-center--hidden]="showBack"></div>
 
+      <!-- Notifications Menu Component -->
       <div class="nb-right" *ngIf="showNotifications">
-        <ion-button fill="clear" routerLink="/notifications" aria-label="Notificaciones">
-          <ion-icon name="notifications"></ion-icon>
-        </ion-button>
+        <app-notifications-menu
+          [items]="notifications"
+          [loading]="notificationsLoading"
+          (opened)="onNotificationsMenuOpened()">
+        </app-notifications-menu>
       </div>
     </div>
   </ion-toolbar>
