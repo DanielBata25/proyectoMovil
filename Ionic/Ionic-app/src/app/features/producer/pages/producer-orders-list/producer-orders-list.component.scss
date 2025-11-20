@@ -177,10 +177,14 @@
   box-sizing: border-box !important;
 }
 
-.order-card ion-card-header {
-  padding: 16px;
-  border-bottom: 1px solid #f1f5f9;
-  background: #fafafa;
+.order-card ion-card-content {
+  padding: 20px 16px 18px;
+}
+
+.order-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .card-header {
@@ -188,6 +192,8 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f1f5f9;
 }
 
 .order-title {
@@ -267,7 +273,8 @@
 .order-details {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
+  padding-bottom: 8px;
 }
 
 .detail-row {
@@ -306,7 +313,7 @@
 }
 
 .detail-row.total-row {
-  margin-top: 8px;
+  margin-top: 4px;
   padding-top: 12px;
   border-top: 1px solid #f1f5f9;
 }
@@ -322,24 +329,7 @@
   color: #059669;
 }
 
-/* ==========================================================================
-   Action Button
-   ========================================================================== */
-
-.action-button {
-  --border-radius: 12px;
-  --border-color: #3b82f6;
-  --color: #3b82f6;
-  --background-hover: #eff6ff;
-  --background-activated: #dbeafe;
-  margin-top: 12px;
-  font-weight: 600;
-  height: 40px;
-}
-
-.action-button ion-icon {
-  font-size: 16px;
-}
+/* action button now handled by app-button component */
 
 /* ==========================================================================
    Empty State

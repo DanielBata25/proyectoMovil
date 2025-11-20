@@ -8,11 +8,12 @@ import { RouterLink } from '@angular/router';
 import { OrderListItemModel } from '../../../../features/products/models/order/order.model';
 import { OrderService } from '../../../../features/products/services/order/order.service';
 import { StatusTranslatePipesPipe } from '../../../../shared/pipes/statusTranslate/status-translate.pipe';
+import { ButtonComponent } from 'src/app/shared/components/button/button.component';
 
 @Component({
   selector: 'app-producer-orders-list',
   standalone: true,
-  imports: [IonicModule, CommonModule, RouterLink, StatusTranslatePipesPipe],
+  imports: [IonicModule, CommonModule, RouterLink, StatusTranslatePipesPipe, ButtonComponent],
   templateUrl: './producer-orders-list.component.html',
   styleUrls: ['./producer-orders-list.component.scss']
 })
