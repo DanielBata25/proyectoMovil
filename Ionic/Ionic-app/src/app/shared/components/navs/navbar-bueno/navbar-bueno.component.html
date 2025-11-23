@@ -1,6 +1,8 @@
 <ion-header class="nb-header" [translucent]="false">
   <ion-toolbar class="nb-onebar">
     <div class="nb-row" [class.nb-row--back]="showBack">
+      
+      <!-- IZQUIERDA -->
       <div class="nb-left" [class.nb-left--back]="showBack">
         <button
           *ngIf="showBack"
@@ -10,15 +12,32 @@
           aria-label="Volver">
           <ion-icon name="arrow-back"></ion-icon>
         </button>
+
         <img *ngIf="!showBack" class="nb-logo" src="assets/logo/logo.png" alt="Logo" />
-        <span class="nb-title" [class.nb-title--center]="showBack">Portal-AgroComercial</span>
+        <span class="nb-title" [class.nb-title--center]="showBack">
+          Portal-AgroComercial
+        </span>
       </div>
 
       <div class="nb-center" [class.nb-center--hidden]="showBack"></div>
 
+      <!-- DERECHA (NOTIFICACIONES) -->
       <div class="nb-right" *ngIf="showNotifications">
-        <ion-icon name="notifications-outline" aria-label="Notificaciones"></ion-icon>
+        <ion-button 
+          fill="clear" 
+          class="notif-btn" 
+          (click)="openNotifications()"
+          aria-label="Abrir notificaciones">
+          <ion-icon name="notifications-outline" slot="icon-only"></ion-icon>
+          <ion-badge 
+            *ngIf="getUnreadCount() > 0" 
+            color="danger" 
+            class="notif-badge">
+            {{ getUnreadCount() }}
+          </ion-badge>
+        </ion-button>
       </div>
+
     </div>
   </ion-toolbar>
 </ion-header>

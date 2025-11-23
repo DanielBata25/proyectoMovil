@@ -1,13 +1,18 @@
+// src/app/shared/services/notifications/notification.service.ts
 import { Injectable } from '@angular/core';
 import { from, Observable } from 'rxjs';
-
 import { ApiNative } from 'src/app/core/services/http/api.native';
-import { CreateNotificationRequest, NotificationListItemDto } from 'src/app/shared/models/notificacions/notificacion.model';
+
+import {
+    NotificationListItemDto,
+    CreateNotificationRequest
+} from '../../models/notificacions/notificacion.model';
 
 @Injectable({
-    providedIn: 'root',
+    providedIn: 'root'
 })
 export class NotificationService {
+
     private readonly base = '/Notification';
 
     /** Obtiene las notificaciones no leídas del usuario */
@@ -25,18 +30,13 @@ export class NotificationService {
     }
 
     /** Obtiene el historial paginado */
-    getHistory(page: number = 1, pageSize: number = 20): Observable<{ items: NotificationListItemDto[]; total: number }> {
+    getHistory(
+        page: number = 1,
+        pageSize: number = 20
+    ): Observable<{ items: NotificationListItemDto[]; total: number }> {
+        const url = `${this.base}/history?page=${page}&pageSize=${pageSize}`;
         return from(
-            ApiNative.get<{ items: NotificationListItemDto[]; total: number }>(
-                `${this.base}/history?page=${page}&pageSize=${pageSize}`
-            )
-        );
-    }
-
-    /** Obtiene todas las notificaciones (leídas + no leídas) */
-    getAll(take: number = 50): Observable<NotificationListItemDto[]> {
-        return from(
-            ApiNative.get<NotificationListItemDto[]>(`${this.base}/all?take=${take}`)
+            ApiNative.get<{ items: NotificationListItemDto[]; total: number }>(url)
         );
     }
 
@@ -47,10 +47,10 @@ export class NotificationService {
         );
     }
 
-    /** Crear notificación manualmente */
-    create(request: CreateNotificationRequest): Observable<number> {
+    /** Crea una notificación manualmente (solo para pruebas o administración) */
+    create(body: CreateNotificationRequest): Observable<number> {
         return from(
-            ApiNative.post<number>(`${this.base}`, request)
+            ApiNative.post<number>(`${this.base}`, body)
         );
     }
 }

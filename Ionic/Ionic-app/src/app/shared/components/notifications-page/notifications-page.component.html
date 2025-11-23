@@ -1,0 +1,81 @@
+<ion-header class="notif-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <ion-title>Notificaciones</ion-title>
+
+    <ion-buttons slot="end">
+      <ion-button *ngIf="showMarkAll" (click)="onMarkAll()" class="mark-all-btn">
+        Marcar todo
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="page-bg notif-content">
+  <div class="page-shell notif-shell">
+    <!-- Loader -->
+    <div *ngIf="loading" class="loading-container">
+      <ion-spinner name="crescent"></ion-spinner>
+    </div>
+
+    <!-- Lista -->
+    <ng-container *ngIf="!loading">
+
+      <ng-container *ngIf="items.length; else empty">
+        <div class="notif-list">
+
+          <div 
+            class="notif-item" 
+            *ngFor="let n of items"
+            [class.unread]="!n.isRead"
+            (click)="onOpenItem(n)"
+          >
+
+            <div class="left-accent" *ngIf="!n.isRead"></div>
+
+            <ion-icon
+              class="item-icon"
+              [name]="n.isRead ? 'notifications-outline' : 'notifications'"
+            ></ion-icon>
+
+            <div class="item-texts">
+              <div class="item-title" [class.unread]="!n.isRead">
+                {{ n.title }}
+              </div>
+              <div class="item-msg" *ngIf="n.message">
+                {{ n.message }}
+              </div>
+
+              <div class="item-meta">
+                {{ timeAgo(n.createAt) }}
+              </div>
+            </div>
+
+            <ion-button
+              fill="clear"
+              class="read-btn"
+              *ngIf="!n.isRead"
+              (click)="onMarkRead(n); $event.stopPropagation()"
+            >
+              <ion-icon name="checkmark-done-outline"></ion-icon>
+            </ion-button>
+
+          </div>
+
+        </div>
+      </ng-container>
+
+      <ng-template #empty>
+        <div class="empty">
+          Sin notificaciones por ahora
+        </div>
+      </ng-template>
+
+    </ng-container>
+  </div>
+</ion-content>
