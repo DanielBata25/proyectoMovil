@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 
@@ -41,46 +41,34 @@ export class NotificationPageComponent implements OnInit {
 
   constructor(
     private nav: NavController,
-    private notificationService: NotificationService
+    private notificationService: NotificationService   // ✔ YA CORRECTO
   ) {}
 
   ngOnInit() {
-    console.log('[NOTIFICATIONS] ngOnInit ejecutado');
     this.loadNotifications();
   }
 
-  /** ===========================
-   *   CARGA PRINCIPAL
-   * =========================== */
   loadNotifications() {
-    console.log('[NOTIFICATIONS] Iniciando carga de notificaciones...');
-    this.loading = true;
+    console.log('[NOTIFICATIONS] Iniciando carga de history...');
+    this.notificationService.getHistory().subscribe((data)=>{
+      this.items = data;
+      console.log(this.items);
+    })
+    // this.loading = true;
 
-    // 🔄 TEMPORAL: Usando getUnread() en lugar de getHistory() 
-    // porque el endpoint /history puede no existir en el backend
-    this.notificationService.getUnread(50).subscribe({
-      next: (items) => {
-        console.log('[NOTIFICATIONS] Respuesta recibida:', items);
-        console.log('[NOTIFICATIONS] Total items:', items?.length);
-        this.items = items ?? [];
-        this.loading = false;
-      },
-      error: (err) => {
-        console.error('[NOTIFICATIONS] Error loading:', err);
-        console.error('[NOTIFICATIONS] Error status:', err?.status);
-        console.error('[NOTIFICATIONS] Error message:', err?.message);
-        console.error('[NOTIFICATIONS] Error data:', err?.data);
-        this.loading = false;
-        
-        // Mostrar mensaje de error al usuario
-        alert(`Error cargando notificaciones: ${err?.message || 'Error desconocido'}`);
-      }
-    });
+    // this.notificationService.getHistory(1, 50).subscribe({
+    //   next: (res) => {
+    //     const resultItems = Array.isArray(res) ? res : res?.items;
+    //     this.items = resultItems ?? [];
+    //     this.showMarkAll = this.items.some(n => !n.isRead);
+    //     this.loading = false;
+    //   },
+    //   error: (err) => {
+    //     console.error('[NOTIFICATIONS] Error loading history', err);
+    //     this.loading = false;
+    //   }
+    // });
   }
-
-  /** ===========================
-   *   UTILIDADES
-   * =========================== */
 
   goBack() {
     this.nav.back();
@@ -97,37 +85,25 @@ export class NotificationPageComponent implements OnInit {
     return `hace ${Math.floor(diff / 86400)} d`;
   }
 
-  /** ===========================
-   *   MARCAR TODO COMO LEÍDO
-   * =========================== */
-
   onMarkAll() {
     const unread = this.items.filter(n => !n.isRead);
 
     unread.forEach(n => {
-      this.notificationService.markAsRead(n.id).subscribe({
-        next: () => (n.isRead = true),
-        error: (err) => console.error(`[NOTIFICATIONS] Error markAll:`, err)
+      this.notificationService.markAsRead(n.id).subscribe(() => {
+        n.isRead = true;
       });
     });
   }
 
-  /** ===========================
-   *   ABRIR ITEM
-   * =========================== */
-
   onOpenItem(n: NotificationListItemDto) {
-    if (!n.isRead) this.onMarkRead(n);
+    if (!n.isRead) {
+      this.onMarkRead(n);
+    }
   }
 
-  /** ===========================
-   *   MARCAR UNA COMO LEÍDA
-   * =========================== */
-
   onMarkRead(n: NotificationListItemDto) {
-    this.notificationService.markAsRead(n.id).subscribe({
-      next: () => (n.isRead = true),
-      error: (err) => console.error(`[NOTIFICATIONS] Error markRead:`, err)
+    this.notificationService.markAsRead(n.id).subscribe(() => {
+      n.isRead = true;
     });
   }
 }

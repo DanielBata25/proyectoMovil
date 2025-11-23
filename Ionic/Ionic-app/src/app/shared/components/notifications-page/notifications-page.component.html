@@ -16,66 +16,65 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="page-bg notif-content">
-  <div class="page-shell notif-shell">
-    <!-- Loader -->
-    <div *ngIf="loading" class="loading-container">
-      <ion-spinner name="crescent"></ion-spinner>
-    </div>
+<ion-content [fullscreen]="true" class="notif-content">
 
-    <!-- Lista -->
-    <ng-container *ngIf="!loading">
+  <div *ngIf="loading" class="loading-container">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
 
-      <ng-container *ngIf="items.length; else empty">
-        <div class="notif-list">
+  <ng-container *ngIf="!loading">
 
-          <div 
-            class="notif-item" 
-            *ngFor="let n of items"
-            [class.unread]="!n.isRead"
-            (click)="onOpenItem(n)"
-          >
+    <ng-container *ngIf="items.length; else empty">
+      <div class="notif-list">
 
-            <div class="left-accent" *ngIf="!n.isRead"></div>
+        <div 
+          class="notif-item" 
+          *ngFor="let n of items"
+          [class.unread]="!n.isRead"
+          (click)="onOpenItem(n)"
+        >
 
-            <ion-icon
-              class="item-icon"
-              [name]="n.isRead ? 'notifications-outline' : 'notifications'"
-            ></ion-icon>
+          <div class="left-accent" *ngIf="!n.isRead"></div>
 
-            <div class="item-texts">
-              <div class="item-title" [class.unread]="!n.isRead">
-                {{ n.title }}
-              </div>
-              <div class="item-msg" *ngIf="n.message">
-                {{ n.message }}
-              </div>
+          <ion-icon
+            class="item-icon"
+            [name]="n.isRead ? 'notifications-outline' : 'notifications'"
+          ></ion-icon>
 
-              <div class="item-meta">
-                {{ timeAgo(n.createAt) }}
-              </div>
+          <div class="item-texts">
+            <div class="item-title" [class.unread]="!n.isRead">
+              {{ n.title }}
             </div>
 
-            <ion-button
-              fill="clear"
-              class="read-btn"
-              *ngIf="!n.isRead"
-              (click)="onMarkRead(n); $event.stopPropagation()"
-            >
-              <ion-icon name="checkmark-done-outline"></ion-icon>
-            </ion-button>
+            <div class="item-msg" *ngIf="n.message">
+              {{ n.message }}
+            </div>
 
+            <div class="item-meta">
+              {{ timeAgo(n.createAt) }}
+            </div>
           </div>
 
-        </div>
-      </ng-container>
+          <ion-button
+            fill="clear"
+            class="read-btn"
+            *ngIf="!n.isRead"
+            (click)="onMarkRead(n); $event.stopPropagation()"
+          >
+            <ion-icon name="checkmark-done-outline"></ion-icon>
+          </ion-button>
 
-      <ng-template #empty>
-        <div class="empty">
-          Sin notificaciones por ahora
         </div>
-      </ng-template>
 
+      </div>
     </ng-container>
-  </div>
+
+    <ng-template #empty>
+      <div class="empty">
+        Sin notificaciones por ahora
+      </div>
+    </ng-template>
+
+  </ng-container>
+
 </ion-content>

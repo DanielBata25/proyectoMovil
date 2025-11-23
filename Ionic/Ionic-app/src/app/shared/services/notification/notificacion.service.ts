@@ -33,10 +33,10 @@ export class NotificationService {
     getHistory(
         page: number = 1,
         pageSize: number = 20
-    ): Observable<{ items: NotificationListItemDto[]; total: number }> {
+    ): Observable<NotificationListItemDto[]> {
         const url = `${this.base}/history?page=${page}&pageSize=${pageSize}`;
         return from(
-            ApiNative.get<{ items: NotificationListItemDto[]; total: number }>(url)
+            ApiNative.get<NotificationListItemDto[]>(url)
         );
     }
 

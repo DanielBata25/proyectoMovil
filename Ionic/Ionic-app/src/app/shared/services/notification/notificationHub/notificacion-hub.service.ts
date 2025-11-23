@@ -35,12 +35,12 @@ export class NotificationHubService {
 
     /** Inicializa la conexión */
     async connect(): Promise<void> {
-        // 🔄 TEMPORAL: SignalR completamente desactivado mientras se arregla el backend
-        console.log('[NOTIFICATION-HUB] SignalR temporalmente desactivado');
+        // 🔄 TEMPORAL: SignalR comentado por solicitud del usuario
+        console.log('[NOTIFICATION-HUB] SignalR temporalmente deshabilitado');
         this.zone.run(() => this.status$.next('disconnected'));
         return;
         
-        // Código original comentado hasta que el backend esté listo
+        // Código original comentado
         /*
         if (!this.hub) {
             this.hub = this.buildConnection();
@@ -60,6 +60,7 @@ export class NotificationHubService {
         try {
             await this.hub.start();
             this.zone.run(() => this.status$.next('connected'));
+            console.log('[NOTIFICATION-HUB] Conexión SignalR establecida');
         } catch (error) {
             console.error('Error al conectar con el hub de notificaciones', error);
             this.zone.run(() => this.status$.next('disconnected'));
@@ -70,13 +71,13 @@ export class NotificationHubService {
 
     /** Detiene la conexión */
     async disconnect(): Promise<void> {
-        // 🔄 TEMPORAL: SignalR completamente desactivado
+        // 🔄 TEMPORAL: SignalR comentado por solicitud del usuario
         console.log('[NOTIFICATION-HUB] SignalR disconnect - conexión ya desactivada');
         this.zone.run(() => this.status$.next('disconnected'));
         this.hub = undefined;
         return;
         
-        // Código original comentado hasta que el backend esté listo
+        // Código original comentado
         /*
         if (!this.hub) return;
 

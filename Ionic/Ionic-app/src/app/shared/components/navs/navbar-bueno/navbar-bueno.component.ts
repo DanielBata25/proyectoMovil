@@ -7,6 +7,7 @@ import { Location } from '@angular/common';
 import { AuthService } from '../../../../core/services/auth/auth.service';
 import { AuthState } from '../../../../core/services/auth/auth.state';
 import { NotificationService } from '../../../services/notification/notificacion.service';
+import { NotificationHubService } from '../../../services/notification/notificationHub/notificacion-hub.service';
 import { NotificationListItemDto } from '../../../models/notificacions/notificacion.model';
 
 import { Subject, takeUntil } from 'rxjs';
@@ -32,6 +33,7 @@ export class NavbarBuenoComponent implements OnInit, OnDestroy {
   private authService = inject(AuthService);
   private authState = inject(AuthState);
   private notificationService = inject(NotificationService);
+  private notificationHubService = inject(NotificationHubService);
   
   // Lifecycle
   private destroy$ = new Subject<void>();
@@ -48,7 +50,7 @@ export class NavbarBuenoComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-    // this.notificationHubService.disconnect(); // Temporal: desactivado
+    // this.notificationHubService.disconnect(); // 🔄 SignalR comentado
   }
 
   // Navigation methods
@@ -78,7 +80,7 @@ export class NavbarBuenoComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(async (me) => {
         if (me) {
-          // 🔄 TEMPORAL: Desactivar SignalR mientras arreglamos el backend
+          // 🔄 TEMPORAL: SignalR comentado por solicitud del usuario
           // try {
           //   await this.notificationHubService.connect();
           // } catch {
@@ -92,7 +94,7 @@ export class NavbarBuenoComponent implements OnInit, OnDestroy {
         }
       });
 
-    // 🔄 TEMPORAL: Desactivar listener de tiempo real
+    // 🔄 TEMPORAL: Listener de tiempo real comentado
     // this.notificationHubService
     //   .onNotification()
     //   .pipe(takeUntil(this.destroy$))
