@@ -1,0 +1,127 @@
+<div class="chat-card">
+  <div class="chat-header">
+    <div>
+      <div class="title">Chat del pedido</div>
+      <div class="order-code">#{{ orderCode }}</div>
+    </div>
+    <ion-badge *ngIf="isChatClosed" color="medium">Cerrado</ion-badge>
+  </div>
+
+  <div class="chat-state" *ngIf="isChatClosed || !canSendMessages">
+    <ion-icon
+      [name]="isChatClosed ? 'lock-closed-outline' : 'alert-circle-outline'"
+    ></ion-icon>
+    <div class="state-text">
+      <div class="state-title">
+        {{ isChatClosed ? 'Chat cerrado' : 'Chat no disponible' }}
+      </div>
+      <p>
+        <ng-container *ngIf="isChatClosed; else disabledTpl">
+          {{ chatClosedReason || 'El chat fue cerrado para este pedido.' }}
+        </ng-container>
+        <ng-template #disabledTpl>
+          {{ chatDisabledReason || 'El chat no está disponible en este momento.' }}
+        </ng-template>
+      </p>
+    </div>
+  </div>
+
+  <div class="chat-body">
+    <div class="chat-load-more">
+      <ion-button
+        size="small"
+        fill="clear"
+        (click)="loadMore()"
+        [disabled]="loading || !hasMore"
+      >
+        <ion-icon slot="start" name="arrow-up-circle-outline"></ion-icon>
+        {{ hasMore ? 'Cargar más mensajes' : 'No hay más mensajes' }}
+      </ion-button>
+    </div>
+
+    <div class="chat-messages" #scrollContainer>
+      <ng-container *ngIf="messages.length; else noMessages">
+        <div
+          *ngFor="let msg of messages; trackBy: trackById"
+          [ngClass]="{
+            'msg-row': true,
+            'msg-mine': msg.isMine && !msg.isSystem,
+            'msg-theirs': !msg.isMine && !msg.isSystem,
+            'msg-system': msg.isSystem
+          }"
+        >
+          <ng-container *ngIf="!msg.isSystem; else systemTemplate">
+            <div class="msg-avatar" [ngClass]="{ 'avatar-mine': msg.isMine, 'avatar-theirs': !msg.isMine }">
+              <span>{{ getInitials(msg) }}</span>
+            </div>
+
+            <div class="msg-bubble">
+              <div class="msg-meta">
+                <span class="msg-time">{{ msg.sentAtUtc | date : 'short' }}</span>
+              </div>
+              <div class="msg-text">{{ msg.message }}</div>
+            </div>
+          </ng-container>
+
+          <ng-template #systemTemplate>
+            <div class="msg-system-bubble">
+              <ion-icon name="information-circle-outline"></ion-icon>
+              <span class="msg-system-text">{{ msg.message }}</span>
+            </div>
+          </ng-template>
+        </div>
+      </ng-container>
+
+      <ng-template #noMessages>
+        <div class="chat-empty">
+          <ng-container *ngIf="canSendMessages; else noSendTpl">
+            <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
+            <p>No hay mensajes en este chat. Escribe el primero.</p>
+          </ng-container>
+          <ng-template #noSendTpl>
+            <ion-icon name="hourglass-outline"></ion-icon>
+            <p>
+              No hay mensajes en este chat. El chat se habilitará cuando esté
+              disponible para este pedido.
+            </p>
+          </ng-template>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+
+  <div class="chat-footer">
+    <ion-text color="danger" *ngIf="error" class="chat-error">
+      {{ error }}
+    </ion-text>
+
+    <div class="chat-input-row">
+      <ion-textarea
+        [(ngModel)]="newMessage"
+        class="chat-input"
+        rows="2"
+        [autoGrow]="true"
+        placeholder="Escribe un mensaje..."
+        [disabled]="sending || !canSendMessages"
+        (keydown.enter)="onEnter($event)"
+      ></ion-textarea>
+
+      <ion-button
+        color="primary"
+        (click)="send()"
+        [disabled]="sending || !newMessage.trim() || !canSendMessages"
+        class="send-btn"
+      >
+        <ion-icon name="send-outline"></ion-icon>
+      </ion-button>
+    </div>
+
+    <div class="send-hint" *ngIf="canSendMessages">
+      Presiona Enter para enviar. Shift + Enter para salto de línea.
+    </div>
+  </div>
+
+  <div class="chat-loading" *ngIf="loading && !messages.length">
+    <ion-spinner name="dots"></ion-spinner>
+  </div>
+</div>

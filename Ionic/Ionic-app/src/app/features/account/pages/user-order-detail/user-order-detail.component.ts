@@ -11,6 +11,7 @@ import {
 } from '../../../products/models/order/order.model';
 import { OrderService } from '../../../products/services/order/order.service';
 import { ButtonComponent } from 'src/app/shared/components/button/button.component';
+import { OrderChatComponent } from 'src/app/shared/components/order-chat/order-chat.component';
 
 @Component({
   selector: 'app-user-order-detail',
@@ -18,7 +19,8 @@ import { ButtonComponent } from 'src/app/shared/components/button/button.compone
   imports: [
     CommonModule, 
     IonicModule,
-    ButtonComponent
+    ButtonComponent,
+    OrderChatComponent
   ],
   templateUrl: './user-order-detail.component.html',
   styleUrls: ['./user-order-detail.component.scss'],
@@ -44,6 +46,8 @@ export class UserOrderDetailComponent implements OnInit {
 
   // estrellas para mostrar la calificación del productor al cliente
   stars = [1, 2, 3, 4, 5];
+  // UI: chat flotante
+  showChat = false;
 
   ngOnInit(): void {
     this.code = String(this.route.snapshot.paramMap.get('code'));
@@ -342,5 +346,10 @@ export class UserOrderDetailComponent implements OnInit {
       color: color
     });
     await toast.present();
+  }
+
+  // ======= Chat flotante =======
+  toggleChat(): void {
+    this.showChat = !this.showChat;
   }
 }

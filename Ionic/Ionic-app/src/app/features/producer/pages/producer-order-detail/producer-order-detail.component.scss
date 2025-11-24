@@ -296,6 +296,22 @@ ion-chip {
   --background: var(--ion-color-light);
 }
 
+.chat-modal {
+  --height: 100%;
+  --width: 100%;
+  --border-radius: 0;
+}
+
+.chat-modal-content {
+  --background: var(--ion-background-color, #f8f9fa);
+  padding: 1rem;
+}
+
+.chat-fab {
+  z-index: 999;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 92px); // encima de la barra
+}
+
 @media (min-width: 680px) {
   .detail-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));

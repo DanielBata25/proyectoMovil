@@ -11,6 +11,7 @@ import {
 import { OrderService } from '../../../products/services/order/order.service';
 import { ButtonComponent } from 'src/app/shared/components/button/button.component';
 import { ConsumerRatingCreateModel } from '../../../products/models/consumerRating/consumerRating.model';
+import { OrderChatComponent } from 'src/app/shared/components/order-chat/order-chat.component';
 
 @Component({
   selector: 'app-producer-order-detail',
@@ -19,7 +20,8 @@ import { ConsumerRatingCreateModel } from '../../../products/models/consumerRati
     CommonModule,
     IonicModule,
     FormsModule,
-    ButtonComponent
+    ButtonComponent,
+    OrderChatComponent
   ],
   templateUrl: './producer-order-detail.component.html',
   styleUrls: ['./producer-order-detail.component.scss'],
@@ -41,6 +43,8 @@ export class ProducerOrderDetailComponent implements OnInit {
   rating = 0;
   comment = '';
   savingRating = false;
+  // UI: chat flotante
+  showChat = false;
 
   ngOnInit(): void {
     this.code = String(this.route.snapshot.paramMap.get('code'));
@@ -471,5 +475,10 @@ export class ProducerOrderDetailComponent implements OnInit {
       color: color
     });
     await toast.present();
+  }
+
+  // ======= Chat flotante =======
+  toggleChat(): void {
+    this.showChat = !this.showChat;
   }
 }
