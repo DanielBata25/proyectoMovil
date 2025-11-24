@@ -5,7 +5,7 @@ import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validatio
 import { take, catchError, finalize } from 'rxjs/operators';
 import { of } from 'rxjs';
 
-import { IonicModule, LoadingController, ToastController } from '@ionic/angular';
+import { IonicModule, ToastController } from '@ionic/angular';
 
 import { AuthService } from 'src/app/core/services/auth/auth.service';
 import { LocationService } from 'src/app/shared/services/location/location.service';
@@ -29,7 +29,6 @@ export class RegisterComponent implements OnInit {
   private router = inject(Router);
   private locationSrv = inject(LocationService);
   private pass = inject(PasswordPolicyService);
-  private loadingCtrl = inject(LoadingController);
   private toastCtrl = inject(ToastController);
 
   departments: DepartmentModel[] = [];
@@ -269,8 +268,6 @@ export class RegisterComponent implements OnInit {
     };
 
     this.loading = true;
-    const loading = await this.loadingCtrl.create({ message: 'Creando usuario...', spinner: 'circles' });
-    await loading.present();
 
     this.auth.Register(payload).pipe(
       take(1),
@@ -279,10 +276,7 @@ export class RegisterComponent implements OnInit {
         this.toast(msg, 'danger');
         return of({ isSuccess: false });
       }),
-      finalize(async () => {
-        this.loading = false;
-        await loading.dismiss();
-      })
+      finalize(() => { this.loading = false; })
     ).subscribe((data: any) => {
       if (data?.isSuccess) {
         this.toast('Usuario creado correctamente', 'success');
