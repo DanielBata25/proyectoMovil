@@ -42,6 +42,9 @@ export class UserOrderDetailComponent implements OnInit {
   readonly MAX_FILE_MB = 6;
   readonly MAX_FILE_BYTES = this.MAX_FILE_MB * 1024 * 1024;
 
+  // estrellas para mostrar la calificación del productor al cliente
+  stars = [1, 2, 3, 4, 5];
+
   ngOnInit(): void {
     this.code = String(this.route.snapshot.paramMap.get('code'));
     if (!this.code) {
@@ -82,6 +85,10 @@ export class UserOrderDetailComponent implements OnInit {
 
   get canConfirm(): boolean {
     return this.detail?.status === 'DeliveredPendingBuyerConfirm';
+  }
+
+  get hasRating(): boolean {
+    return !!this.detail?.consumerRating;
   }
 
   /* ======= Chip de estado (texto + clase) ======= */

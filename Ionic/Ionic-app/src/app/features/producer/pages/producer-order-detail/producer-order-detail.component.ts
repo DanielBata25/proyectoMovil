@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { IonicModule, AlertController, ToastController } from '@ionic/angular';
 import { firstValueFrom, Observable } from 'rxjs';
 import {
@@ -9,6 +10,7 @@ import {
 } from '../../../products/models/order/order.model';
 import { OrderService } from '../../../products/services/order/order.service';
 import { ButtonComponent } from 'src/app/shared/components/button/button.component';
+import { ConsumerRatingCreateModel } from '../../../products/models/consumerRating/consumerRating.model';
 
 @Component({
   selector: 'app-producer-order-detail',
@@ -16,6 +18,7 @@ import { ButtonComponent } from 'src/app/shared/components/button/button.compone
   imports: [
     CommonModule,
     IonicModule,
+    FormsModule,
     ButtonComponent
   ],
   templateUrl: './producer-order-detail.component.html',
@@ -33,6 +36,12 @@ export class ProducerOrderDetailComponent implements OnInit {
   processing = false;
   detail?: OrderDetailModel;
 
+  // Calificación del cliente
+  stars = [1, 2, 3, 4, 5];
+  rating = 0;
+  comment = '';
+  savingRating = false;
+
   ngOnInit(): void {
     this.code = String(this.route.snapshot.paramMap.get('code'));
     if (!this.code) {
@@ -48,6 +57,7 @@ export class ProducerOrderDetailComponent implements OnInit {
       this.detail = await firstValueFrom(
         this.ordersSrv.getDetailForProducer(this.code)
       );
+      this.resetRatingFromDetail();
     } catch (err: any) {
       const alert = await this.alertController.create({
         header: 'Error',
@@ -81,6 +91,79 @@ export class ProducerOrderDetailComponent implements OnInit {
 
   get canManageLogistics(): boolean {
     return this.canMarkPreparing || this.canMarkDispatched || this.canMarkDelivered;
+  }
+
+  get isAlreadyRated(): boolean {
+    return !!this.detail?.consumerRating;
+  }
+
+  private resetRatingFromDetail(): void {
+    if (!this.detail?.consumerRating) {
+      this.rating = 0;
+      this.comment = '';
+      return;
+    }
+
+    this.rating = this.detail.consumerRating.rating;
+    this.comment = this.detail.consumerRating.comment ?? '';
+  }
+
+  setRating(value: number): void {
+    if (this.savingRating) return;
+    this.rating = value;
+  }
+
+  async onRateCustomer(): Promise<void> {
+    if (!this.detail) return;
+
+    if (this.detail.status !== 'Completed') {
+      await this.showToast('Solo puedes calificar cuando la orden está completada.');
+      return;
+    }
+
+    if (this.rating < 1 || this.rating > 5) {
+      await this.showToast('Selecciona una calificación entre 1 y 5.');
+      return;
+    }
+
+    const body: ConsumerRatingCreateModel = {
+      rating: this.rating,
+      comment: this.comment?.trim() || null,
+      rowVersion: this.detail.rowVersion,
+    };
+
+    this.savingRating = true;
+    const loadingAlert = await this.alertController.create({
+      header: 'Guardando...',
+      message: 'Registrando la calificación del cliente.',
+      buttons: [],
+      cssClass: 'loading-alert',
+    });
+    await loadingAlert.present();
+
+    this.ordersSrv.rateCustomer(this.code, body).subscribe({
+      next: async (res) => {
+        await loadingAlert.dismiss();
+        this.savingRating = false;
+
+        if (this.detail) {
+          this.detail.consumerRating = res.data;
+          this.resetRatingFromDetail();
+        }
+
+        await this.showToast(
+          'La calificación del cliente se guardó correctamente.',
+          'success'
+        );
+      },
+      error: async (err: any) => {
+        await loadingAlert.dismiss();
+        this.savingRating = false;
+        await this.showToast(
+          err?.error?.message ?? 'No se pudo registrar la calificación.'
+        );
+      },
+    });
   }
 
   /* ======= Chip de estado (texto + clase) ======= */

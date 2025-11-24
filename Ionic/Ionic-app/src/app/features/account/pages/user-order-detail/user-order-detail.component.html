@@ -179,6 +179,44 @@
             </div>
           </section>
 
+          <section class="detail-section customer-rating" *ngIf="detail">
+            <div class="section-heading">
+              <ion-icon name="star-half-outline"></ion-icon>
+              <span>Tu calificación como cliente</span>
+            </div>
+
+            <p *ngIf="detail.customerRatingsCount > 0" class="rating-stats">
+              Promedio histórico:
+              <strong>{{ detail.customerAverageRating | number:'1.1-2' }}/5</strong>
+              ({{ detail.customerRatingsCount }} calificaciones)
+            </p>
+
+            <ng-container *ngIf="hasRating; else noCustomerRating">
+              <div class="rating-stars">
+                <span
+                  *ngFor="let s of stars"
+                  class="star"
+                  [class.filled]="detail!.consumerRating!.rating >= s"
+                >
+                  ★
+                </span>
+                <span class="rating-label">
+                  ({{ detail!.consumerRating!.rating }}/5)
+                </span>
+              </div>
+
+              <p *ngIf="detail!.consumerRating!.comment" class="rating-comment">
+                “{{ detail!.consumerRating!.comment }}”
+              </p>
+            </ng-container>
+
+            <ng-template #noCustomerRating>
+              <p class="muted">
+                Este pedido aún no ha sido calificado por el productor.
+              </p>
+            </ng-template>
+          </section>
+
           <section class="detail-section" *ngIf="canConfirm">
             <div class="section-heading">
               <ion-icon name="checkbox-outline"></ion-icon>

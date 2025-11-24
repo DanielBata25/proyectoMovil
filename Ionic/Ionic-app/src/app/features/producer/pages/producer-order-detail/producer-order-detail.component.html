@@ -144,6 +144,53 @@
             </div>
           </section>
 
+          <section class="detail-section rating-section" *ngIf="detail">
+            <div class="section-heading">
+              <ion-icon name="star-outline"></ion-icon>
+              <span>Calificar al cliente</span>
+            </div>
+
+            <div class="rating-stars">
+              <button
+                type="button"
+                class="star"
+                *ngFor="let s of stars"
+                [class.filled]="rating >= s"
+                [disabled]="savingRating"
+                (click)="setRating(s)"
+                [attr.aria-label]="'Calificación ' + s"
+              >
+                ★
+              </button>
+              <span class="rating-label">
+                {{ rating ? (rating + '/5') : 'Toca para calificar' }}
+              </span>
+            </div>
+
+            <ion-textarea
+              label="Comentario (opcional)"
+              labelPlacement="stacked"
+              placeholder="Escribe un comentario para el cliente..."
+              [autoGrow]="true"
+              [(ngModel)]="comment"
+              [disabled]="savingRating"
+            ></ion-textarea>
+
+            <div class="rating-actions">
+              <app-button
+                text="Guardar calificación"
+                color="primary"
+                icon="star"
+                [disabled]="savingRating"
+                (clicked)="onRateCustomer()"
+                style="--app-button-margin:0"
+              ></app-button>
+              <ion-note *ngIf="isAlreadyRated" color="medium">
+                Ya habías calificado este pedido; puedes actualizar la nota.
+              </ion-note>
+            </div>
+          </section>
+
           <section class="detail-section" *ngIf="canAcceptReject">
             <div class="section-heading">
               <ion-icon name="build-outline"></ion-icon>

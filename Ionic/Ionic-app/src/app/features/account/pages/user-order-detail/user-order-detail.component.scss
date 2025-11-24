@@ -235,6 +235,46 @@ ion-chip {
   padding-bottom: 0;
 }
 
+.customer-rating {
+  .rating-stats {
+    color: var(--ion-color-medium);
+    font-size: 0.9rem;
+    margin: 0 0 0.5rem;
+  }
+
+  .rating-stars {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .star {
+    color: var(--ion-color-medium);
+    font-size: 1.4rem;
+
+    &.filled {
+      color: var(--ion-color-warning);
+    }
+  }
+
+  .rating-label {
+    color: var(--ion-color-medium);
+    font-size: 0.9rem;
+  }
+
+  .rating-comment {
+    margin: 0;
+    color: var(--ion-color-dark);
+    font-style: italic;
+  }
+
+  .muted {
+    color: var(--ion-color-medium);
+    margin: 0;
+  }
+}
+
 .info-message {
   display: flex;
   align-items: center;
