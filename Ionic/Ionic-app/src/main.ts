@@ -51,6 +51,8 @@ import {
   keyOutline,
   logOutOutline,
   createOutline,
+  notificationsOutline,
+  basketOutline,
 } from 'ionicons/icons';
 
 /** 👇 Importamos y registramos locale español Colombia */
@@ -97,6 +99,8 @@ addIcons({
   'key-outline': keyOutline,
   'log-out-outline': logOutOutline,
   'create-outline': createOutline,
+  'notifications-outline': notificationsOutline,
+  'basket-outline': basketOutline,
 });
 
 bootstrapApplication(AppComponent, {

@@ -50,7 +50,7 @@ export class NavbarBuenoComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-    // this.notificationHubService.disconnect(); // 🔄 SignalR comentado
+    this.notificationHubService.disconnect(); // Cierra SignalR cuando se destruye el nav
   }
 
   // Navigation methods
@@ -80,30 +80,29 @@ export class NavbarBuenoComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(async (me) => {
         if (me) {
-          // 🔄 TEMPORAL: SignalR comentado por solicitud del usuario
-          // try {
-          //   await this.notificationHubService.connect();
-          // } catch {
-          //   console.log('SignalR no disponible - continuando sin tiempo real');
-          // }
+          try {
+            await this.notificationHubService.connect();
+          } catch {
+            console.log('SignalR no disponible - continuando sin tiempo real');
+          }
           
           this.loadUnreadNotifications();
         } else {
           this.notifications = [];
-          // await this.notificationHubService.disconnect();
+          await this.notificationHubService.disconnect();
         }
       });
 
-    // 🔄 TEMPORAL: Listener de tiempo real comentado
-    // this.notificationHubService
-    //   .onNotification()
-    //   .pipe(takeUntil(this.destroy$))
-    //   .subscribe((notification) => {
-    //     this.notifications = [
-    //       notification,
-    //       ...this.notifications.filter((item) => item.id !== notification.id),
-    //     ].slice(0, 20);
-    //   });
+    this.notificationHubService
+      .onNotification()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((notification) => {
+        // Inserta nueva notificación al inicio y limita a 20 para el badge
+        this.notifications = [
+          notification,
+          ...this.notifications.filter((item) => item.id !== notification.id),
+        ].slice(0, 20);
+      });
   }
 
   // Notification event handlers

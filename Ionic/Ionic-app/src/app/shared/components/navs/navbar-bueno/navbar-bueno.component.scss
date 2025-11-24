@@ -96,7 +96,16 @@ $blanco: #ffffff;
   --ion-button-min-height: 40px;
 }
 
-.notification-badge {
+.notif-btn {
+  position: relative;
+  --padding-start: 8px;
+  --padding-end: 8px;
+  --ion-button-min-width: 40px;
+  --ion-button-min-height: 40px;
+}
+
+.notification-badge,
+.notif-badge {
   position: absolute;
   top: -2px;
   right: -2px;
