@@ -200,6 +200,57 @@
           </div>
         </form>
 
+        <!-- Paso 4: Verificación de correo -->
+        <form [formGroup]="verificationForm" *ngIf="currentStep === 4" class="mt-12">
+          <div class="ion-text-center" style="margin-bottom: 1rem;">
+            <p>Te enviamos un código de 6 dígitos al correo:</p>
+            <strong>{{ verificationEmail }}</strong>
+            <p style="margin-top: .5rem;">Ingresa el código para activar tu cuenta.</p>
+          </div>
+
+          <!-- Email (solo lectura) -->
+          <label for="verificationEmail" class="label">Correo electrónico</label>
+          <ion-item lines="none" class="input-custom">
+            <ion-input id="verificationEmail" type="email" formControlName="email" readonly></ion-input>
+          </ion-item>
+
+          <!-- Código -->
+          <label for="code" class="label mt-12">Código de verificación</label>
+          <ion-item lines="none" class="input-custom">
+            <ion-input
+              id="code"
+              type="tel"
+              inputmode="numeric"
+              maxlength="6"
+              formControlName="code"
+              placeholder="Ingresa el código">
+            </ion-input>
+          </ion-item>
+          <ion-note
+            color="danger"
+            class="note"
+            *ngIf="verificationForm.get('code')?.invalid && (verificationForm.get('code')?.touched || verificationForm.get('code')?.dirty)">
+            {{ getVerificationMessage('code') }}
+          </ion-note>
+
+          <div class="button-stack">
+            <app-button
+              type="button"
+              color="secondary"
+              [disabled]="resending"
+              [text]="resending ? 'Enviando...' : 'Reenviar código'"
+              (clicked)="resendCode()">
+            </app-button>
+            <app-button
+              type="button"
+              color="primary"
+              [disabled]="verificationForm.invalid || verifying"
+              [text]="verifying ? 'Verificando...' : 'Verificar correo'"
+              (clicked)="confirmVerification()">
+            </app-button>
+          </div>
+        </form>
+
       </ion-card-content>
     </ion-card>
   </div>

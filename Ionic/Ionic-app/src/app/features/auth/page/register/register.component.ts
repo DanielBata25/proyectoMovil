@@ -33,6 +33,9 @@ export class RegisterComponent implements OnInit {
 
   departments: DepartmentModel[] = [];
   cities: CityModel[] = [];
+  verificationEmail = '';
+  resending = false;
+  verifying = false;
 
   // Paso 1: Credenciales
   public credentialsForm: FormGroup = this.fb.group(
@@ -115,6 +118,12 @@ export class RegisterComponent implements OnInit {
     ],
     departmentId: [null, [Validators.required, RegisterComponent.positiveSelect]],
     cityId: [null, [Validators.required, RegisterComponent.positiveSelect]],
+  });
+
+  // Paso 4: Verificación de correo
+  public verificationForm: FormGroup = this.fb.group({
+    email: [{ value: '', disabled: true }, [Validators.required, Validators.email]],
+    code: ['', [Validators.required, Validators.pattern(/^[0-9]{6}$/)]],
   });
 
   private readonly sectionMessages: Record<FormSection, Record<string, Record<string, string>>> = {
@@ -279,11 +288,59 @@ export class RegisterComponent implements OnInit {
       finalize(() => { this.loading = false; })
     ).subscribe((data: any) => {
       if (data?.isSuccess) {
-        this.toast('Usuario creado correctamente', 'success');
-        this.router.navigate(['/auth/login']);
+        this.startEmailVerification(payload.email);
       } else {
         this.toast('Error al crear el usuario.', 'danger');
       }
+    });
+  }
+
+  private startEmailVerification(email: string): void {
+    this.verificationEmail = email;
+    this.verificationForm.reset({ email });
+    this.verificationForm.get('email')?.disable({ emitEvent: false });
+    this.currentStep = 4;
+    this.toast('Hemos enviado un código de verificación a tu correo.', 'success');
+  }
+
+  resendCode(): void {
+    if (!this.verificationEmail || this.resending) return;
+    this.resending = true;
+
+    this.auth.RequestEmailVerification({ email: this.verificationEmail }).pipe(
+      take(1),
+      catchError((err) => {
+        const msg = err?.error?.message || err?.message || 'No se pudo reenviar el código.';
+        this.toast(msg, 'danger');
+        return of({ isSuccess: false });
+      }),
+      finalize(() => { this.resending = false; })
+    ).subscribe((resp: any) => {
+      if (resp?.isSuccess === false) return;
+      this.toast('Código reenviado. Revisa tu correo.', 'success');
+    });
+  }
+
+  confirmVerification(): void {
+    if (this.verifying) return;
+    this.verificationForm.markAllAsTouched();
+    if (this.verificationForm.invalid) return;
+
+    this.verifying = true;
+    const code = this.verificationForm.get('code')?.value;
+
+    this.auth.ConfirmEmailVerification({ email: this.verificationEmail, code }).pipe(
+      take(1),
+      catchError((err) => {
+        const msg = err?.error?.message || err?.message || 'No se pudo verificar el correo.';
+        this.toast(msg, 'danger');
+        return of({ isSuccess: false });
+      }),
+      finalize(() => { this.verifying = false; })
+    ).subscribe((resp: any) => {
+      if (resp?.isSuccess === false) return;
+      this.toast('Correo verificado. Ahora puedes iniciar sesión.', 'success');
+      this.router.navigate(['/auth/login']);
     });
   }
 
@@ -311,6 +368,19 @@ export class RegisterComponent implements OnInit {
 
     const resolved = this.resolveMessage(messages, control?.errors ?? null);
     return resolved ?? 'Campo inválido.';
+  }
+
+  getVerificationMessage(controlName: 'code' | 'email'): string {
+    const control = this.verificationForm.get(controlName);
+    if (!control) return 'Campo inválido.';
+    if (controlName === 'email') {
+      if (control.hasError('required')) return 'El correo es requerido.';
+      if (control.hasError('email')) return 'Correo no válido.';
+      return 'Campo inválido.';
+    }
+    if (control.hasError('required')) return 'Ingresa el código enviado a tu correo.';
+    if (control.hasError('pattern')) return 'El código debe tener 6 dígitos numéricos.';
+    return 'Campo inválido.';
   }
 
   private getSectionError(section: FormSection): string | null {

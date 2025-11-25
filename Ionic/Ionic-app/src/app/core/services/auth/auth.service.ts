@@ -1,7 +1,7 @@
 // src/app/core/services/auth/auth.service.ts
 import { Injectable } from '@angular/core';
 import { from, map, switchMap } from 'rxjs';
-import { RegisterUserModel } from '../../models/register.user.model';
+import { ConfirmEmailVerificationModel, RegisterUserModel, RequestEmailVerificationModel } from '../../models/register.user.model';
 import { LoginModel, UserMeDto } from '../../models/login.model';
 import { PersonUpdateModel, UserSelectModel } from '../../models/user.model';
 import {
@@ -24,6 +24,14 @@ export class AuthService {
 
   Register(obj: RegisterUserModel) {
     return from(ApiNative.post<void>(`${this.base}Register`, obj));
+  }
+
+  RequestEmailVerification(obj: RequestEmailVerificationModel) {
+    return from(ApiNative.post<void>(`${this.base}verify/send-code`, obj));
+  }
+
+  ConfirmEmailVerification(obj: ConfirmEmailVerificationModel) {
+    return from(ApiNative.post<void>(`${this.base}verify/confirm`, obj));
   }
 
   Login(obj: LoginModel) {
