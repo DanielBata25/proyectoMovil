@@ -26,6 +26,41 @@
       </div>
     </section>
 
+    <section class="stock-section">
+      <div class="low-stock" *ngIf="loadingLowStock">
+        <p class="low-stock__title">Cargando alertas de stock...</p>
+      </div>
+
+      <div class="low-stock low-stock--error" *ngIf="!loadingLowStock && errorLoadingLowStock">
+        <p class="low-stock__title">No pudimos cargar los productos con poco stock.</p>
+      </div>
+
+      <div
+        class="low-stock"
+        *ngIf="!loadingLowStock && !errorLoadingLowStock && lowStockProducts.length">
+        <div class="low-stock__header">
+          <p class="low-stock__title">Productos con poco stock</p>
+          <span class="low-stock__badge">{{ lowStockProducts.length }}</span>
+        </div>
+        <p class="low-stock__subtitle">
+          Revisa y actualiza el stock para evitar quedarte sin unidades.
+        </p>
+        <ul class="low-stock__list">
+          <li *ngFor="let product of lowStockProducts">
+            <div>
+              <p class="low-stock__name">{{ product.name }}</p>
+              <span class="low-stock__stock">Stock actual: {{ product.stock }}</span>
+            </div>
+            <a
+              class="low-stock__link"
+              [routerLink]="['/account/producer/product/update', product.id]">
+              Actualizar
+            </a>
+          </li>
+        </ul>
+      </div>
+    </section>
+
     <!-- Estado de los pedidos -->
     <section class="orders-section">
       <header class="section-header">

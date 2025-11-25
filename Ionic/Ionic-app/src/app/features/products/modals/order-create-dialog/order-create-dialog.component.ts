@@ -19,11 +19,13 @@ import { ModalController, ToastController, LoadingController } from '@ionic/angu
 
 import { addIcons } from 'ionicons';
 import { arrowBack, checkmark, chevronBack, chevronForward, bagCheckOutline } from 'ionicons/icons';
+import { take } from 'rxjs';
 
 import { DepartmentModel, CityModel } from '../../../../shared/models/location/location.model';
 import { LocationService } from '../../../../shared/services/location/location.service';
 import { OrderService } from '../../services/order/order.service';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
+import { AuthService } from 'src/app/core/services/auth/auth.service';
 
 // === Props desde el padre ===
 export interface OrderCreateDialogData {
@@ -101,6 +103,7 @@ export class OrderCreateModalComponent implements OnInit {
   private loadingCtrl = inject(LoadingController);
   private locationSrv = inject(LocationService);
   private orderSrv = inject(OrderService);
+  private authSrv = inject(AuthService);
 
   // Estado UI
   currentStep = 1; // 1: producto, 2: entrega
@@ -124,6 +127,7 @@ export class OrderCreateModalComponent implements OnInit {
   ngOnInit(): void {
     this.initForms();
     this.loadDepartments();
+    this.prefillForm();
   }
 
   // ---------- Init Forms (exactamente como tu código) ----------
@@ -167,14 +171,48 @@ export class OrderCreateModalComponent implements OnInit {
     });
   }
 
-  onDepartmentChange(depId: number): void {
+  onDepartmentChange(depId: number, cityId?: number): void {
     this.deliveryGroup.patchValue({ cityId: null });
     this.cities = [];
     if (!depId) return;
 
     this.locationSrv.getCity(depId).subscribe({
-      next: (cities) => (this.cities = cities ?? []),
+      next: (cities) => {
+        this.cities = cities ?? [];
+        if (cityId) {
+          const exists = this.cities.some((c) => c.id === cityId);
+          if (exists) {
+            this.deliveryGroup.patchValue({ cityId });
+          }
+        }
+      },
     });
+  }
+
+  // Precarga datos básicos del usuario (como en web)
+  private prefillForm(): void {
+    this.authSrv
+      .GetDataBasic()
+      .pipe(take(1))
+      .subscribe({
+        next: (data) => {
+          const fullName = `${data.firstName ?? ''} ${data.lastName ?? ''}`.trim();
+
+          this.deliveryGroup.patchValue({
+            recipientName: fullName || undefined,
+            contactPhone: data.phoneNumber ?? undefined,
+            addressLine1: data.address ?? undefined,
+            departmentId: data.departmentId ?? null,
+          });
+
+          if (data.departmentId) {
+            this.onDepartmentChange(data.departmentId, data.cityId ?? undefined);
+          }
+        },
+        error: () => {
+          // Silenciar errores para no bloquear la creación de pedido
+        },
+      });
   }
 
   // ---------- Helpers UI (exactamente como tu código) ----------

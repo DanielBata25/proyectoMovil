@@ -47,7 +47,7 @@
               <div class="image-wrap">
                 <img
                   class="card-image"
-                  [src]="p.imageUrl || p.images[0]?.imageUrl || 'assets/1.png'"
+                  [src]="p.images?.[0]?.imageUrl || 'assets/1.png'"
                   [alt]="p.name"
                   loading="lazy"
                   decoding="async"

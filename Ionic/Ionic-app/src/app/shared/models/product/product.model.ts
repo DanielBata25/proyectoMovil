@@ -5,7 +5,6 @@ export interface ApiOk {
 }
 
 export interface ProductSelectModel {
-imageUrl: any;
   id: number;
   name: string;
   description: string;
@@ -53,7 +52,7 @@ export interface ProductRegisterModel {
   status: boolean;
   categoryId: number;
   images?: File[];
-  farmIds: (number | string)[];
+  farmIds: number[];           
 }
 
 export interface ProductUpdateModel {
@@ -68,7 +67,7 @@ export interface ProductUpdateModel {
   status: boolean;
   categoryId: number;
   images?: File[];
-  farmIds: (number | string)[];
+  farmIds: number[];               
   imagesToDelete?: string[];
 }
 
@@ -90,4 +89,9 @@ export interface ReviewSelectModel {
   rating: number;         
   comment: string;
   createAt: string;       
+}
+
+export interface StockUpdateModel{
+  productId: number;
+  newStock:number
 }

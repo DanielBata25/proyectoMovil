@@ -6,85 +6,128 @@ import {
   ProductSelectModel,
   ProductUpdateModel,
   ApiOk,
+  StockUpdateModel,
 } from './../../models/product/product.model';
 
 @Injectable({ providedIn: 'root' })
 export class ProductService {
-  /** Mantén la convención de Auth: bases relativas; ApiNative las resuelve contra environment.apiUrl */
+
+  /** Base principal usando rutas relativas (ApiNative usa environment.apiUrl) */
   private readonly base = '/Product';
   private readonly categoriesBase = '/Product/categories';
 
-  /** ----------------------------- Home / Favorites ----------------------------- */
-  // GET /Product/home  (con soporte opcional de limit)
+  /** --------------------------------------------------
+   *                 HOME / FAVORITOS
+   * -------------------------------------------------- */
+
+  /** GET /Product/home?limit={limit} */
   getAllHome(limit?: number): Observable<ProductSelectModel[]> {
-    const url = limit ? `${this.base}/home?limit=${limit}` : `${this.base}/home`;
+    const url = limit
+      ? `${this.base}/home?limit=${limit}`
+      : `${this.base}/home`;
+
     return from(ApiNative.get<ProductSelectModel[]>(url));
   }
 
-  // GET /Product/featured
+  /** GET /Product/featured */
   getFeatured(): Observable<ProductSelectModel[]> {
     return from(ApiNative.get<ProductSelectModel[]>(`${this.base}/featured`));
   }
 
-  // GET /Product/favorites
+  /** GET /Product/favorites */
   getFavorites(): Observable<ProductSelectModel[]> {
     return from(ApiNative.get<ProductSelectModel[]>(`${this.base}/favorites`));
   }
 
-  /** ----------------------------- Categorías ----------------------------------- */
-  // GET /categories/{categoryId}/products
+  /** --------------------------------------------------
+   *                 BY CATEGORY
+   * -------------------------------------------------- */
+
+  /** GET /Product/categories/{categoryId}/products */
   getByCategory(categoryId: number): Observable<ProductSelectModel[]> {
-    if (!categoryId || categoryId <= 0) throw new Error('categoryId invalido');
-    return from(
-      ApiNative.get<ProductSelectModel[]>(`${this.categoriesBase}/${categoryId}/products`)
-    );
+    if (!categoryId || categoryId <= 0) {
+      throw new Error('categoryId inválido');
+    }
+    const url = `${this.categoriesBase}/${categoryId}/products`;
+    return from(ApiNative.get<ProductSelectModel[]>(url));
   }
 
-  /** --------------------------------- CRUD ------------------------------------ */
-  // GET /Product
+  /** --------------------------------------------------
+   *                       CRUD
+   * -------------------------------------------------- */
+
+  /** GET /Product */
   getAll(): Observable<ProductSelectModel[]> {
-    return from(ApiNative.get<ProductSelectModel[]>(`${this.base}`));
+    return from(ApiNative.get<ProductSelectModel[]>(this.base));
   }
 
-  // GET /Product/by-producer
+  /** GET /Product/by-producer */
   getByProducerId(): Observable<ProductSelectModel[]> {
     return from(ApiNative.get<ProductSelectModel[]>(`${this.base}/by-producer`));
   }
 
-  // GET /Product/by-producerCode/{code}
+  /** GET /Product/by-producer/low-stock */
+  getLowStockByProducer(): Observable<ProductSelectModel[]> {
+    return from(ApiNative.get<ProductSelectModel[]>(`${this.base}/by-producer/low-stock`));
+  }
+
+  /** GET /Product/by-producerCode/{codeProducer} */
   getProductByCodeProducer(codeProducer: string): Observable<ProductSelectModel[]> {
     const safe = encodeURIComponent(codeProducer ?? '');
     return from(ApiNative.get<ProductSelectModel[]>(`${this.base}/by-producerCode/${safe}`));
   }
 
-  // GET /Product/{id}
+  /** GET /Product/{id} */
   getById(id: number): Observable<ProductSelectModel> {
     return from(ApiNative.get<ProductSelectModel>(`${this.base}/${id}`));
   }
 
-  // DELETE /Product/{id}
+  /** GET /Product/detail/{id} */
+  getDetail(id: number): Observable<ProductSelectModel> {
+    return from(ApiNative.get<ProductSelectModel>(`${this.base}/detail/${id}`));
+  }
+
+  /** DELETE /Product/{id} */
   delete(id: number): Observable<void> {
     return from(ApiNative.delete<void>(`${this.base}/${id}`));
   }
 
-  /** ------------------------------ Create / Update ---------------------------- */
-  // POST /Product/register/product   (multipart/form-data)
+  /** --------------------------------------------------
+   *                    CREATE
+   * -------------------------------------------------- */
+
+  /** POST /Product/register/product (multipart/form-data) */
   create(dto: ProductRegisterModel): Observable<ApiOk> {
     const fd = this.buildFormData(dto);
     return from(ApiNative.post<ApiOk>(`${this.base}/register/product`, fd));
   }
 
-  // PUT /Product/{id}                 (multipart/form-data)
+  /** --------------------------------------------------
+   *                    UPDATE
+   * -------------------------------------------------- */
+
+  /** PUT /Product/{id} (multipart/form-data) */
   update(dto: ProductUpdateModel): Observable<ApiOk> {
     if (!dto.id) throw new Error('ID del producto es obligatorio');
     const fd = this.buildFormData(dto);
     return from(ApiNative.put<ApiOk>(`${this.base}/${dto.id}`, fd));
   }
 
-  /** ------------------------------- FormData ---------------------------------- */
-  private buildFormData(dto: ProductRegisterModel | ProductUpdateModel): FormData {
+  /** PATCH /Product/stock */
+  updateStock(dto: StockUpdateModel): Observable<ApiOk> {
+    return from(ApiNative.patch<ApiOk>(`${this.base}/stock`, dto));
+  }
+
+  /** --------------------------------------------------
+   *              MULTIPART BUILDER (FORMDATA)
+   * -------------------------------------------------- */
+
+  private buildFormData(
+    dto: ProductRegisterModel | ProductUpdateModel
+  ): FormData {
     const data = new FormData();
 
+    // ID opcional (solo para update)
     if ('id' in dto && dto.id !== undefined && dto.id !== null) {
       data.append('id', String(dto.id));
     }
@@ -96,31 +139,25 @@ export class ProductService {
     data.append('production', dto.production);
     data.append('stock', String(dto.stock));
     data.append('status', String(dto.status));
+    data.append('shippingIncluded', String(dto.shippingIncluded));
     data.append('categoryId', String(dto.categoryId));
 
-    // << NUEVO: soporte para shippingIncluded (si existe en el dto como en Web)
-    if ('shippingIncluded' in dto && dto.shippingIncluded !== undefined) {
-      data.append('shippingIncluded', String((dto as any).shippingIncluded));
-    }
-
     // Múltiples fincas
-    (dto.farmIds ?? []).forEach((fid) => data.append('FarmIds', String(fid)));
+    (dto.farmIds ?? []).forEach(fid => data.append('FarmIds', String(fid)));
 
     // Imágenes nuevas
     if (dto.images?.length) {
-      dto.images.forEach((file) => {
+      dto.images.forEach(file => {
         const name = (file as any).name ?? 'image';
         data.append('images', file as any, name);
       });
     }
 
-    // Imágenes a borrar (PublicId)
+    // Imágenes a borrar (publicId)
     if ('imagesToDelete' in dto && dto.imagesToDelete?.length) {
-      dto.imagesToDelete.forEach((pubId) => data.append('imagesToDelete', pubId));
+      dto.imagesToDelete.forEach(pubId => data.append('imagesToDelete', pubId));
     }
 
     return data;
   }
 }
-
-

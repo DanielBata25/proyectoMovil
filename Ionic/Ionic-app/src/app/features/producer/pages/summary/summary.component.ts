@@ -11,6 +11,7 @@ import { OrderService } from 'src/app/features/products/services/order/order.ser
 import { StatCardComponent } from 'src/app/shared/components/stat-card/stat-card.component';
 import { ButtonComponent } from 'src/app/shared/components/button/button.component';
 import { ProductService } from 'src/app/shared/services/product/product.service';
+import { ProductSelectModel } from 'src/app/shared/models/product/product.model';
 
 import { forkJoin, catchError, finalize, of } from 'rxjs';
 
@@ -44,6 +45,9 @@ export class SummaryPage implements OnInit {
   publishedProducts = 0;
   loading = true;
   chartLoading = true;
+  lowStockProducts: ProductSelectModel[] = [];
+  loadingLowStock = false;
+  errorLoadingLowStock = false;
   codeProducer?: string;
 
   range: 'day' | 'week' | 'month' = 'month';
@@ -84,6 +88,7 @@ export class SummaryPage implements OnInit {
     this.loadProducer();
     this.loadSummary();
     this.loadTopProductsChart();
+    this.loadLowStockProducts();
   }
 
   private loadProducer(): void {
@@ -153,6 +158,19 @@ export class SummaryPage implements OnInit {
       this.range = value;
       this.loadTopProductsChart();
     }
+  }
+
+  private loadLowStockProducts(): void {
+    this.loadingLowStock = true;
+    this.errorLoadingLowStock = false;
+
+    this.productService
+      .getLowStockByProducer()
+      .pipe(finalize(() => (this.loadingLowStock = false)))
+      .subscribe({
+        next: (products) => (this.lowStockProducts = products ?? []),
+        error: () => (this.errorLoadingLowStock = true),
+      });
   }
 
   async goProfile(): Promise<void> {

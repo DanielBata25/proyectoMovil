@@ -171,10 +171,7 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
       if (url) urls.push(url);
     }
 
-    if (!urls.length) {
-      const single = typeof product.imageUrl === 'string' ? product.imageUrl.trim() : '';
-      if (single) urls.push(single);
-    }
+    if (!urls.length) urls.push(this.fallbackImage);
 
     return urls;
   }

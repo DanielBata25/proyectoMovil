@@ -516,8 +516,9 @@ export class ProductFormComponent implements OnInit {
     const stock = Number(d.stock);
     const categoryId = Number(d.categoryId);
     const farmIds = (d.farmIds ?? [])
-      .map(fid => this.normalizeId(fid))
-      .filter((fid): fid is number | string => fid !== null);
+      .map((fid) => this.normalizeId(fid))
+      .map((fid) => (typeof fid === 'string' ? Number(fid) : fid))
+      .filter((fid): fid is number => typeof fid === 'number' && Number.isFinite(fid));
 
     if (!Number.isFinite(price) || !Number.isFinite(stock) || !Number.isFinite(categoryId) || !farmIds.length) {
       await loading.dismiss();

@@ -67,6 +67,100 @@ ion-header {
   gap: 16px;
 }
 
+/* ==========================================================================
+   Low stock alert
+   ========================================================================== */
+
+.stock-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.low-stock {
+  background: #fff6e8;
+  border: 1px solid #f8d8a8;
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.low-stock--error {
+  border-color: #fca5a5;
+  background: #fff1f2;
+}
+
+.low-stock__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.low-stock__title {
+  margin: 0;
+  font-weight: 700;
+  color: #92400e;
+}
+
+.low-stock__subtitle {
+  margin: 0;
+  color: #b45309;
+  font-size: 14px;
+}
+
+.low-stock__badge {
+  background: #f59e0b;
+  color: #fff;
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.low-stock__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.low-stock__list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  background: #fff;
+  border-radius: 10px;
+  border: 1px solid #fde68a;
+}
+
+.low-stock__name {
+  margin: 0;
+  font-weight: 600;
+  color: #92400e;
+}
+
+.low-stock__stock {
+  color: #b45309;
+  font-size: 13px;
+}
+
+.low-stock__link {
+  color: #92400e;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.low-stock__link:hover {
+  text-decoration: underline;
+}
+
 .section-header {
   display: flex;
   align-items: center;
