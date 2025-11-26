@@ -64,7 +64,8 @@
             color="primary"
             [disabled]="credentialsForm.invalid"
             text="Siguiente"
-            (clicked)="nextStep()">
+            (clicked)="nextStep()"
+            [style.--app-button-margin]="'0.9rem auto 0'">
           </app-button>
         </form>
 
@@ -125,14 +126,16 @@
               type="button"
               color="secondary"
               text="Volver"
-              (clicked)="prevStep()">
+              (clicked)="prevStep()"
+              [style.--app-button-margin]="'0.9rem auto 0'">
             </app-button>
             <app-button
               type="button"
               color="primary"
               [disabled]="basicForm.invalid"
               text="Siguiente"
-              (clicked)="nextStep()">
+              (clicked)="nextStep()"
+              [style.--app-button-margin]="'0.35rem auto 0'">
             </app-button>
           </div>
         </form>
@@ -202,14 +205,16 @@
               type="button"
               color="secondary"
               text="Volver"
-              (clicked)="prevStep()">
+              (clicked)="prevStep()"
+              [style.--app-button-margin]="'0.9rem auto 0'">
             </app-button>
             <app-button
               type="button"
               color="primary"
               [disabled]="contactForm.invalid || loading"
               text="Registrarse"
-              (clicked)="register()">
+              (clicked)="register()"
+              [style.--app-button-margin]="'0.35rem auto 0'">
             </app-button>
           </div>
         </form>
@@ -253,14 +258,16 @@
               color="secondary"
               [disabled]="resending"
               [text]="resending ? 'Enviando...' : 'Reenviar código'"
-              (clicked)="resendCode()">
+              (clicked)="resendCode()"
+              [style.--app-button-margin]="'0.9rem auto 0'">
             </app-button>
             <app-button
               type="button"
               color="primary"
               [disabled]="verificationForm.invalid || verifying"
               [text]="verifying ? 'Verificando...' : 'Verificar correo'"
-              (clicked)="confirmVerification()">
+              (clicked)="confirmVerification()"
+              [style.--app-button-margin]="'0.35rem auto 0'">
             </app-button>
           </div>
         </form>

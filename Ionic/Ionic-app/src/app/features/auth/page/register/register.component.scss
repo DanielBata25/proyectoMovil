@@ -77,7 +77,7 @@
   display: block;
   width: 100%;
   max-width: 340px;
-  margin: 1.25rem auto 0;
+  margin: 0;
 }
 .auth-card app-button .custom-btn {
   width: 100%;
@@ -108,11 +108,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.15rem;
-  margin-top: 0.15rem;
-}
-.button-stack app-button {
-  --app-button-margin: 0.05rem auto 0;
+  gap: 0.35rem;
+  margin-top: 0.5rem;
 }
 
 /* Inputs con fondo y texto oscuro */
