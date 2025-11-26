@@ -3,7 +3,6 @@ import { ActivatedRoute, Router, Params } from '@angular/router';
 import { IonicModule, ToastController } from '@ionic/angular';
 import { Subscription, switchMap } from 'rxjs';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
 
 import { OrderListItemModel } from '../../../../features/products/models/order/order.model';
 import { OrderService } from '../../../../features/products/services/order/order.service';
@@ -13,7 +12,7 @@ import { ButtonComponent } from 'src/app/shared/components/button/button.compone
 @Component({
   selector: 'app-producer-orders-list',
   standalone: true,
-  imports: [IonicModule, CommonModule, RouterLink, StatusTranslatePipesPipe, ButtonComponent],
+  imports: [IonicModule, CommonModule, StatusTranslatePipesPipe, ButtonComponent],
   templateUrl: './producer-orders-list.component.html',
   styleUrls: ['./producer-orders-list.component.scss']
 })

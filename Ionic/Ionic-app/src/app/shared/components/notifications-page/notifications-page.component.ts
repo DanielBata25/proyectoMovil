@@ -5,16 +5,9 @@ import { CommonModule } from '@angular/common';
 import { NotificationListItemDto } from '../../models/notificacions/notificacion.model';
 import { NotificationService } from '../../services/notification/notificacion.service';
 
-// Importar el componente Button personalizado
-import { ButtonComponent } from '../button/button.component';
-
 import {
-  IonHeader,
-  IonToolbar,
-  IonButtons,
   IonButton,
   IonIcon,
-  IonTitle,
   IonContent,
   IonSpinner,
   IonBadge
@@ -27,16 +20,11 @@ type NotificationFilter = 'all' | 'unread';
   standalone: true,
   imports: [
     CommonModule,
-    IonHeader,
-    IonToolbar,
-    IonButtons,
     IonButton,
     IonIcon,
-    IonTitle,
     IonContent,
     IonSpinner,
-    IonBadge,
-    ButtonComponent
+    IonBadge
   ],
   templateUrl: './notifications-page.component.html',
   styleUrls: ['./notifications-page.component.scss'],

@@ -1,6 +1,6 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize, take } from 'rxjs';
 import { IonicModule, ToastController, AlertController } from '@ionic/angular';
@@ -14,7 +14,7 @@ import { ButtonComponent } from 'src/app/shared/components/button/button.compone
 @Component({
   selector: 'app-recover-password',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, IonicModule, RouterLink, ButtonComponent],
+  imports: [CommonModule, ReactiveFormsModule, IonicModule, ButtonComponent],
   templateUrl: './recover-password.component.html',
   styleUrls: ['./recover-password.component.scss'],
 })

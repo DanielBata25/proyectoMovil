@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import {
   IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardContent,
-  IonItem, IonLabel, IonInput, IonIcon, IonSelect, IonSelectOption,
+  IonItem, IonLabel, IonInput, IonSelect, IonSelectOption,
   AlertController, ToastController
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -23,7 +23,7 @@ import { ButtonComponent } from 'src/app/shared/components/button/button.compone
   imports: [
     CommonModule, ReactiveFormsModule,
     IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardContent,
-    IonItem, IonLabel, IonInput, IonIcon, IonSelect, IonSelectOption,
+    IonItem, IonLabel, IonInput, IonSelect, IonSelectOption,
     ButtonComponent
   ],
   templateUrl: './update-person.component.html',

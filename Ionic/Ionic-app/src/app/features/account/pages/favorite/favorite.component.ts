@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   IonContent, IonHeader, IonToolbar, IonTitle, IonRefresher, IonRefresherContent,
-  IonGrid, IonRow, IonCol, IonCard, IonCardContent, IonImg, IonIcon, IonSkeletonText
+  IonGrid, IonRow, IonCol, IonCard, IonCardContent, IonIcon, IonSkeletonText
 } from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
 import { addIcons } from 'ionicons';
@@ -20,7 +20,7 @@ import { Subject, takeUntil } from 'rxjs';
   imports: [
     CommonModule,
     IonContent, IonRefresher, IonRefresherContent,
-    IonGrid, IonRow, IonCol, IonCard, IonCardContent, IonImg, IonIcon, IonSkeletonText
+    IonGrid, IonRow, IonCol, IonCard, IonCardContent, IonIcon, IonSkeletonText
 ],
   templateUrl: './favorite.component.html',
   styleUrls: ['./favorite.component.scss'],

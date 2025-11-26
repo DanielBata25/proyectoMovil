@@ -86,7 +86,7 @@ const phoneCoMobile = (label: string): ValidatorFn => (c: AbstractControl): Vali
   imports: [
     CommonModule, ReactiveFormsModule,
     IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonIcon,
-    IonContent, IonItem, IonLabel, IonInput, IonSelect, IonSelectOption, IonTextarea,
+    IonContent, IonLabel, IonInput, IonSelect, IonSelectOption, IonTextarea,
     IonNote, ButtonComponent
   ],
   templateUrl: './order-create-dialog.component.html',

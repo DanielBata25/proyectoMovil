@@ -18,7 +18,6 @@ import { eye, eyeOff } from 'ionicons/icons';
 import { AuthService } from 'src/app/core/services/auth/auth.service';
 import { AuthState } from 'src/app/core/services/auth/auth.state';
 import { RouterLink } from '@angular/router';
-import { ButtonComponent } from 'src/app/shared/components/button/button.component';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
@@ -30,7 +29,6 @@ import { firstValueFrom } from 'rxjs';
     IonCard, IonCardContent,
     IonItem, IonInput, IonNote,
     IonButton, IonIcon,
-    ButtonComponent,
     IonicModule
 ],
   templateUrl: './login.component.html',

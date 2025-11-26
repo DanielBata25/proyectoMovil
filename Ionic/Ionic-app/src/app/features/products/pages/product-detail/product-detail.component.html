@@ -175,7 +175,7 @@
             <div class="r-item" *ngFor="let r of reviews; trackBy: trackByReview">
               <div class="r-head">
                 <div class="who">
-                  <div class="avatar">{{ r.userName?.[0] ?? 'U' }}</div>
+                  <div class="avatar">{{ r.userName[0] || 'U' }}</div>
                   <div>
                     <div class="name">{{ r.userName }}</div>
                     <div class="date muted small">{{ r.createAt | date:'mediumDate':'':'es-CO' }}</div>
