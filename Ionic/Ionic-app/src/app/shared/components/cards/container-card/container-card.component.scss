@@ -1,0 +1,48 @@
+.product-section {
+  background: linear-gradient(180deg, rgba(231, 243, 234, 0.75) 0%, rgba(244, 250, 244, 0.92) 100%);
+  border-radius: 18px;
+  padding: 14px 12px 10px;
+  margin: 6px 0 4px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(46, 125, 50, 0.08);
+}
+
+.section-title {
+  margin: 0 0 8px;
+  font-size: 1.1rem;
+  color: #2e7d32;
+  font-weight: 700;
+  letter-spacing: 0.15px;
+}
+
+.product-container {
+  display: flex;
+  gap: 6px;
+  padding: 3px 4px 5px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(46, 125, 50, 0.3) transparent;
+}
+
+.product-container > app-card {
+  scroll-snap-align: start;
+  flex: 0 0 35vw;
+  max-width: 160px;
+}
+
+@media (min-width: 640px) {
+  .product-container {
+    gap: 7px;
+  }
+  .product-container > app-card {
+    flex-basis: 18vw;
+  }
+}
+
+@media (min-width: 992px) {
+  .product-container > app-card {
+    flex-basis: 14vw;
+  }
+}
