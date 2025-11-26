@@ -4,7 +4,7 @@ import { ForbiddenComponent } from './core/page/forbidden/forbidden.component';
 
 export const routes: Routes = [
   /** 1) Arranque: mandar al login */
-  { path: '', pathMatch: 'full', redirectTo: 'auth/login' },
+  { path: '', pathMatch: 'full', redirectTo: 'auth/intro' },
 
   /** 2) Rutas sin barras (auth) */
   {
