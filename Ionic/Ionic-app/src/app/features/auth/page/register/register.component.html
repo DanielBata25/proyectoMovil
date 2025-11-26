@@ -267,5 +267,10 @@
 
       </ion-card-content>
     </ion-card>
+
+  </div>
+
+  <div *ngIf="inlineError" class="floating-alert bottom" role="alert">
+    {{ inlineError }}
   </div>
 </ion-content>

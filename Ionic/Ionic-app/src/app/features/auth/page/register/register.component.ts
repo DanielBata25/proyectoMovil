@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, NgZone, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
@@ -30,12 +30,15 @@ export class RegisterComponent implements OnInit {
   private locationSrv = inject(LocationService);
   private pass = inject(PasswordPolicyService);
   private toastCtrl = inject(ToastController);
+  private zone = inject(NgZone);
 
   departments: DepartmentModel[] = [];
   cities: CityModel[] = [];
   verificationEmail = '';
   resending = false;
   verifying = false;
+  serverErrorMessage = '';
+  inlineError = '';
 
   // Paso 1: Credenciales
   public credentialsForm: FormGroup = this.fb.group(
@@ -245,8 +248,19 @@ export class RegisterComponent implements OnInit {
   }
 
   private async toast(message: string, color: 'success' | 'danger' | 'medium' = 'medium') {
-    const t = await this.toastCtrl.create({ message, duration: 2000, color, position: 'bottom' });
-    await t.present();
+    const present = async () => {
+      const t = await this.toastCtrl.create({ message, duration: 1800, color, position: 'bottom' });
+      await t.present();
+    };
+
+    try {
+      const maybePromise = this.zone ? this.zone.run(present) : present();
+      await maybePromise;
+    } catch (err) {
+      // Fallback para que el usuario vea algo si el overlay falla
+      console.warn('[Register] toast fallback', err);
+      alert(message);
+    }
   }
 
   async register(): Promise<void> {
@@ -255,6 +269,8 @@ export class RegisterComponent implements OnInit {
     this.credentialsForm.markAllAsTouched();
     this.basicForm.markAllAsTouched();
     this.contactForm.markAllAsTouched();
+    this.serverErrorMessage = '';
+    this.inlineError = '';
 
     if (this.credentialsForm.invalid || this.basicForm.invalid || this.contactForm.invalid) {
       const message =
@@ -281,18 +297,30 @@ export class RegisterComponent implements OnInit {
 
     this.auth.Register(payload).pipe(
       take(1),
-      catchError((err) => {
-        const msg = err?.error?.message || err?.message || 'No se pudo completar el registro.';
-        this.toast(msg, 'danger');
-        return of({ isSuccess: false });
-      }),
       finalize(() => { this.loading = false; })
-    ).subscribe((data: any) => {
-      if (data?.isSuccess) {
-        this.startEmailVerification(payload.email);
-      } else {
-        this.toast('Error al crear el usuario.', 'danger');
-      }
+    ).subscribe({
+      next: (data: any) => {
+        if (data?.isSuccess) {
+          this.serverErrorMessage = '';
+          this.inlineError = '';
+          this.startEmailVerification(payload.email);
+          return;
+        }
+        const msg = this.isDuplicateEmailError(data)
+          ? 'Este correo ya está registrado.'
+          : this.extractMessage(data) || 'Error al crear el usuario.';
+        this.serverErrorMessage = msg;
+        this.inlineError = msg;
+        this.toast(msg, 'danger');
+      },
+      error: async (err) => {
+        const msg = this.isDuplicateEmailError(err)
+          ? 'Este correo ya está registrado.'
+          : this.extractMessage(err) || 'No se pudo completar el registro.';
+        this.serverErrorMessage = msg;
+        this.inlineError = msg;
+        await this.toast(msg, 'danger');
+      },
     });
   }
 
@@ -437,6 +465,17 @@ export class RegisterComponent implements OnInit {
     return value > 0 ? null : { invalidSelect: true };
   }
 
+  private isDuplicateEmailError(err: any): boolean {
+    const status = err?.status;
+    const message = (this.extractMessage(err) || '').toLowerCase();
+    if (status === 409) return true;
+    if (status === 400 && message.includes('correo') && message.includes('registr')) return true;
+    if (message.includes('correo') && message.includes('existe')) return true;
+    if (message.includes('email') && message.includes('exist')) return true;
+    if (err?.data?.isSuccess === false && message.includes('correo')) return true;
+    return false;
+  }
+
   private bindNameCapitalization(): void {
     const applyCapitalization = (controlName: 'firstName' | 'lastName') => {
       const control = this.basicForm.get(controlName);
@@ -456,5 +495,22 @@ export class RegisterComponent implements OnInit {
 
   private static capitalizeWords(value: string): string {
     return (value ?? '').replace(/\b([a-záéíóúüñ])/gi, (match) => match.toUpperCase());
+  }
+
+  private extractMessage(err: any): string | null {
+    const candidates = [
+      err?.error?.message,
+      err?.error?.Message,
+      err?.data?.message,
+      err?.data?.Message,
+      err?.data?.data?.message,
+      err?.data?.data?.Message,
+      err?.message,
+      err?.Message,
+    ];
+    for (const c of candidates) {
+      if (typeof c === 'string' && c.trim()) return c;
+    }
+    return null;
   }
 }
