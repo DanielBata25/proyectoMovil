@@ -199,6 +199,7 @@ export class RegisterComponent implements OnInit {
   ngOnInit(): void {
     this.loadDepartments();
     this.bindDepartmentWatcher();
+    this.bindNameCapitalization();
   }
 
   async nextStep(): Promise<void> {
@@ -266,8 +267,8 @@ export class RegisterComponent implements OnInit {
     }
 
     const payload: RegisterUserModel = {
-      firstName: (this.basicForm.value.firstName ?? '').trim(),
-      lastName: (this.basicForm.value.lastName ?? '').trim(),
+      firstName: RegisterComponent.capitalizeWords((this.basicForm.value.firstName ?? '').trim()),
+      lastName: RegisterComponent.capitalizeWords((this.basicForm.value.lastName ?? '').trim()),
       identification: this.basicForm.value.identification,
       phoneNumber: this.contactForm.value.phoneNumber,
       address: (this.contactForm.value.address ?? '').trim(),
@@ -434,5 +435,26 @@ export class RegisterComponent implements OnInit {
     const value = Number(control.value);
     if (!value) return { invalidSelect: true };
     return value > 0 ? null : { invalidSelect: true };
+  }
+
+  private bindNameCapitalization(): void {
+    const applyCapitalization = (controlName: 'firstName' | 'lastName') => {
+      const control = this.basicForm.get(controlName);
+      if (!control) return;
+      control.valueChanges.subscribe((raw) => {
+        if (typeof raw !== 'string') return;
+        const formatted = RegisterComponent.capitalizeWords(raw);
+        if (formatted !== raw) {
+          control.setValue(formatted, { emitEvent: false });
+        }
+      });
+    };
+
+    applyCapitalization('firstName');
+    applyCapitalization('lastName');
+  }
+
+  private static capitalizeWords(value: string): string {
+    return (value ?? '').replace(/\b([a-záéíóúüñ])/gi, (match) => match.toUpperCase());
   }
 }

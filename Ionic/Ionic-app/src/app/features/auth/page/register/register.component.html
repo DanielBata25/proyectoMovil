@@ -73,7 +73,14 @@
           <!-- Nombre -->
           <label for="firstName" class="label">Nombre</label>
           <ion-item lines="none" class="input-custom">
-            <ion-input id="firstName" type="text" formControlName="firstName" placeholder="Nombre"></ion-input>
+            <ion-input
+              id="firstName"
+              type="text"
+              formControlName="firstName"
+              placeholder="Nombre"
+              autocapitalize="words"
+              style="text-transform: capitalize;"
+            ></ion-input>
           </ion-item>
           <ion-note
             color="danger"
@@ -85,7 +92,14 @@
           <!-- Apellido -->
           <label for="lastName" class="label mt-12">Apellido</label>
           <ion-item lines="none" class="input-custom">
-            <ion-input id="lastName" type="text" formControlName="lastName" placeholder="Apellido"></ion-input>
+            <ion-input
+              id="lastName"
+              type="text"
+              formControlName="lastName"
+              placeholder="Apellido"
+              autocapitalize="words"
+              style="text-transform: capitalize;"
+            ></ion-input>
           </ion-item>
           <ion-note
             color="danger"
