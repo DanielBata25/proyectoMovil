@@ -8,6 +8,11 @@
 $verde: #2e7d32;
 $blanco: #ffffff;
 
+/* Variables para responsive */
+$breakpoint-mobile: 480px;
+$breakpoint-tablet: 768px;
+$breakpoint-desktop: 1024px;
+
 /* Fuerza el color del toolbar */
 .nb-header,
 .nb-onebar,
@@ -35,6 +40,26 @@ $blanco: #ffffff;
   margin-bottom: -20px;
   padding: 0 16px;
   box-sizing: border-box;
+  gap: 12px;
+  
+  /* En pantallas muy pequeñas, reduce el padding */
+  @media (max-width: 360px) {
+    padding: 0 12px;
+    gap: 8px;
+  }
+  
+  /* En tablets, permite más espacio */
+  @media (min-width: $breakpoint-tablet) {
+    padding: 0 24px;
+    gap: 16px;
+    min-height: 80px;
+  }
+  
+  /* En desktop, máximo ancho y centrado */
+  @media (min-width: $breakpoint-desktop) {
+    max-width: 1200px;
+    margin: 8px auto -20px auto;
+  }
 }
 
 /* IZQUIERDA */
@@ -42,6 +67,15 @@ $blanco: #ffffff;
   display: flex;
   align-items: center;
   gap: 10px;
+  min-width: 0; /* Permite que se comprima si es necesario */
+  
+  @media (max-width: 360px) {
+    gap: 8px;
+  }
+  
+  @media (min-width: $breakpoint-tablet) {
+    gap: 16px;
+  }
 }
 
 .nb-left.nb-left--back {
@@ -50,12 +84,33 @@ $blanco: #ffffff;
   padding-left: 40px;
   grid-column: 1 / span 2;
   width: 100%;
+  
+  @media (max-width: 360px) {
+    padding-left: 36px;
+  }
+  
+  @media (min-width: $breakpoint-tablet) {
+    padding-left: 48px;
+  }
 }
 
 .nb-logo {
   height: 28px;
   width: auto;
   display: block;
+  flex-shrink: 0;
+  
+  @media (max-width: 360px) {
+    height: 22px;
+  }
+  
+  @media (min-width: $breakpoint-tablet) {
+    height: 32px;
+  }
+  
+  @media (min-width: $breakpoint-desktop) {
+    height: 36px;
+  }
 }
 
 .nb-title {
@@ -66,6 +121,22 @@ $blanco: #ffffff;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 180px;
+  line-height: 1.2;
+  
+  @media (max-width: 360px) {
+    font-size: 16px;
+    max-width: 140px;
+  }
+  
+  @media (min-width: $breakpoint-tablet) {
+    font-size: 20px;
+    max-width: 250px;
+  }
+  
+  @media (min-width: $breakpoint-desktop) {
+    font-size: 22px;
+    max-width: 300px;
+  }
 }
 
 .nb-title.nb-title--center {
@@ -87,6 +158,17 @@ $blanco: #ffffff;
   display: flex;
   align-items: center;
   padding-right: 4px;
+  gap: 4px;
+  
+  @media (min-width: $breakpoint-tablet) {
+    gap: 8px;
+    padding-right: 8px;
+  }
+  
+  @media (min-width: $breakpoint-desktop) {
+    gap: 12px;
+    padding-right: 12px;
+  }
 }
 
 .nb-right ion-button {
@@ -94,6 +176,16 @@ $blanco: #ffffff;
   --padding-end: 8px;
   --ion-button-min-width: 40px;
   --ion-button-min-height: 40px;
+  
+  @media (min-width: $breakpoint-tablet) {
+    --ion-button-min-width: 44px;
+    --ion-button-min-height: 44px;
+  }
+  
+  @media (min-width: $breakpoint-desktop) {
+    --ion-button-min-width: 48px;
+    --ion-button-min-height: 48px;
+  }
 }
 
 .notif-btn {
@@ -102,6 +194,16 @@ $blanco: #ffffff;
   --padding-end: 8px;
   --ion-button-min-width: 40px;
   --ion-button-min-height: 40px;
+  
+  @media (min-width: $breakpoint-tablet) {
+    --ion-button-min-width: 44px;
+    --ion-button-min-height: 44px;
+  }
+  
+  @media (min-width: $breakpoint-desktop) {
+    --ion-button-min-width: 48px;
+    --ion-button-min-height: 48px;
+  }
 }
 
 .notification-badge,
@@ -116,12 +218,87 @@ $blanco: #ffffff;
   padding: 0;
   border-radius: 9px;
   z-index: 10;
+  
+  @media (min-width: $breakpoint-tablet) {
+    min-width: 20px;
+    height: 20px;
+    font-size: 11px;
+    line-height: 20px;
+    border-radius: 10px;
+    top: -3px;
+    right: -3px;
+  }
+  
+  @media (min-width: $breakpoint-desktop) {
+    min-width: 22px;
+    height: 22px;
+    font-size: 12px;
+    line-height: 22px;
+    border-radius: 11px;
+    top: -4px;
+    right: -4px;
+  }
 }
 
 /* Iconos blancos */
 ion-button,
 ion-icon {
   color: $blanco !important;
+}
+
+/* Mejoras de accesibilidad */
+.nb-back-btn:focus,
+.nb-right ion-button:focus {
+  outline: 2px solid rgba(255, 255, 255, 0.6);
+  outline-offset: 2px;
+}
+
+/* Smooth transitions para mejor UX */
+.nb-logo,
+.nb-title,
+.nb-back-btn,
+.nb-right ion-button {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Mejoras en modo landscape */
+@media (orientation: landscape) and (max-height: 400px) {
+  .nb-row {
+    min-height: 48px;
+    margin-top: 2px;
+    margin-bottom: -12px;
+  }
+  
+  .nb-logo {
+    height: 18px;
+  }
+  
+  .nb-title {
+    font-size: 13px;
+    max-width: 120px;
+  }
+  
+  .nb-back-btn {
+    width: 30px;
+    height: 30px;
+  }
+  
+  .nb-back-btn ion-icon {
+    font-size: 16px;
+  }
+  
+  .nb-right ion-button {
+    --ion-button-min-width: 36px;
+    --ion-button-min-height: 36px;
+  }
+}
+
+/* Soporte para pantallas de alta densidad */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .nb-logo {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
 }
 
 .nb-back-btn {
@@ -135,18 +312,123 @@ ion-icon {
   display: grid;
   place-items: center;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  
+  @media (min-width: $breakpoint-tablet) {
+    width: 38px;
+    height: 38px;
+  }
+  
+  @media (min-width: $breakpoint-desktop) {
+    width: 42px;
+    height: 42px;
+  }
 }
 
 .nb-back-btn ion-icon {
   font-size: 20px;
   color: #ffffff !important;
+  
+  @media (min-width: $breakpoint-tablet) {
+    font-size: 22px;
+  }
+  
+  @media (min-width: $breakpoint-desktop) {
+    font-size: 24px;
+  }
 }
 
-/* Compacto en pantallas angostas */
+/* ========================================
+   RESPONSIVE DESIGN - Media Queries
+======================================== */
+
+/* Extra small devices (phones) */
 @media (max-width: 360px) {
   .nb-logo { height: 22px; }
-  .nb-title { font-size: 16px; max-width: 140px; }
-  .nb-row { min-height: 56px; }
+  .nb-title { 
+    font-size: 16px; 
+    max-width: 140px; 
+  }
+  .nb-row { 
+    min-height: 56px; 
+    padding: 0 12px;
+  }
+  .nb-back-btn {
+    width: 32px;
+    height: 32px;
+  }
+  .nb-back-btn ion-icon {
+    font-size: 18px;
+  }
+}
+
+/* Small devices (large phones) */
+@media (min-width: 361px) and (max-width: 480px) {
+  .nb-logo { height: 24px; }
+  .nb-title { 
+    font-size: 17px; 
+    max-width: 160px; 
+  }
+  .nb-row { 
+    min-height: 60px; 
+  }
+}
+
+/* Medium devices (tablets) */
+@media (min-width: 481px) and (max-width: 768px) {
+  .nb-logo { height: 32px; }
+  .nb-title { 
+    font-size: 20px; 
+    max-width: 250px; 
+  }
+  .nb-row { 
+    min-height: 80px; 
+    padding: 0 24px;
+  }
+}
+
+/* Large devices (desktops) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .nb-logo { height: 36px; }
+  .nb-title { 
+    font-size: 22px; 
+    max-width: 300px; 
+  }
+  .nb-row { 
+    min-height: 85px; 
+    max-width: 900px;
+    margin: 8px auto -20px auto;
+  }
+}
+
+/* Extra large devices (large desktops) */
+@media (min-width: 1025px) {
+  .nb-logo { height: 40px; }
+  .nb-title { 
+    font-size: 24px; 
+    max-width: 350px; 
+  }
+  .nb-row { 
+    min-height: 90px; 
+    max-width: 1200px;
+    margin: 8px auto -20px auto;
+  }
+}
+
+/* Landscape orientation adjustments */
+@media (max-height: 500px) and (orientation: landscape) {
+  .nb-row {
+    min-height: 50px;
+    margin-top: 4px;
+    margin-bottom: -16px;
+  }
+  
+  .nb-logo {
+    height: 20px;
+  }
+  
+  .nb-title {
+    font-size: 14px;
+  }
 }
 
 
