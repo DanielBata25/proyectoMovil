@@ -32,7 +32,7 @@
 .hero-frame {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 8.5;
+  height: clamp(240px, 52vw, 360px);
   border-radius: 20px;
   background: #ffffff;
   display: flex;
@@ -49,6 +49,7 @@
   object-position: center;
   transition: transform 0.3s ease;
   display: block;
+  transform: scale(1.02);
 }
 
 @media (hover: hover) {

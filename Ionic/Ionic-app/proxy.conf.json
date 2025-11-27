@@ -1,7 +1,7 @@
 [
   {
     "context": ["/api"],
-    "target": "https://lawana-unhale-sorrowfully.ngrok-free.dev",
+    "target": "https://web20251124155458-chefafacbmaxerdc.canadacentral-01.azurewebsites.net",
     "secure": true,
     "changeOrigin": true,
     "logLevel": "info"
