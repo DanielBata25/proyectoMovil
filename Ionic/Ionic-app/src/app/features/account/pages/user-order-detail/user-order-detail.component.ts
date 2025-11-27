@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, HostListener, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IonicModule, AlertController, ToastController } from '@ionic/angular';
 import { firstValueFrom } from 'rxjs';
@@ -351,5 +351,10 @@ export class UserOrderDetailComponent implements OnInit {
   // ======= Chat flotante =======
   toggleChat(): void {
     this.showChat = !this.showChat;
+  }
+
+  @HostListener('document:closeChat')
+  handleCloseChat(): void {
+    this.showChat = false;
   }
 }

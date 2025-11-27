@@ -198,4 +198,10 @@ export class OrderChatComponent implements OnInit, OnDestroy {
     const native = this.scrollContainer.nativeElement;
     native.scrollTop = native.scrollHeight;
   }
+
+  closeChat(): void {
+    // Emitir evento para cerrar el chat desde el componente padre
+    const event = new CustomEvent('closeChat');
+    document.dispatchEvent(event);
+  }
 }

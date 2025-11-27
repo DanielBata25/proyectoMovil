@@ -6,7 +6,7 @@ import {
   Validators,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { IonicModule, LoadingController, ToastController, ViewDidEnter } from '@ionic/angular';
+import { IonicModule, ToastController, ViewDidEnter } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 import { firstValueFrom } from 'rxjs';
@@ -46,7 +46,6 @@ export class FarmFormComponent implements OnInit, AfterViewInit, OnDestroy, View
   private readonly farmService = inject(FarmService);
   private readonly locationService = inject(LocationService);
   private readonly toastCtrl = inject(ToastController);
-  private readonly loadingCtrl = inject(LoadingController);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly elevationSvc = inject(ElevationService);
@@ -214,18 +213,15 @@ export class FarmFormComponent implements OnInit, AfterViewInit, OnDestroy, View
       this.form.markAllAsTouched();
       return;
     }
-
-    const loading = await this.loadingCtrl.create({
-      message: this.isEdit ? 'Actualizando finca...' : 'Creando finca...',
-    });
-    await loading.present();
     this.isSaving = true;
+    const finish = () => {
+      this.isSaving = false;
+    };
 
     const value = this.form.getRawValue();
     const cityId = this.toNumber(value.cityId);
     if (cityId === null) {
-      await loading.dismiss();
-      this.isSaving = false;
+      finish();
       void this.presentToast('Selecciona ciudad');
       return;
     }
@@ -233,8 +229,7 @@ export class FarmFormComponent implements OnInit, AfterViewInit, OnDestroy, View
     const latitude = this.normalizeLatitude(this.toNumber(value.latitude));
     const longitude = this.normalizeLongitude(this.toNumber(value.longitude));
     if (latitude === null || longitude === null) {
-      await loading.dismiss();
-      this.isSaving = false;
+      finish();
       void this.presentToast('Coordenadas incompletas o inválidas.');
       return;
     }
@@ -266,9 +261,8 @@ export class FarmFormComponent implements OnInit, AfterViewInit, OnDestroy, View
 
     request$
       .pipe(
-        finalize(async () => {
-          this.isSaving = false;
-          await loading.dismiss();
+        finalize(() => {
+          finish();
         }),
       )
       .subscribe({

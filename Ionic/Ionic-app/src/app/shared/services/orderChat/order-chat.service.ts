@@ -15,6 +15,7 @@ import { ApiNative } from 'src/app/core/services/http/api.native';
 export class OrderChatService {
 
   private hubConnection?: signalR.HubConnection;
+  private currentOrderCode?: string;
   private readonly base = '/orders';
   private readonly zone = inject(NgZone);
 
@@ -60,40 +61,58 @@ export class OrderChatService {
     onMessage: (msg: OrderChatMessageDto) => void
   ): Promise<void> {
 
+    this.currentOrderCode = orderCode;
+
+    // Si ya existe la conexión, sólo nos aseguramos de que esté activa y en la sala
     if (this.hubConnection) {
-      return Promise.resolve();
-    }
-
-    // Construcción del HUB URL (igual que antes)
-    const hubUrl = (environment as any).hubUrl
-      ? (environment as any).hubUrl + 'orders/chat'
-      : environment.apiUrl.replace('/api/v1/', '/hubs/orders/chat');
-
-    this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl(hubUrl, {
-        withCredentials: true,
-      })
-      .withAutomaticReconnect()
-      .build();
-
-    // Evento de mensaje recibido
-    this.hubConnection.on(
-      'ReceiveMessage',
-      (orderCodeFromHub: string, message: OrderChatMessageDto) => {
-
-        if (orderCodeFromHub !== orderCode) {
-          return;
-        }
-
-        this.zone.run(() => onMessage(message));
+      if (this.hubConnection.state === signalR.HubConnectionState.Connected) {
+        return this.joinRoom(orderCode);
       }
-    );
+      if (this.hubConnection.state === signalR.HubConnectionState.Reconnecting) {
+        // Cuando reconecte, onreconnected volverá a unir la sala
+        return Promise.resolve();
+      }
+    } else {
+      // Construcción del HUB URL (igual que antes)
+      const hubUrl = (environment as any).hubUrl
+        ? (environment as any).hubUrl + 'orders/chat'
+        : environment.apiUrl.replace('/api/v1/', '/hubs/orders/chat');
+
+      this.hubConnection = new signalR.HubConnectionBuilder()
+        .withUrl(hubUrl, {
+          withCredentials: true,
+        })
+        .withAutomaticReconnect()
+        .build();
+
+      // Evento de mensaje recibido
+      this.hubConnection.on(
+        'ReceiveMessage',
+        (orderCodeFromHub: string, message: OrderChatMessageDto) => {
+
+          if (orderCodeFromHub !== this.currentOrderCode) {
+            return;
+          }
+
+          this.zone.run(() => onMessage(message));
+        }
+      );
+
+      // Al reconectar, volvemos a unir la sala para seguir recibiendo mensajes
+      this.hubConnection.onreconnected(() => {
+        if (!this.currentOrderCode) return;
+        this.joinRoom(this.currentOrderCode).catch((err) =>
+          console.warn('No se pudo re-unir al room del pedido tras reconectar', err)
+        );
+      });
+    }
 
     return this.hubConnection
       .start()
-      .then(() => this.hubConnection!.invoke('JoinOrderRoom', orderCode))
+      .then(() => this.joinRoom(orderCode))
       .catch((err) => {
         console.error('Error al conectar al hub de chat', err);
+        this.hubConnection = undefined;
         throw err;
       });
   }
@@ -112,5 +131,10 @@ export class OrderChatService {
 
     await this.hubConnection.stop();
     this.hubConnection = undefined;
+    this.currentOrderCode = undefined;
+  }
+
+  private joinRoom(orderCode: string): Promise<void> {
+    return this.hubConnection!.invoke('JoinOrderRoom', orderCode);
   }
 }

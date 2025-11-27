@@ -340,14 +340,20 @@ ion-chip {
 }
 
 .chat-modal {
-  --height: 100%;
+  // Ocupa solo el espacio entre la barra superior y la tab bar
+  --height: calc(100% - var(--app-shell-header-offset, 56px) - var(--app-shell-footer-offset, 64px));
   --width: 100%;
-  --border-radius: 0;
+  --border-radius: 18px;
+  --margin-top: var(--app-shell-header-offset, 56px);
+  --margin-bottom: var(--app-shell-footer-offset, 64px);
 }
 
 .chat-modal-content {
   --background: var(--ion-background-color, #f8f9fa);
-  padding: 1rem;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .chat-fab {

@@ -7,7 +7,7 @@ import {
 
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import {
-  IonicModule, AlertController, ToastController, LoadingController
+  IonicModule, AlertController, ToastController
 } from '@ionic/angular';
 
 import {
@@ -63,7 +63,6 @@ export class ProductFormComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private alertCtrl = inject(AlertController);
   private toastCtrl = inject(ToastController);
-  private loadingCtrl = inject(LoadingController);
 
   private productSrv = inject(ProductService);
   private imageSrv = inject(ProductImageService);
@@ -495,19 +494,26 @@ export class ProductFormComponent implements OnInit {
   }
 
   async submit() {
+    if (this.isLoading) {
+      return;
+    }
     if (this.generalGroup.invalid || this.detallesGroup.invalid) {
+      this.detallesGroup.markAllAsTouched();
+      this.generalGroup.markAllAsTouched();
       this.showToast('Completa los campos obligatorios');
       return;
     }
     const creating = !this.isEdit;
-    const loading = await this.loadingCtrl.create({ message: creating ? 'Creando...' : 'Actualizando...' });
-    await loading.present();
+    this.isLoading = true;
+    const finish = () => {
+      this.isLoading = false;
+    };
 
     const g = this.generalGroup.getRawValue();
     const d = this.detallesGroup.getRawValue();
 
     if (g.price == null || d.categoryId == null) {
-      await loading.dismiss();
+      finish();
       this.showToast('Completa los campos obligatorios');
       return;
     }
@@ -521,13 +527,13 @@ export class ProductFormComponent implements OnInit {
       .filter((fid): fid is number => typeof fid === 'number' && Number.isFinite(fid));
 
     if (!Number.isFinite(price) || !Number.isFinite(stock) || !Number.isFinite(categoryId) || !farmIds.length) {
-      await loading.dismiss();
+      finish();
       this.showToast('Completa los campos obligatorios');
       return;
     }
 
     if (creating && this.selectedFiles.length === 0 && this.existingImages.length === 0) {
-      await loading.dismiss();
+      finish();
       this.showToast('Agrega al menos una imagen');
       return;
     }
@@ -556,7 +562,7 @@ export class ProductFormComponent implements OnInit {
           this.showAlert('Error', 'No se pudo crear el producto');
           return of(null);
         }),
-        finalize(() => loading.dismiss())
+        finalize(() => finish())
       ).subscribe(resp => {
         if (!resp) return;
         this.showToast('Producto creado');
@@ -567,7 +573,7 @@ export class ProductFormComponent implements OnInit {
     }
 
     if (!this.productId) {
-      await loading.dismiss();
+      finish();
       this.showAlert('Error', 'No se encontró el producto a actualizar');
       return;
     }
@@ -596,10 +602,10 @@ export class ProductFormComponent implements OnInit {
         this.showAlert('Error', 'No se pudo actualizar');
         return of(null);
       }),
-      finalize(() => loading.dismiss())
-    ).subscribe(resp => {
-      if (!resp) return;
-      this.showToast('Producto actualizado');
+        finalize(() => finish())
+      ).subscribe(resp => {
+        if (!resp) return;
+        this.showToast('Producto actualizado');
       this.router.navigateByUrl('/account/producer/product');
     });
   }

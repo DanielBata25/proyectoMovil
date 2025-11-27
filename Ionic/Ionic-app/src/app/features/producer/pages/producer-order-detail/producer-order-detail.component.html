@@ -297,17 +297,6 @@
     class="chat-modal"
   >
     <ng-template>
-      <ion-header class="ion-no-border">
-        <ion-toolbar>
-          <ion-title>Chat con el cliente</ion-title>
-          <ion-buttons slot="end">
-            <ion-button (click)="toggleChat()" color="medium">
-              <ion-icon name="close"></ion-icon>
-            </ion-button>
-          </ion-buttons>
-        </ion-toolbar>
-      </ion-header>
-
       <ion-content class="chat-modal-content">
         <app-order-chat [orderCode]="code"></app-order-chat>
       </ion-content>
