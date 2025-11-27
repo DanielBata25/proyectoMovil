@@ -30,9 +30,9 @@
 /* Contenedor principal unificado */
 .notifications-container {
   width: 100%;
-  max-width: 100%;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 12px 12px 24px;
+  padding: 16px 16px 28px;
   box-sizing: border-box;
 }
 
@@ -203,7 +203,7 @@
   line-height: 1.35;
 
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -292,6 +292,7 @@
 @media (max-width: 576px) {
   .notifications-container {
     padding: 12px 12px 20px;
+    max-width: 100%;
   }
 
   .notif-list {

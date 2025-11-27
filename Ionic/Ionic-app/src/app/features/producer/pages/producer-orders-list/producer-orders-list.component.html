@@ -1,40 +1,40 @@
 <ion-content [fullscreen]="true" class="page-bg producer-orders-content">
   <div class="page-shell product-shell producer-orders-shell">
-  <!-- Page Header -->
+    <!-- Título de la página -->
+    <h1 class="page-title">Pedidos</h1>
+    
+    <!-- Page Header -->
   <div class="page-header">
-    <div class="title-wrap">
-      <h2 class="page-title">P2222edidos</h2>
+    <!-- <div class="title-wrap">
       <ion-badge color="secondary">{{ items.length || 0 }}</ion-badge>
-    </div>
+    </div> -->
 
-    <div class="filters-section">
-      <div class="filter-chips">
-        <ion-chip 
-          class="filter-chip"
+    <!-- Tabs Section -->
+    <div class="tabs-section">
+      <div class="filter-tabs">
+        <button
+          type="button"
+          class="tab-btn"
           [class.active]="statusFilter === 'pending'"
           (click)="goFilter('pending')"
-          fill="outline">
+          aria-label="Ver pedidos pendientes">
           <ion-icon name="hourglass-outline"></ion-icon>
-          <ion-label>Pendiiiiientes</ion-label>
-          <ion-badge color="warning" *ngIf="statusFilter === 'pending'">{{ items.length || 0 }}</ion-badge>
-        </ion-chip>
+          Pendientes
+          <ion-badge color="warning">{{ items.length || 0 }}</ion-badge>
+        </button>
 
-        <ion-chip 
-          class="filter-chip"
+        <button
+          type="button"
+          class="tab-btn"
           [class.active]="statusFilter === 'all'"
           (click)="goFilter('all')"
-          fill="outline">
+          aria-label="Ver todos los pedidos">
           <ion-icon name="list-outline"></ion-icon>
-          <ion-label>Todos</ion-label>
-          <ion-badge color="primary" *ngIf="statusFilter === 'all'">{{ items.length || 0 }}</ion-badge>
-        </ion-chip>
+          Todos
+          <ion-badge color="primary">{{ items.length || 0 }}</ion-badge>
+        </button>
       </div>
     </div>
-
-    <p class="hint">
-      Estás viendo: <strong>{{ statusFilter === 'pending' ? 'Pendientes' : 'Todos' }}</strong>. 
-      Cambia el filtro con los botones superiores.
-    </p>
   </div>
 
   <!-- Loading Skeleton -->

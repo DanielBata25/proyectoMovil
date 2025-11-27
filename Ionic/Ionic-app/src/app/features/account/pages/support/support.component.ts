@@ -3,7 +3,7 @@ import {
   IonContent, IonButton, IonIcon
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { mail, call } from 'ionicons/icons';
+import { mail } from 'ionicons/icons';
 
 @Component({
   selector: 'app-support',
@@ -16,17 +16,12 @@ import { mail, call } from 'ionicons/icons';
 })
 export class SupportComponent {
   email = 'portalagrocomercialhuila@gmail.com';
-  phone = '+57 310 123 4567';
 
   constructor() {
-    addIcons({ mail, call });
+    addIcons({ mail });
   }
 
   sendEmail() {
     window.location.href = `mailto:${this.email}`;
-  }
-
-  callPhone() {
-    window.location.href = `tel:${this.phone}`;
   }
 }

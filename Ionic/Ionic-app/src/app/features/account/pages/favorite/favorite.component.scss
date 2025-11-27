@@ -2,10 +2,14 @@
 
 @include card.product-card-shell();
 
+/* Título de la página dentro del contenido */
 .page-title {
-  font-weight: 600;
-  color: #2d6a4f;
+  color: #1f3b22;
+  font-size: 24px;
+  font-weight: 800;
   text-align: center;
+  margin: 16px 0 6px 0;
+  padding: 0;
 }
 
 .favorites-grid {

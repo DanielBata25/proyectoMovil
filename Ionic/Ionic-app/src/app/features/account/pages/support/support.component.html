@@ -16,24 +16,11 @@
         <span><strong>Correo:</strong> {{ email }}</span>
       </div>
 
-      <!-- Teléfono -->
-      <div class="info-item">
-        <div class="icon">
-          <ion-icon name="call"></ion-icon>
-        </div>
-        <span><strong>Teléfono:</strong> {{ phone }}</span>
-      </div>
-
       <!-- Acciones -->
       <div class="actions-section">
         <ion-button expand="block" color="success" (click)="sendEmail()">
           <ion-icon slot="start" name="mail"></ion-icon>
           Enviar Correo
-        </ion-button>
-
-        <ion-button expand="block" color="secondary" (click)="callPhone()">
-          <ion-icon slot="start" name="call"></ion-icon>
-          Llamar
         </ion-button>
       </div>
     </div>

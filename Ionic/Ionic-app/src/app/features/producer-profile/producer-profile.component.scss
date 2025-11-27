@@ -25,10 +25,11 @@
 
 // Header perfil - como en el código web
 .profile-card {
-  background: #fff;
-  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(231, 243, 234, 0.75) 0%, rgba(244, 250, 244, 0.92) 100%);
+  border-radius: 18px;
   padding: 16px;
-  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(46, 125, 50, 0.08);
   margin-bottom: 16px;
 }
 
@@ -43,14 +44,14 @@
   margin-top: 12px;
   padding: 16px;
   border-radius: 14px;
-  background: #fdfdfd;
-  box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.04);
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: inset 0 0 0 1px rgba(46, 125, 50, 0.08);
 
   .description-title {
     margin: 0 0 8px;
     font-size: 1rem;
     font-weight: 600;
-    color: #1f2937;
+    color: #2e7d32;
   }
 
   .description-text {
@@ -145,9 +146,10 @@
 
 // Info cards - estilo Ionic
 .info-card {
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+  background: linear-gradient(180deg, rgba(231, 243, 234, 0.75) 0%, rgba(244, 250, 244, 0.92) 100%);
+  border-radius: 18px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(46, 125, 50, 0.08);
   margin-bottom: 16px;
 
   ion-card-header {
@@ -157,7 +159,7 @@
   ion-card-title {
     font-size: 1.1rem;
     font-weight: 600;
-    color: #1f2937;
+    color: #2e7d32;
   }
 
   ion-card-content {
@@ -196,6 +198,19 @@
 // Sección de elementos (Fincas/Productos)
 .profile-section {
   margin-bottom: 20px;
+  background: linear-gradient(180deg, rgba(231, 243, 234, 0.75) 0%, rgba(244, 250, 244, 0.92) 100%);
+  border-radius: 18px;
+  padding: 14px 12px 10px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(46, 125, 50, 0.08);
+}
+
+.profile-section .section-title {
+  margin: 0 0 8px;
+  font-size: 1.1rem;
+  color: #2e7d32;
+  font-weight: 700;
+  letter-spacing: 0.15px;
 }
 
 .product-container app-card,

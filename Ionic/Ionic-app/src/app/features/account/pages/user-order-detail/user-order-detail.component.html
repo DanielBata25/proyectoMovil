@@ -1,15 +1,9 @@
-<ion-header class="ion-no-border">
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button default-href="/account/orders"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Detalle del Pedido</ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content [fullscreen]="true" class="page-bg order-detail-content">
   <div class="page-shell product-shell order-shell">
-  <ng-container *ngIf="!loading && detail; else loadingTpl">
+    <!-- Título de la página -->
+    <h1 class="page-title">Detalle del Pedido</h1>
+    
+    <ng-container *ngIf="!loading && detail; else loadingTpl">
     <div class="order-container">
       <ion-card class="order-detail-card" mode="md">
         <ion-card-header>

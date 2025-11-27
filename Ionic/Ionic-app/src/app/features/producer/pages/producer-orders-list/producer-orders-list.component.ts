@@ -58,8 +58,9 @@ export class ProducerOrdersListComponent implements OnInit, OnDestroy{
     this.sub?.unsubscribe();
   }
 
-  // Navega con status específico (para botones)
-  goFilter(status: 'pending' | 'all'): void {
+  // Navega con status específico (para botones y tabs)
+  goFilter(status: any): void {
+    if (status !== 'pending' && status !== 'all') return;
     if (this.statusFilter === status) return;
     
     this.statusFilter = status;
