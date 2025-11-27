@@ -37,8 +37,8 @@
 }
 
 .form-card ion-card-title {
-  font-size: 1.3rem;
-  font-weight: 600;
+  font-size: 1.15rem;
+  font-weight: 700;
   color: #2e7d32;
   text-align: center;
 }
@@ -48,7 +48,7 @@ ion-item {
   --padding-start: 12px;
   --inner-padding-end: 10px;
   border-radius: 12px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   --background: #f3f7f2;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
 }
@@ -58,11 +58,27 @@ ion-item::part(native) {
 }
 
 ion-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+ion-select {
   font-size: 0.9rem;
+  color: #333;
+}
+
+/* Estilos para selects en layout de 2 columnas */
+.row-2cols ion-item {
+  margin-bottom: 8px;
+}
+
+.row-2cols ion-select {
+  --padding-start: 0;
+  --padding-end: 0;
 }
 
 ion-input {
-  font-size: 1rem;
+  font-size: 0.9rem;
   color: #333;
 }
 
