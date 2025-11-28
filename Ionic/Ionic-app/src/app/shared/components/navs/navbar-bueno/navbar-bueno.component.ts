@@ -61,8 +61,8 @@ export class NavbarBuenoComponent implements OnInit, OnDestroy {
   // StatusBar methods
   private async setupStatusBar(): Promise<void> {
     try {
-      // ⚠️ IMPORTANTE: No usar overlay - solo configurar color y estilo
-      // await StatusBar.setOverlaysWebView({ overlay: true });
+      // Colocamos la webview debajo del área del sistema para que la barra no quede oculta
+      await StatusBar.setOverlaysWebView({ overlay: false });
       
       // Set style to light (white text) for dark background
       await StatusBar.setStyle({ style: Style.Light });
@@ -79,8 +79,8 @@ export class NavbarBuenoComponent implements OnInit, OnDestroy {
 
   private async restoreStatusBar(): Promise<void> {
     try {
-      // Reset StatusBar to default behavior
-      // await StatusBar.setOverlaysWebView({ overlay: false });
+      // Mantiene la webview sin superponer el status bar al salir del componente
+      await StatusBar.setOverlaysWebView({ overlay: false });
       await StatusBar.setStyle({ style: Style.Default });
       await StatusBar.setBackgroundColor({ color: '#000000' });
     } catch (error) {

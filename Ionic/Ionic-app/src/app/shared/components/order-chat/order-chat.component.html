@@ -1,20 +1,18 @@
-<div class="chat-wrapper">
-  <div class="chat-card">
-    <div class="chat-header">
-      <ion-button
-        *ngIf="showClose"
-        fill="clear"
-        class="chat-close-btn"
-        (click)="closeChat()"
-        aria-label="Cerrar chat">
-        <ion-icon name="arrow-back" slot="icon-only"></ion-icon>
-      </ion-button>
-      <div class="header-content">
-        <div class="title">Chat del pedido</div>
-        <div class="order-code">#{{ orderCode }}</div>
-      </div>
-      <ion-badge *ngIf="isChatClosed" color="medium">Cerrado</ion-badge>
+<div class="chat-container">
+  <div class="chat-header">
+    <ion-button
+      *ngIf="showClose"
+      fill="clear"
+      class="chat-close-btn"
+      (click)="closeChat()"
+      aria-label="Cerrar chat">
+      <ion-icon name="arrow-back" slot="icon-only"></ion-icon>
+    </ion-button>
+
+    <div class="header-content">
+      <div class="title">Chat del pedido</div>
     </div>
+  </div>
 
   <div class="chat-state" *ngIf="isChatClosed || !canSendMessages">
     <ion-icon
@@ -130,8 +128,7 @@
     </div>
   </div>
 
-    <div class="chat-loading" *ngIf="loading && !messages.length">
-      <ion-spinner name="dots"></ion-spinner>
-    </div>
+  <div class="chat-loading" *ngIf="loading && !messages.length">
+    <ion-spinner name="dots"></ion-spinner>
   </div>
 </div>

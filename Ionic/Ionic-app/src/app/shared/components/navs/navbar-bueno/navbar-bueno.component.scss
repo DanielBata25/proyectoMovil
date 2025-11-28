@@ -2,9 +2,11 @@
   display: block;
   width: 100%;
   position: relative;
-  z-index: 999999; /* Z-index ultra alto para estar siempre visible */
+  z-index: 999999;
   background: transparent;
-  pointer-events: none; /* Allow content interaction */
+  pointer-events: none;
+  /* Debug - temporary background to ensure visibility */
+  /* background: rgba(255, 0, 0, 0.3) !important; */
 }
 
 // Re-enable pointer events for navbar elements
@@ -17,498 +19,508 @@
 .nb-title,
 .nb-center,
 .notif-btn {
-  pointer-events: auto !important; /* Re-enable interaction for navbar elements */
+  pointer-events: auto !important;
 }
 
-// Estilos optimizados para responsividad completa usando ::ng-deep
+// Optimized responsive styles
 :host ::ng-deep {
   
-  // Contenedor principal con posicionamiento seguro
+  // Main container with positioning
   .nb-statusbar-header {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    z-index: 999999 !important; /* Z-index ultra alto para estar siempre visible */
-    width: 100% !important;
-    background: #2e7d32 !important;
-    --background: #2e7d32 !important;
-    background-color: #2e7d32 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    height: auto !important;
-    display: block !important;
-    box-sizing: border-box !important;
-    border: none !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important; /* Sombra más pronunciada */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 999999;
+    width: 100%;
+    background: #2e7d32;
+    --background: #2e7d32;
+    margin: 0;
+    padding: 0;
+    height: 3rem; /* Increased from 0.5rem to make it more visible */
+    display: block;
+    box-sizing: border-box;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   }
 
-  // Layout principal mejorado
+  // Main layout
   .nb-row {
-    position: relative !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-    padding: 0.75rem 1rem !important;
-    padding-top: calc(env(safe-area-inset-top) + 0.75rem) !important;
-    min-height: 3.25rem !important;
-    gap: 1rem !important;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.5rem 1rem;
+    min-height: 2rem;
+    gap: 0.4375rem;
   }
 
-  // Sección izquierda optimizada
+  // Left section
   .nb-left {
-    display: flex !important;
-    align-items: center !important;
-    gap: 0.75rem !important;
-    flex: 1 !important;
-    min-width: 0 !important;
-    justify-content: flex-start !important;
+    display: flex;
+    align-items: center;
+    gap: 0.4375rem;
+    flex: 1;
+    min-width: 0;
+    justify-content: flex-start;
   }
 
-  .nb-left.nb-left--back {
-    .nb-title {
-      max-width: calc(100% - 3rem) !important;
-      margin-left: 0.75rem !important;
-    }
+  .nb-left.nb-left--back .nb-title {
+    max-width: calc(100% - 3rem);
+    margin-left: 0.4375rem;
   }
 
-  // Botón back mejorado
+  // Back button
   .nb-back-btn {
-    --ripple-color: rgba(255, 255, 255, 0.2) !important;
-    background: rgba(255, 255, 255, 0.15) !important;
-    border: none !important;
-    border-radius: 50% !important;
-    width: 2.25rem !important;
-    height: 2.25rem !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    color: #ffffff !important;
-    cursor: pointer !important;
-    transition: all 0.2s ease !important;
-    flex-shrink: 0 !important;
-    position: relative !important;
+    --ripple-color: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    border-radius: 50%;
+    width: 1.25rem;
+    height: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    position: relative;
   }
 
   .nb-back-btn:hover {
-    background: rgba(255, 255, 255, 0.25) !important;
+    background: rgba(255, 255, 255, 0.25);
   }
 
   .nb-back-btn:active {
-    background: rgba(255, 255, 255, 0.35) !important;
-    transform: scale(0.95) !important;
+    background: rgba(255, 255, 255, 0.35);
+    transform: scale(0.95);
   }
 
   .nb-back-btn ion-icon {
-    font-size: 1.125rem !important;
-    color: #ffffff !important;
+    font-size: 1.05rem;
+    color: #ffffff;
   }
 
-  // Logo responsivo
+  // Logo
   .nb-logo {
-    height: 1.5rem !important;
-    width: auto !important;
-    display: block !important;
-    flex-shrink: 0 !important;
-    border-radius: 0.25rem !important;
-    transition: all 0.2s ease !important;
+    height: 1rem;
+    width: auto;
+    display: block;
+    flex-shrink: 0;
+    border-radius: 0.25rem;
+    transition: all 0.2s ease;
   }
 
-  // Título adaptativo
+  // Title
   .nb-title {
-    font-size: 1rem !important;
-    font-weight: 600 !important;
-    color: #ffffff !important;
-    white-space: nowrap !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    line-height: 1.2 !important;
-    flex: 1 !important;
-    text-align: left !important;
-    transition: all 0.2s ease !important;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #ffffff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.2;
+    flex: 1;
+    text-align: left;
+    transition: all 0.2s ease;
   }
 
   .nb-title.nb-title--center {
-    text-align: center !important;
-    max-width: calc(100% - 4rem) !important;
-    margin: 0 auto !important;
+    text-align: center;
+    max-width: calc(100% - 4rem);
+    margin: 0 auto;
   }
 
-  // Sección centro (oculta pero estructuralmente importante)
+  // Center section (hidden)
   .nb-center {
-    display: none !important;
+    display: none;
   }
 
   .nb-center.nb-center--hidden {
-    display: none !important;
+    display: none;
   }
 
-  // Sección derecha para notificaciones
+  // Right section for notifications
   .nb-right {
-    display: flex !important;
-    align-items: center !important;
-    gap: 0.5rem !important;
-    flex-shrink: 0 !important;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    flex-shrink: 0;
   }
 
-  // Botón de notificaciones optimizado
+  // Notification button
   .notif-btn {
-    --ripple-color: rgba(255, 255, 255, 0.2) !important;
-    --padding-start: 0.5rem !important;
-    --padding-end: 0.5rem !important;
-    --ion-button-min-width: 2.5rem !important;
-    --ion-button-min-height: 2.5rem !important;
-    color: #ffffff !important;
-    background: transparent !important;
-    border-radius: 50% !important;
-    position: relative !important;
-    transition: all 0.2s ease !important;
+    --ripple-color: rgba(255, 255, 255, 0.2);
+    --padding-start: 0.5rem;
+    --padding-end: 0.5rem;
+    --ion-button-min-width: 1.5rem;
+    --ion-button-min-height: 1.5rem;
+    color: #ffffff;
+    background: transparent;
+    border-radius: 50%;
+    position: relative;
+    transition: all 0.2s ease;
   }
 
   .notif-btn:hover {
-    background: rgba(255, 255, 255, 0.1) !important;
+    background: rgba(255, 255, 255, 0.1);
   }
 
   .notif-btn:active {
-    background: rgba(255, 255, 255, 0.2) !important;
-    transform: scale(0.95) !important;
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(0.95);
   }
 
   .notif-btn ion-icon {
-    font-size: 1.25rem !important;
-    color: #ffffff !important;
+    font-size: 1.05rem;
+    color: #ffffff;
   }
 
-  // Badge de notificaciones mejorado
+  // Notification badge
   .notif-badge {
-    position: absolute !important;
-    top: -0.25rem !important;
-    right: -0.25rem !important;
-    min-width: 1.125rem !important;
-    height: 1.125rem !important;
-    font-size: 0.625rem !important;
-    line-height: 1.125rem !important;
-    padding: 0 !important;
-    border-radius: 0.5625rem !important;
-    z-index: 10 !important;
-    font-weight: 600 !important;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+    position: absolute;
+    top: -0.25rem;
+    right: -0.25rem;
+    min-width: 1.125rem;
+    height: 1.125rem;
+    font-size: 0.625rem;
+    line-height: 1.125rem;
+    padding: 0;
+    border-radius: 0.5625rem;
+    z-index: 10;
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   }
 
-  // RESPONSIVE DESIGN MEJORADO
+  // RESPONSIVE DESIGN
 
-  // Móviles muy pequeños (320px - 360px)
+  // Small mobiles (320px - 360px)
   @media (max-width: 360px) {
+    .nb-statusbar-header {
+      height: 2.5rem;
+    }
+    
     .nb-row {
-      padding: 0.625rem 0.75rem !important;
-      gap: 0.625rem !important;
-      min-height: 2.875rem !important;
+      padding: 0.375rem 0.75rem;
+      gap: 0.375rem;
+      min-height: 1.5rem;
     }
     
     .nb-left {
-      gap: 0.625rem !important;
-      
-      .nb-back-btn {
-        width: 2rem !important;
-        height: 2rem !important;
-        
-        ion-icon {
-          font-size: 1rem !important;
-        }
-      }
-      
-      .nb-logo {
-        height: 1.25rem !important;
-      }
-      
-      .nb-title {
-        font-size: 0.875rem !important;
-        max-width: calc(100vw - 7rem) !important;
-      }
+      gap: 0.375rem;
     }
     
-    .nb-left.nb-left--back {
-      .nb-title {
-        max-width: calc(100vw - 6rem) !important;
-      }
+    .nb-left .nb-back-btn {
+      width: 1.125rem;
+      height: 1.125rem;
+    }
+    
+    .nb-back-btn ion-icon {
+      font-size: 0.82rem;
+    }
+    
+    .nb-left .nb-logo {
+      height: 0.9rem;
+    }
+    
+    .nb-left .nb-title {
+      font-size: 0.78rem;
+      max-width: calc(100vw - 7rem);
+    }
+    
+    .nb-left.nb-left--back .nb-title {
+      max-width: calc(100vw - 6rem);
     }
     
     .nb-right {
-      gap: 0.375rem !important;
-      
-      .notif-btn {
-        --ion-button-min-width: 2.25rem !important;
-        --ion-button-min-height: 2.25rem !important;
-      }
+      gap: 0.1875rem;
+    }
+    
+    .nb-right .notif-btn {
+      --ion-button-min-width: 1.375rem;
+      --ion-button-min-height: 1.375rem;
     }
 
     .notif-badge {
-      min-width: 1rem !important;
-      height: 1rem !important;
-      font-size: 0.5625rem !important;
-      line-height: 1rem !important;
-      top: -0.1875rem !important;
-      right: -0.1875rem !important;
+      min-width: 1rem;
+      height: 1rem;
+      font-size: 0.5625rem;
+      line-height: 1rem;
+      top: -0.1875rem;
+      right: -0.1875rem;
     }
   }
 
-  // Móviles pequeños (361px - 480px)
+  // Small mobiles (361px - 480px)
   @media (min-width: 361px) and (max-width: 480px) {
+    .nb-statusbar-header {
+      height: 2.75rem;
+    }
+    
     .nb-row {
-      padding: 0.6875rem 0.875rem !important;
-      gap: 0.75rem !important;
-      min-height: 3rem !important;
+      padding: 0.4375rem 0.875rem;
+      gap: 0.4375rem;
+      min-height: 1.75rem;
     }
     
     .nb-left {
-      gap: 0.75rem !important;
-      
-      .nb-logo {
-        height: 1.375rem !important;
-      }
-      
-      .nb-title {
-        font-size: 0.9375rem !important;
-      }
+      gap: 0.4375rem;
     }
     
-    .nb-right {
-      .notif-btn {
-        --ion-button-min-width: 2.375rem !important;
-        --ion-button-min-height: 2.375rem !important;
-      }
+    .nb-left .nb-logo {
+      height: 0.93rem;
+    }
+    
+    .nb-left .nb-title {
+      font-size: 0.82rem;
+    }
+    
+    .nb-right .notif-btn {
+      --ion-button-min-width: 1.4375rem;
+      --ion-button-min-height: 1.4375rem;
     }
   }
 
-  // Móviles grandes / Tablets pequeñas (481px - 768px)
+  // Large mobiles / Small tablets (481px - 768px)
   @media (min-width: 481px) and (max-width: 768px) {
+    .nb-statusbar-header {
+      height: 3rem;
+    }
+    
     .nb-row {
-      padding: 0.75rem 1rem !important;
-      gap: 0.875rem !important;
-      min-height: 3.25rem !important;
+      padding: 0.5rem 1rem;
+      gap: 0.5rem;
+      min-height: 2rem;
     }
     
     .nb-left {
-      gap: 0.875rem !important;
-      
-      .nb-back-btn {
-        width: 2.375rem !important;
-        height: 2.375rem !important;
-        
-        ion-icon {
-          font-size: 1.1875rem !important;
-        }
-      }
-      
-      .nb-logo {
-        height: 1.625rem !important;
-      }
-      
-      .nb-title {
-        font-size: 1.0625rem !important;
-      }
+      gap: 0.5rem;
     }
     
-    .nb-right {
-      .notif-btn {
-        --ion-button-min-width: 2.625rem !important;
-        --ion-button-min-height: 2.625rem !important;
-      }
+    .nb-left .nb-back-btn {
+      width: 1.375rem;
+      height: 1.375rem;
+    }
+    
+    .nb-back-btn ion-icon {
+      font-size: 0.97rem;
+    }
+    
+    .nb-left .nb-logo {
+      height: 1.08rem;
+    }
+    
+    .nb-left .nb-title {
+      font-size: 1rem;
+    }
+    
+    .nb-right .notif-btn {
+      --ion-button-min-width: 1.5625rem;
+      --ion-button-min-height: 1.5625rem;
     }
   }
 
   // Tablets (769px - 1024px)
   @media (min-width: 769px) and (max-width: 1024px) {
+    .nb-statusbar-header {
+      height: 3.25rem;
+    }
+    
     .nb-row {
-      max-width: 56.25rem !important;
-      margin: 0 auto !important;
-      padding: 0.875rem 1.25rem !important;
-      gap: 1rem !important;
-      min-height: 3.5rem !important;
+      max-width: 56.25rem;
+      margin: 0 auto;
+      padding: 0.625rem 1.25rem;
+      gap: 0.5625rem;
+      min-height: 2rem;
     }
     
     .nb-left {
-      gap: 1rem !important;
-      
-      .nb-back-btn {
-        width: 2.5rem !important;
-        height: 2.5rem !important;
-        
-        ion-icon {
-          font-size: 1.25rem !important;
-        }
-      }
-      
-      .nb-logo {
-        height: 1.75rem !important;
-      }
-      
-      .nb-title {
-        font-size: 1.125rem !important;
-      }
+      gap: 0.5625rem;
+    }
+    
+    .nb-left .nb-back-btn {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+    
+    .nb-back-btn ion-icon {
+      font-size: 1.05rem;
+    }
+    
+    .nb-left .nb-logo {
+      height: 1.08rem;
+    }
+    
+    .nb-left .nb-title {
+      font-size: 1.05rem;
     }
     
     .nb-right {
-      gap: 0.625rem !important;
-      
-      .notif-btn {
-        --ion-button-min-width: 2.75rem !important;
-        --ion-button-min-height: 2.75rem !important;
-      }
+      gap: 0.3125rem;
+    }
+    
+    .nb-right .notif-btn {
+      --ion-button-min-width: 1.6875rem;
+      --ion-button-min-height: 1.6875rem;
     }
 
     .notif-badge {
-      min-width: 1.25rem !important;
-      height: 1.25rem !important;
-      font-size: 0.6875rem !important;
-      line-height: 1.25rem !important;
-      top: -0.3125rem !important;
-      right: -0.3125rem !important;
+      min-width: 1.25rem;
+      height: 1.25rem;
+      font-size: 0.6875rem;
+      line-height: 1.25rem;
+      top: -0.3125rem;
+      right: -0.3125rem;
     }
   }
 
   // Desktop (1025px+)
   @media (min-width: 1025px) {
+    .nb-statusbar-header {
+      height: 3.5rem;
+    }
+    
     .nb-row {
-      max-width: 75rem !important;
-      margin: 0 auto !important;
-      padding: 1rem 1.5rem !important;
-      gap: 1.125rem !important;
-      min-height: 3.75rem !important;
+      max-width: 75rem;
+      margin: 0 auto;
+      padding: 0.75rem 1.5rem;
+      gap: 0.625rem;
+      min-height: 2rem;
     }
     
     .nb-left {
-      gap: 1.125rem !important;
-      
-      .nb-back-btn {
-        width: 2.625rem !important;
-        height: 2.625rem !important;
-        
-        ion-icon {
-          font-size: 1.3125rem !important;
-        }
-      }
-      
-      .nb-logo {
-        height: 1.875rem !important;
-      }
-      
-      .nb-title {
-        font-size: 1.1875rem !important;
-      }
+      gap: 0.625rem;
+    }
+    
+    .nb-left .nb-back-btn {
+      width: 1.625rem;
+      height: 1.625rem;
+    }
+    
+    .nb-back-btn ion-icon {
+      font-size: 1.12rem;
+    }
+    
+    .nb-left .nb-logo {
+      height: 1.15rem;
+    }
+    
+    .nb-left .nb-title {
+      font-size: 1rem;
     }
     
     .nb-right {
-      gap: 0.75rem !important;
-      
-      .notif-btn {
-        --ion-button-min-width: 3rem !important;
-        --ion-button-min-height: 3rem !important;
-      }
+      gap: 0.375rem;
+    }
+    
+    .nb-right .notif-btn {
+      --ion-button-min-width: 1.8125rem;
+      --ion-button-min-height: 1.8125rem;
     }
 
     .notif-badge {
-      min-width: 1.25rem !important;
-      height: 1.25rem !important;
-      font-size: 0.6875rem !important;
-      line-height: 1.25rem !important;
-      top: -0.3125rem !important;
-      right: -0.3125rem !important;
+      min-width: 1.25rem;
+      height: 1.25rem;
+      font-size: 0.6875rem;
+      line-height: 1.25rem;
+      top: -0.3125rem;
+      right: -0.3125rem;
     }
   }
 
-  // LANDSCAPE MODE OPTIMIZADO
+  // LANDSCAPE MODE OPTIMIZATION
 
-  // Landscape general
+  // General landscape
   @media (orientation: landscape) and (max-height: 500px) {
+    .nb-statusbar-header {
+      height: 2rem;
+    }
+    
     .nb-row {
-      min-height: 2.5rem !important;
-      padding: 0.5rem 1rem !important;
-      margin-top: 0.125rem !important;
-      margin-bottom: -0.5rem !important;
+      min-height: 1.5rem;
+      padding: 0.25rem 1rem;
+      margin-top: 0.125rem;
+      margin-bottom: -0.5rem;
     }
     
-    .nb-left {
-      .nb-logo {
-        height: 1.125rem !important;
-      }
-      
-      .nb-title {
-        font-size: 0.875rem !important;
-      }
-      
-      .nb-back-btn {
-        width: 1.75rem !important;
-        height: 1.75rem !important;
-        
-        ion-icon {
-          font-size: 0.875rem !important;
-        }
-      }
+    .nb-left .nb-logo {
+      height: 0.82rem;
     }
     
-    .nb-right {
-      .notif-btn {
-        --ion-button-min-width: 2rem !important;
-        --ion-button-min-height: 2rem !important;
-      }
+    .nb-left .nb-title {
+      font-size: 0.78rem;
+    }
+    
+    .nb-left .nb-back-btn {
+      width: 1.125rem;
+      height: 1.125rem;
+    }
+    
+    .nb-back-btn ion-icon {
+      font-size: 0.78rem;
+    }
+    
+    .nb-right .notif-btn {
+      --ion-button-min-width: 1.25rem;
+      --ion-button-min-height: 1.25rem;
     }
   }
 
-  // Landscape muy pequeño
+  // Very small landscape
   @media (orientation: landscape) and (max-height: 400px) {
+    .nb-statusbar-header {
+      height: 1.75rem;
+    }
+    
     .nb-row {
-      min-height: 2.25rem !important;
-      padding: 0.375rem 0.75rem !important;
-      margin-top: 0.0625rem !important;
-      margin-bottom: -0.375rem !important;
+      min-height: 1.25rem;
+      padding: 0.1875rem 0.75rem;
+      margin-top: 0.0625rem;
+      margin-bottom: -0.375rem;
     }
     
-    .nb-left {
-      .nb-logo {
-        height: 1rem !important;
-      }
-      
-      .nb-title {
-        font-size: 0.75rem !important;
-      }
-      
-      .nb-back-btn {
-        width: 1.625rem !important;
-        height: 1.625rem !important;
-      }
+    .nb-left .nb-logo {
+      height: 0.6875rem;
     }
     
-    .nb-right {
-      .notif-btn {
-        --ion-button-min-width: 1.875rem !important;
-        --ion-button-min-height: 1.875rem !important;
-      }
+    .nb-left .nb-title {
+      font-size: 0.72rem;
+    }
+    
+    .nb-left .nb-back-btn {
+      width: 1rem;
+      height: 1rem;
+    }
+    
+    .nb-right .notif-btn {
+      --ion-button-min-width: 1.125rem;
+      --ion-button-min-height: 1.125rem;
     }
   }
 
-  // ACCESIBILIDAD MEJORADA
+  // ACCESSIBILITY
   .nb-back-btn:focus,
   .notif-btn:focus {
-    outline: 2px solid rgba(255, 255, 255, 0.6) !important;
-    outline-offset: 2px !important;
+    outline: 2px solid rgba(255, 255, 255, 0.6);
+    outline-offset: 2px;
   }
 
-  // OPTIMIZACIÓN PARA ALTA DENSIDAD
+  // HIGH DENSITY OPTIMIZATION
   @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
     .nb-logo {
-      image-rendering: -webkit-optimize-contrast !important;
-      image-rendering: crisp-edges !important;
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: crisp-edges;
     }
   }
 
-  // ANIMACIONES SUAVES
+  // SMOOTH ANIMATIONS
   .nb-logo,
   .nb-title,
   .nb-back-btn,
   .notif-btn {
-    transition: all 0.2s ease-in-out !important;
+    transition: all 0.2s ease-in-out;
   }
 }

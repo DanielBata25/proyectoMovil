@@ -2,36 +2,20 @@
   display: block;
 }
 
-.chat-wrapper {
-  min-height: 100%;
-  width: 100%;
-  padding: 8px 10px 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 // Paleta inspirada en burbujas de chat, usando verdes/azules de la app
 $bubble-mine: #2d6a4f;
 $bubble-theirs: #f16f6f;
 $bubble-soft: #e9f5ff;
 $chat-bg: linear-gradient(180deg, #e9f5ff 0%, #f8fbff 45%, #ffffff 100%);
 
-.chat-card {
-  background: linear-gradient(180deg, rgba(231, 243, 234, 0.75) 0%, rgba(244, 250, 244, 0.92) 100%);
-  border-radius: 50px;
-  box-shadow: 0 14px 32px rgba(46, 125, 50, 0.15);
-  border: 1px solid rgba(46, 125, 50, 0.12);
-  overflow: hidden;
+.chat-container {
   position: relative;
-  min-height: 0;
-  max-height: 70vh;
-  width: 90%;
-  max-width: 360px;
-  margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  width: 100%;
+  min-height: 0;
+  padding: 0.5rem 0;
 }
 
 .chat-header {
@@ -312,14 +296,6 @@ $chat-bg: linear-gradient(180deg, #e9f5ff 0%, #f8fbff 45%, #ffffff 100%);
 }
 
 @media (max-width: 480px) {
-  .chat-card {
-    width: 95%;
-    max-width: 380px;
-    min-height: 400px;
-    max-height: 80vh;
-    border-radius: 30px;
-  }
-  
   .chat-messages {
     max-height: 320px;
   }
@@ -330,20 +306,7 @@ $chat-bg: linear-gradient(180deg, #e9f5ff 0%, #f8fbff 45%, #ffffff 100%);
   }
 }
 
-@media (min-width: 768px) {
-  .chat-card {
-    width: 85%;
-    max-width: 450px;
-    min-height: 500px;
-  }
-}
-
 @media (prefers-color-scheme: dark) {
-  .chat-card {
-    background: #0b1220;
-    border-color: #111827;
-  }
-
   .chat-header {
     background: linear-gradient(180deg, #0b172b 0%, #0d1b30 50%, #0f172a 100%);
     .title,
