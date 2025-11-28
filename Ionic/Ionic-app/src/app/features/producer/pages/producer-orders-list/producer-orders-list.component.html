@@ -20,7 +20,7 @@
           aria-label="Ver pedidos pendientes">
           <ion-icon name="hourglass-outline"></ion-icon>
           Pendientes
-          <ion-badge color="warning">{{ items.length || 0 }}</ion-badge>
+          <ion-badge color="warning">{{ pendingCount }}</ion-badge>
         </button>
 
         <button
@@ -31,7 +31,7 @@
           aria-label="Ver todos los pedidos">
           <ion-icon name="list-outline"></ion-icon>
           Todos
-          <ion-badge color="primary">{{ items.length || 0 }}</ion-badge>
+          <ion-badge color="primary">{{ allCount }}</ion-badge>
         </button>
       </div>
     </div>

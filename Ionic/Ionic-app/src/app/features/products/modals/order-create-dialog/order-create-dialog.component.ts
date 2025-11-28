@@ -15,11 +15,11 @@ import {
   IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonIcon, IonContent,
   IonItem, IonLabel, IonInput, IonSelect, IonSelectOption, IonTextarea, IonNote
 } from '@ionic/angular/standalone';
-import { ModalController, ToastController, LoadingController } from '@ionic/angular';
+import { ModalController, ToastController } from '@ionic/angular';
 
 import { addIcons } from 'ionicons';
 import { arrowBack, checkmark, chevronBack, chevronForward, bagCheckOutline } from 'ionicons/icons';
-import { take } from 'rxjs';
+import { finalize, take } from 'rxjs';
 
 import { DepartmentModel, CityModel } from '../../../../shared/models/location/location.model';
 import { LocationService } from '../../../../shared/services/location/location.service';
@@ -100,7 +100,6 @@ export class OrderCreateModalComponent implements OnInit {
   private fb = inject(FormBuilder);
   private modalCtrl = inject(ModalController);
   private toastCtrl = inject(ToastController);
-  private loadingCtrl = inject(LoadingController);
   private locationSrv = inject(LocationService);
   private orderSrv = inject(OrderService);
   private authSrv = inject(AuthService);
@@ -259,40 +258,55 @@ export class OrderCreateModalComponent implements OnInit {
 
   // ---------- Submit (exactamente como tu código) ----------
   async submit() {
-  console.log('%c ---> SUBMIT EJECUTADO', 'color: #28a745; font-weight: bold;');
+    if (this.isSubmitting) {
+      return;
+    }
 
-  this.productGroup.markAllAsTouched();
-  this.deliveryGroup.markAllAsTouched();
+    console.log('%c ---> SUBMIT EJECUTADO', 'color: #28a745; font-weight: bold;');
 
-  if (this.productGroup.invalid || this.deliveryGroup.invalid) {
-    console.log('❌ Formulario inválido');
-    return;
+    this.productGroup.markAllAsTouched();
+    this.deliveryGroup.markAllAsTouched();
+
+    if (this.productGroup.invalid || this.deliveryGroup.invalid) {
+      console.log('❌ Formulario inválido');
+      return;
+    }
+
+    const dto: OrderCreateModel = {
+      productId: this.data.productId,
+      quantityRequested: Number(this.productGroup.value.quantityRequested),
+      recipientName: this.deliveryGroup.value.recipientName,
+      contactPhone: this.deliveryGroup.value.contactPhone,
+      addressLine1: this.deliveryGroup.value.addressLine1,
+      addressLine2: this.deliveryGroup.value.addressLine2,
+      cityId: Number(this.deliveryGroup.value.cityId),
+      additionalNotes: this.deliveryGroup.value.additionalNotes,
+    };
+
+    console.log('%c DTO a enviar:', 'color: #00aaff; font-weight: bold;', dto);
+
+    console.log('%c ---> LLAMANDO SERVICIO...', 'color: orange; font-weight: bold;');
+
+    this.isSubmitting = true;
+
+    this.orderSrv.create(dto).pipe(
+      take(1),
+      finalize(() => {
+        this.isSubmitting = false;
+      })
+    ).subscribe({
+      next: async (resp) => {
+        console.log('%c ✔ RESPUESTA OK:', 'color: #00d26a; font-weight: bold;', resp);
+        const successMsg = (resp as any)?.message || 'Pedido creado correctamente.';
+        await this.toast(successMsg, 'success');
+        this.modalCtrl.dismiss({ created: true, order: resp });
+      },
+      error: async (err) => {
+        console.log('%c ❌ ERROR:', 'color: red; font-weight: bold;', err);
+        await this.toast('No se pudo crear el pedido', 'error');
+      },
+    });
   }
-
-  const dto : OrderCreateModel = {
-    productId: this.data.productId,
-    quantityRequested: Number(this.productGroup.value.quantityRequested),
-    recipientName: this.deliveryGroup.value.recipientName,
-    contactPhone: this.deliveryGroup.value.contactPhone,
-    addressLine1: this.deliveryGroup.value.addressLine1,
-    addressLine2: this.deliveryGroup.value.addressLine2,
-    cityId: Number(this.deliveryGroup.value.cityId),
-    additionalNotes: this.deliveryGroup.value.additionalNotes,
-  };
-
-  console.log('%c DTO a enviar:', 'color: #00aaff; font-weight: bold;', dto);
-
-  console.log('%c ---> LLAMANDO SERVICIO...', 'color: orange; font-weight: bold;');
-
-  this.orderSrv.create(dto).subscribe({
-    next: (resp) => {
-      console.log('%c ✔ RESPUESTA OK:', 'color: #00d26a; font-weight: bold;', resp);
-    },
-    error: (err) => {
-      console.log('%c ❌ ERROR:', 'color: red; font-weight: bold;', err);
-    },
-  });
-}
 
 
   close(): void {

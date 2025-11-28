@@ -1,7 +1,7 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, Params } from '@angular/router';
 import { IonicModule, ToastController } from '@ionic/angular';
-import { Subscription, switchMap } from 'rxjs';
+import { Subscription, switchMap, forkJoin, of, take, catchError } from 'rxjs';
 import { CommonModule } from '@angular/common';
 
 import { OrderListItemModel } from '../../../../features/products/models/order/order.model';
@@ -25,6 +25,8 @@ export class ProducerOrdersListComponent implements OnInit, OnDestroy{
   isLoading = false;
   items: OrderListItemModel[] = [];
   statusFilter: 'pending' | 'all' = 'pending';
+  pendingCount = 0;
+  allCount = 0;
 
   private sub?: Subscription;
 
@@ -35,6 +37,7 @@ export class ProducerOrdersListComponent implements OnInit, OnDestroy{
         switchMap((qp: Params) => {
           this.statusFilter = qp['status'] === 'all' ? 'all' : 'pending';
           this.isLoading = true;
+          this.loadCounts();
           return this.statusFilter === 'pending'
             ? this.orderSrv.getProducerPendingOrders()
             : this.orderSrv.getProducerOrders();
@@ -115,5 +118,15 @@ export class ProducerOrdersListComponent implements OnInit, OnDestroy{
       color: 'danger'
     });
     await toast.present();
+  }
+
+  private loadCounts(): void {
+    forkJoin({
+      pending: this.orderSrv.getProducerPendingOrders().pipe(take(1), catchError(() => of([]))),
+      all: this.orderSrv.getProducerOrders().pipe(take(1), catchError(() => of([]))),
+    }).subscribe(({ pending, all }) => {
+      this.pendingCount = pending?.length ?? 0;
+      this.allCount = all?.length ?? 0;
+    });
   }
 }

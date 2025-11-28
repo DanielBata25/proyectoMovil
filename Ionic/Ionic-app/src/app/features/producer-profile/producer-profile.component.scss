@@ -23,13 +23,13 @@
   text-align: center;
 }
 
-// Header perfil - como en el código web
+// Header perfil - fondo neutro (sin verde)
 .profile-card {
-  background: linear-gradient(180deg, rgba(231, 243, 234, 0.75) 0%, rgba(244, 250, 244, 0.92) 100%);
+  background: #ffffff;
   border-radius: 18px;
   padding: 16px;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
-  border: 1px solid rgba(46, 125, 50, 0.08);
+  border: 1px solid #e5e7eb;
   margin-bottom: 16px;
 }
 

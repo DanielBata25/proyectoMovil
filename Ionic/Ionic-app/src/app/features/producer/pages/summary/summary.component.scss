@@ -287,10 +287,27 @@ ion-segment-button.ion-activated {
   display: flex;
   align-items: center;
   justify-content: center;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  margin-top: -4px;
+}
+
+.chart-card canvas {
+  width: 100% !important;
+  max-width: 100%;
+  min-height: 180px;
+}
+
+.chart-card.chart-card--loading {
+  padding: 12px;
 }
 
 .chart-card--loading {
   padding: 0;
+}
+
+.chart-card--loading ion-skeleton-text {
+  --background: linear-gradient(90deg, #e5e7eb 25%, #d1d5db 37%, #e5e7eb 63%);
+  width: 100%;
 }
 
 /* ==========================================================================

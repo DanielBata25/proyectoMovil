@@ -35,78 +35,134 @@
   gap: 1rem;
 }
 
-.order-detail-card {
-  border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-  --background: var(--ion-color-light);
-  border: 1px solid var(--ion-color-light-shade);
+/* === Ticket layout === */
+.ticket-shell {
+  position: relative;
+  background: transparent;
+  padding: 12px 12px 18px;
 }
 
-.card-header {
+.ticket-card {
+  position: relative;
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 12px 30px rgba(26, 41, 64, 0.12);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+}
+
+.ticket-clip {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  height: 18px;
+  background: radial-gradient(circle at 10px 9px, transparent 9px, #f4f6fb 9px);
+  z-index: 1;
+}
+
+.ticket-clip.top {
+  top: 0;
+  transform: translateY(-50%);
+}
+
+.ticket-clip.bottom {
+  bottom: 0;
+  transform: translateY(50%) rotate(180deg);
+}
+
+.ticket-card::before {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  background: url("data:image/svg+xml,%3Csvg width='160' height='120' viewBox='0 0 160 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cg opacity='0.07' stroke='%2390a4ae' stroke-width='1' fill='none'%3E%3Cpath d='M5 80h50M30 60v40M70 30h30M120 70h35M90 10h45M15 20h25M110 40v30'/%3E%3Ccircle cx='90' cy='70' r='12'/%3E%3Ccircle cx='30' cy='95' r='10'/%3E%3C/g%3E%3C/svg%3E") repeat;
+  border-radius: 12px;
+  pointer-events: none;
+}
+
+.ticket-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.75rem;
+  gap: 12px;
+  padding: 18px 18px 6px;
 }
 
-.detail-section {
-  padding: 1rem 0;
-  border-top: 1px solid var(--ion-color-light-shade);
-
-  &:first-of-type {
-    border-top: none;
-    padding-top: 0;
-  }
-}
-
-.section-heading {
+.header-left {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.75rem;
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--ion-color-dark);
-
-  ion-icon {
-    color: var(--ion-color-primary);
-    font-size: 1.2rem;
-  }
+  gap: 10px;
 }
 
-.detail-grid {
-  display: grid;
-  gap: 0.9rem;
+.header-left ion-icon {
+  font-size: 24px;
+  color: var(--ion-color-primary);
 }
 
-.detail-field {
+.header-left h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  color: #101828;
+}
+
+.muted {
+  margin: 0;
+  font-size: 12px;
+  color: #6c7280;
+}
+
+.section-title {
+  margin: 0 0 8px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.ticket-section {
+  position: relative;
+  padding: 10px 18px 16px;
+  z-index: 2;
+}
+
+.ticket-grid {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 8px;
 }
 
-.field-label {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--ion-color-medium);
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }
 
-.field-value {
-  font-size: 0.95rem;
-  color: var(--ion-color-dark);
-  line-height: 1.4;
+.row .label {
+  font-size: 13px;
+  color: #6b7280;
 }
 
-.total-field {
-  padding-top: 0.75rem;
-  border-top: 1px solid var(--ion-color-light-shade);
+.row .value {
+  font-size: 14px;
+  color: #0f172a;
+  text-align: right;
 }
 
-.highlighted {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--ion-color-success);
+.row.total .value {
+  color: #0ea400;
+  font-weight: 800;
+  font-size: 15px;
+}
+
+.divider {
+  height: 1px;
+  margin: 4px 18px;
+  position: relative;
+  z-index: 2;
+}
+
+.divider.dotted {
+  border-bottom: 1px dashed #d7dde6;
 }
 
 ion-chip {
@@ -142,25 +198,17 @@ ion-chip {
   }
 }
 
-.receipt-container {
-  text-align: center;
-  margin-bottom: 0.75rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-}
-
 .receipt-preview {
   position: relative;
   width: 100%;
   max-width: 320px;
-  height: 180px;
+  height: 190px;
   border-radius: 12px;
-  border: 1px solid var(--ion-color-light-shade);
+  border: 1px dashed #cbd5e1;
   overflow: hidden;
   cursor: pointer;
-  background: #f8f8f8;
+  background: #f8fafc;
+  margin: 6px 0 4px;
 }
 
 .receipt-image {
@@ -178,7 +226,7 @@ ion-chip {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(180deg, rgba(0,0,0,0.05), rgba(0,0,0,0.55));
+  background: linear-gradient(180deg, rgba(0,0,0,0.04), rgba(0,0,0,0.5));
   color: #fff;
   font-weight: 600;
   gap: 0.35rem;
@@ -197,13 +245,16 @@ ion-chip {
 
 .receipt-preview:hover .receipt-image,
 .receipt-preview:focus-visible .receipt-image {
-  transform: scale(1.05);
+  transform: scale(1.04);
 }
 
-.upload-date {
-  margin-top: 0.25rem;
-  color: var(--ion-color-medium);
-  font-size: 0.75rem;
+.no-receipt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  text-align: center;
 }
 
 .no-receipt {
@@ -329,14 +380,6 @@ ion-chip {
 }
 
 @media (min-width: 680px) {
-  .detail-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .detail-field.total-field {
-    grid-column: span 2;
-  }
-
   .action-buttons {
     flex-direction: row;
 

@@ -68,7 +68,7 @@
 .order-content {
   --background: #f8f9fb;
   --padding-top: 8px;
-  --padding-bottom: 16px;
+  --padding-bottom: calc(env(safe-area-inset-bottom) + 28px);
   --padding-start: 12px;
   --padding-end: 12px;
   flex: 1;
@@ -395,6 +395,9 @@ ion-select.form-select::part(text) {
 .actions.triple {
   align-items: stretch;
   margin-top: 16px;
+  margin-bottom: 10px;
+  gap: 10px;
+  padding: 10px;
 }
 
 .actions.triple app-button {
@@ -404,9 +407,19 @@ ion-select.form-select::part(text) {
 :host ::ng-deep .trio-btn .custom-btn {
   margin: 0;
   width: 100%;
-  padding: 10px 12px;
-  font-size: 0.9rem;
-  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+  padding: 8px 10px;
+  font-size: 0.85rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+}
+
+:host ::ng-deep .trio-btn .icon-btn {
+  font-size: 16px;
+}
+
+:host ::ng-deep .trio-btn .btn-spinner {
+  width: 18px;
+  height: 18px;
 }
 
 .actions.single {
