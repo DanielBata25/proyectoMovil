@@ -31,10 +31,10 @@
 }
 
 .order-card {
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  --background: var(--ion-color-light);
-  border: 1px solid var(--ion-color-light-shade);
+  border-radius: 18px;
+  box-shadow: 0 10px 26px rgba(18, 94, 43, 0.08);
+  --background: #e7f6ec; /* verde muy claro como producer */
+  border: 1px solid rgba(42, 105, 66, 0.35);
 }
 
 .card-header-content {
