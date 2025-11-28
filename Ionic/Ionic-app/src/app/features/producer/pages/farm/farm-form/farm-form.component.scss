@@ -81,7 +81,6 @@ ion-select {
   align-items: center;
 
 
-
   app-button {
     --app-button-margin: 0;
     margin: 0;
@@ -99,9 +98,12 @@ ion-select {
 
 .map-preview {
   height: 240px;
+  min-height: 240px;
+  position: relative;
   border-radius: 14px;
   overflow: hidden;
   border: 1px solid #e5e7eb;
+  background: #e5eef4;
 }
 
 .map-help {

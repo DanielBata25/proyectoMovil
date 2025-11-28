@@ -13,7 +13,7 @@ import { firstValueFrom } from 'rxjs';
 
 import * as L from 'leaflet';
 import { addIcons } from 'ionicons';
-import { locateOutline } from 'ionicons/icons';
+import { locateOutline, mapOutline, alertCircleOutline, cloudUploadOutline } from 'ionicons/icons';
 
 import { FarmService } from 'src/app/shared/services/farm/farm.service';
 import { LocationService } from 'src/app/shared/services/location/location.service';
@@ -75,6 +75,7 @@ export class FarmFormComponent implements OnInit, AfterViewInit, OnDestroy, View
   private mapInitialized = false;
   mapReady = false;
   private updatingFromMap = false;
+  private readonly defaultCenter: L.LatLngTuple = [4.5709, -74.2973];
   readonly hasMapSupport = true;
   private readonly farmMarkerIcon = L.icon({
     iconUrl: 'assets/img/map-pin.svg',
@@ -84,7 +85,7 @@ export class FarmFormComponent implements OnInit, AfterViewInit, OnDestroy, View
   });
 
   constructor() {
-    addIcons({ locateOutline });
+    addIcons({ locateOutline, mapOutline, alertCircleOutline, cloudUploadOutline });
     this.loadLeafletAssets();
     this.form = this.fb.group({
       name: ['', [Validators.required, Validators.maxLength(120)]],
@@ -338,6 +339,11 @@ export class FarmFormComponent implements OnInit, AfterViewInit, OnDestroy, View
         this.applyFarm(farm);
         this.isLoadingFarm = false;
         this.updateMarkerFromForm(true);
+        setTimeout(() => {
+          this.tileLayer?.redraw();
+          this.map?.invalidateSize();
+          this.updateMarkerFromForm(true);
+        }, 180);
       },
       error: async () => {
         this.isLoadingFarm = false;
@@ -352,14 +358,16 @@ export class FarmFormComponent implements OnInit, AfterViewInit, OnDestroy, View
     const cityId = this.toNumber(farm.cityId);
     const latitude = this.normalizeLatitude(this.toNumber(farm.latitude));
     const longitude = this.normalizeLongitude(this.toNumber(farm.longitude));
+    const safeLat = latitude ?? this.defaultCenter[0];
+    const safeLon = longitude ?? this.defaultCenter[1];
 
     this.form.patchValue(
       {
         name: farm.name,
         hectares: farm.hectares,
         altitude: farm.altitude,
-        latitude: latitude ?? farm.latitude ?? null,
-        longitude: longitude ?? farm.longitude ?? null,
+        latitude: safeLat,
+        longitude: safeLon,
         departmentId,
       },
       { emitEvent: false },
@@ -395,6 +403,11 @@ export class FarmFormComponent implements OnInit, AfterViewInit, OnDestroy, View
     }));
 
     this.updateMarkerFromForm(true);
+    setTimeout(() => {
+      this.tileLayer?.redraw();
+      this.map?.invalidateSize();
+      this.updateMarkerFromForm(true);
+    }, 180);
   }
 
   private clearCityControl(): void {
@@ -439,12 +452,15 @@ export class FarmFormComponent implements OnInit, AfterViewInit, OnDestroy, View
     this.map = L.map(container, {
       zoomControl: true,
       attributionControl: true,
-    }).setView([4.5709, -74.2973], 6);
+    }).setView(this.defaultCenter, 6);
 
     this.tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors',
       maxZoom: 19,
+      minZoom: 3,
+      crossOrigin: true,
     }).addTo(this.map);
+    this.tileLayer.once('load', () => setTimeout(() => this.map?.invalidateSize(), 120));
 
     this.marker = L.marker([4.5709, -74.2973], {
       draggable: true,
@@ -489,7 +505,8 @@ export class FarmFormComponent implements OnInit, AfterViewInit, OnDestroy, View
     const rawLon = this.toNumber(this.form.get('longitude')?.value);
     const lat = this.normalizeLatitude(rawLat);
     const lon = this.normalizeLongitude(rawLon);
-    if (lat === null || lon === null) return;
+    const position: L.LatLngExpression =
+      lat !== null && lon !== null ? [lat, lon] : this.defaultCenter;
 
     if (rawLat !== null && lat !== rawLat) {
       this.form.get('latitude')?.setValue(lat, { emitEvent: false });
@@ -498,11 +515,12 @@ export class FarmFormComponent implements OnInit, AfterViewInit, OnDestroy, View
       this.form.get('longitude')?.setValue(lon, { emitEvent: false });
     }
 
-    const position: L.LatLngExpression = [lat, lon];
     this.marker?.setLatLng(position);
     if (fitView) {
       this.map?.setView(position, 13);
     }
+    this.tileLayer?.redraw();
+    setTimeout(() => this.map?.invalidateSize(), 120);
   }
 
   centerMapOnInputs(): void {
@@ -549,6 +567,25 @@ export class FarmFormComponent implements OnInit, AfterViewInit, OnDestroy, View
 
   private toNumber(value: any): number | null {
     if (value === null || value === undefined || value === '') return null;
+    const normalizeLocaleNumber = (v: string): number | null => {
+      const cleaned = v.replace(/[^\d.,-]/g, '');
+      const lastComma = cleaned.lastIndexOf(',');
+      const lastDot = cleaned.lastIndexOf('.');
+      const sep = Math.max(lastComma, lastDot);
+      if (sep === -1) {
+        const n = Number(cleaned);
+        return Number.isFinite(n) ? n : null;
+      }
+      const intPart = cleaned.slice(0, sep).replace(/[.,]/g, '');
+      const fracPart = cleaned.slice(sep + 1).replace(/[.,]/g, '');
+      const composed = `${intPart}.${fracPart}`;
+      const n = Number(composed);
+      return Number.isFinite(n) ? n : null;
+    };
+
+    if (typeof value === 'string') {
+      return normalizeLocaleNumber(value.trim());
+    }
     const num = Number(value);
     return Number.isFinite(num) ? num : null;
   }

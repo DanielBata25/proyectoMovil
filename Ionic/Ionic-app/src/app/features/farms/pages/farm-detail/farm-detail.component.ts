@@ -18,7 +18,7 @@ import { FarmService } from '../../../../shared/services/farm/farm.service';
 import { FarmSelectModel } from '../../../../shared/models/farm/farm.model';
 import * as L from 'leaflet';
 import { addIcons } from 'ionicons';
-import { locateOutline } from 'ionicons/icons';
+import { locateOutline, mapOutline, alertCircleOutline } from 'ionicons/icons';
 import { ButtonComponent } from 'src/app/shared/components/button/button.component';
 
 @Component({
@@ -51,11 +51,13 @@ export class FarmDetailComponent implements OnInit, AfterViewInit, OnDestroy {
   private marker?: L.Marker;
   private tileLayer?: L.TileLayer;
   mapReady = false;
+  private mapInitialized = false;
+  private mapVisibilityObserver?: MutationObserver; // Monitor to keep map visible
   private readonly defaultCenter: L.LatLngExpression = [4.5709, -74.2973];
 
   constructor() {
     register();
-    addIcons({ locateOutline });
+    addIcons({ locateOutline, mapOutline, alertCircleOutline });
     this.loadLeafletAssets();
   }
 
@@ -71,20 +73,33 @@ export class FarmDetailComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     this.viewReady = true;
-    this.renderMap();
     this.initSwiperAutoplay();
+    // Initialize map with proper timing like in FarmFormComponent
+    setTimeout(() => this.initMap(), 0);
   }
 
   ionViewDidEnter(): void {
     setTimeout(() => {
-      this.renderMap();
+      if (!this.mapInitialized) {
+        this.initMap();
+        return;
+      }
       this.map?.invalidateSize();
       this.centerMapOnFarm();
     }, 150);
   }
 
   ngOnDestroy(): void {
-    this.destroyMap();
+    if (this.mapInitialized) {
+      this.destroyMap();
+    }
+    this.mapInitialized = false;
+    
+    // Clean up visibility monitoring
+    if (this.mapVisibilityObserver) {
+      this.mapVisibilityObserver.disconnect();
+      this.mapVisibilityObserver = undefined;
+    }
   }
 
   get galleryImages(): string[] {
@@ -124,9 +139,22 @@ export class FarmDetailComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.farmService.getById(this.farmId).subscribe({
       next: farm => {
-        this.farm = farm;
+        this.farm = this.normalizeFarmCoords(farm);
         this.loading = false;
-        this.renderMap();
+        
+        console.log('[FarmDetail] Farm data loaded, preserving map visibility');
+        
+        // Initialize map if not already done, then update marker
+        if (!this.mapInitialized) {
+          setTimeout(() => this.initMap(), 100);
+        } else {
+          // CRITICAL: Preserve map visibility when farm data loads
+          setTimeout(() => {
+            this.updateMarkerFromFarm();
+            this.forceMapVisibility(); // Force visibility after data load
+          }, 200);
+        }
+        
         this.initSwiperAutoplay();
       },
       error: err => {
@@ -164,20 +192,12 @@ export class FarmDetailComponent implements OnInit, AfterViewInit, OnDestroy {
   private renderMap(): void {
     if (!this.viewReady || !this.farm || !this.hasValidCoordinates) return;
 
-    const container = this.mapContainer?.nativeElement;
-    if (!container) {
-      setTimeout(() => this.renderMap(), 80);
+    if (!this.mapInitialized) {
+      setTimeout(() => this.initMap(), 100);
       return;
     }
 
-    const coords = this.getDisplayCoordinates();
-    if (!coords) return;
-    const { lat, lng } = coords;
-
-    this.ensureMap(container, [lat, lng]);
-    this.marker?.setLatLng([lat, lng]);
-    this.mapReady = true;
-    setTimeout(() => this.map?.invalidateSize(), 200);
+    this.updateMarkerFromFarm();
   }
 
   private destroyMap(): void {
@@ -195,6 +215,36 @@ export class FarmDetailComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private isValidCoordinate(value: number | null | undefined): value is number {
     return typeof value === 'number' && Number.isFinite(value);
+  }
+
+  private normalizeFarmCoords(farm: FarmSelectModel): FarmSelectModel {
+    const toNumber = (v: any): number | null => {
+      if (v === null || v === undefined || v === '') return null;
+      if (typeof v === 'number' && Number.isFinite(v)) return v;
+      if (typeof v === 'string') {
+        const cleaned = v.trim().replace(/[^\d.,-]/g, '');
+        if (!cleaned) return null;
+        const lastSep = Math.max(cleaned.lastIndexOf(','), cleaned.lastIndexOf('.'));
+        if (lastSep === -1) {
+          const n = Number(cleaned);
+          return Number.isFinite(n) ? n : null;
+        }
+        const intPart = cleaned.slice(0, lastSep).replace(/[.,]/g, '');
+        const fracPart = cleaned.slice(lastSep + 1).replace(/[.,]/g, '');
+        const n = Number(`${intPart}.${fracPart}`);
+        return Number.isFinite(n) ? n : null;
+      }
+      const n = Number(v);
+      return Number.isFinite(n) ? n : null;
+    };
+
+    const lat = toNumber((farm as any)?.latitude);
+    const lon = toNumber((farm as any)?.longitude);
+    return {
+      ...farm,
+      latitude: lat ?? farm.latitude ?? undefined,
+      longitude: lon ?? farm.longitude ?? undefined,
+    } as FarmSelectModel;
   }
 
   private loadLeafletAssets(): void {
@@ -227,6 +277,161 @@ export class FarmDetailComponent implements OnInit, AfterViewInit, OnDestroy {
     this.marker?.setLatLng(target);
   }
 
+  private initMap(): void {
+    if (this.mapInitialized) return;
+    const container = this.mapContainer?.nativeElement;
+    if (!container) {
+      setTimeout(() => this.initMap(), 120);
+      return;
+    }
+
+    console.log('[FarmDetail] Initializing STATIC map (view mode) with visibility monitoring');
+
+    // Configure map as STATIC for view mode - NO interactions allowed
+    this.map = L.map(container, {
+      zoomControl: false,        // No zoom controls in view mode
+      attributionControl: false, // No attribution in view mode
+      dragging: false,           // No dragging/pan in view mode
+      touchZoom: false,          // No touch zoom in view mode
+      doubleClickZoom: false,    // No double click zoom in view mode
+      scrollWheelZoom: false,    // No scroll zoom in view mode
+      boxZoom: false,            // No box zoom in view mode
+      keyboard: false,           // No keyboard controls in view mode
+    }).setView([4.5709, -74.2973], 6);
+
+    // Add static tile layer
+    this.tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '', // No attribution in view mode
+      maxZoom: 19,
+    }).addTo(this.map);
+
+    // Add static marker (not interactive)
+    this.marker = L.marker([4.5709, -74.2973], {
+      icon: L.icon({
+        iconUrl: 'assets/img/map-pin.svg',
+        iconSize: [30, 42],
+        iconAnchor: [15, 40],
+      }),
+      interactive: false, // Marker is not interactive in view mode
+    }).addTo(this.map);
+
+    // Add CSS class to make map completely static
+    container.classList.add('leaflet-container-static');
+
+    this.mapInitialized = true;
+    this.mapReady = true;
+    
+    console.log('[FarmDetail] Static map initialized (view mode - no interactions)');
+    
+    // CRITICAL: Start visibility monitoring immediately
+    this.startVisibilityMonitoring();
+    
+    // Update marker position if we have farm data
+    setTimeout(() => {
+      this.updateMarkerFromFarm();
+      this.map?.invalidateSize();
+      // Multiple invalidateSize calls to prevent disappearing
+      setTimeout(() => this.map?.invalidateSize(), 100);
+      setTimeout(() => this.map?.invalidateSize(), 300);
+    }, 200);
+  }
+
+  private startVisibilityMonitoring(): void {
+    const container = this.mapContainer?.nativeElement;
+    if (!container || this.mapVisibilityObserver) return;
+
+    // Monitor for any changes that might hide the map
+    this.mapVisibilityObserver = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+          const target = mutation.target as HTMLElement;
+          if (target.classList.contains('leaflet-container') || 
+              target.classList.contains('leaflet-tile-pane')) {
+            
+            // Force visibility if anything tries to hide the map
+            if (target.style.display === 'none' || 
+                target.style.visibility === 'hidden' || 
+                target.style.opacity === '0') {
+              console.log('[FarmDetail] Visibility monitoring: forcing map visible');
+              this.forceMapVisibility();
+            }
+          }
+        }
+      });
+    });
+
+    // Start monitoring the map container and all its children
+    this.mapVisibilityObserver.observe(container, {
+      attributes: true,
+      subtree: true,
+      attributeFilter: ['style', 'class']
+    });
+
+    console.log('[FarmDetail] Visibility monitoring started');
+  }
+
+  private updateMarkerFromFarm(): void {
+    if (!this.mapInitialized || !this.farm || !this.hasValidCoordinates) return;
+    
+    const coords = this.getDisplayCoordinates();
+    if (!coords) return;
+    
+    // CRITICAL FIX: Preserve map visibility during data updates
+    console.log('[FarmDetail] Updating marker position:', coords);
+    
+    // Update marker position
+    this.marker?.setLatLng([coords.lat, coords.lng]);
+    
+    // CRITICAL FIX: Set view without triggering map recreation
+    if (this.map) {
+      // Don't recreate the map, just update view
+      this.map.setView([coords.lat, coords.lng], 15, { animate: false });
+      
+      // CRITICAL FIX: Force multiple invalidations to prevent disappearing
+      setTimeout(() => {
+        this.map?.invalidateSize();
+        this.forceMapVisibility();
+      }, 50);
+      
+      setTimeout(() => {
+        this.map?.invalidateSize();
+        this.forceMapVisibility();
+      }, 150);
+      
+      setTimeout(() => {
+        this.map?.invalidateSize();
+        this.forceMapVisibility();
+      }, 300);
+    }
+    
+    console.log('[FarmDetail] Marker updated and map visibility preserved');
+  }
+
+  private forceMapVisibility(): void {
+    const container = this.mapContainer?.nativeElement;
+    if (container && this.map) {
+      // Force the map container to be visible
+      container.style.opacity = '1';
+      container.style.visibility = 'visible';
+      container.style.display = 'block';
+      
+      // Force leaflet container visibility
+      const leafletContainer = container.querySelector('.leaflet-container') as HTMLElement;
+      if (leafletContainer) {
+        leafletContainer.style.opacity = '1';
+        leafletContainer.style.visibility = 'visible';
+        leafletContainer.style.display = 'block';
+      }
+      
+      // Force tile visibility
+      const tiles = container.querySelectorAll('.leaflet-tile');
+      tiles.forEach(tile => {
+        (tile as HTMLElement).style.opacity = '1';
+        (tile as HTMLElement).style.visibility = 'visible';
+      });
+    }
+  }
+
   private getDisplayCoordinates(): { lat: number; lng: number } | null {
     const rawLat = this.farm?.latitude;
     const rawLon = this.farm?.longitude;
@@ -237,38 +442,6 @@ export class FarmDetailComponent implements OnInit, AfterViewInit, OnDestroy {
     const lng = this.normalizeLongitude(rawLon);
     if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
     return { lat, lng };
-  }
-
-  private ensureMap(container: HTMLElement, coords: L.LatLngExpression): void {
-    if (!this.map) {
-      this.map = L.map(container, {
-        zoomControl: true,
-        attributionControl: false,
-        preferCanvas: false,
-      });
-
-      this.tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        minZoom: 3,
-        detectRetina: true,
-        crossOrigin: true,
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-      }).addTo(this.map);
-
-      this.tileLayer.once('load', () => setTimeout(() => this.map?.invalidateSize(), 80));
-
-      this.marker = L.marker(coords, {
-        icon: L.icon({
-          iconUrl: 'assets/img/map-pin.svg',
-          iconSize: [30, 42],
-          iconAnchor: [15, 40],
-        }),
-        interactive: false,
-      }).addTo(this.map);
-    }
-
-    this.map.setView(coords, 15);
-    this.tileLayer?.redraw();
   }
 
   private clamp(value: number, min: number, max: number): number {

@@ -1,7 +1,7 @@
 [
   {
     "context": ["/api"],
-    "target": "apiUrl:'https://lawana-unhale-sorrowfully.ngrok-free.dev/api/v1',",
+    "target": "apiUrl:'https://portal-agro-huila-ggg3bzabdma2byes.eastus2-01.azurewebsites.net/api/v1',",
     "secure": true,
     "changeOrigin": true,
     "logLevel": "info"

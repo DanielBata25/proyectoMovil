@@ -221,6 +221,53 @@
   border-radius: 14px;
   overflow: hidden;
   border: 1px solid #e4e9ed;
+  position: relative;
+  /* CRITICAL FIX: Higher z-index and forced visibility */
+  z-index: 9999 !important;
+}
+
+/* Ensure Leaflet map container fills the preview area */
+.map-preview .leaflet-container {
+  height: 100% !important;
+  width: 100% !important;
+  border-radius: 14px;
+  /* CRITICAL FIX: Highest z-index to appear above everything */
+  z-index: 9998 !important;
+  position: relative !important;
+  /* FORCE visibility */
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Force map tiles to be visible at all times */
+.map-preview .leaflet-tile-pane {
+  z-index: 9997 !important;
+}
+
+.map-preview .leaflet-tile {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Static map (view mode) - disable all interactions */
+.map-preview .leaflet-container-static {
+  pointer-events: none !important;
+  touch-action: none !important;
+}
+
+.map-preview .leaflet-container-static .leaflet-control-zoom,
+.map-preview .leaflet-container-static .leaflet-control-attribution {
+  display: none !important;
+}
+
+.map-preview .leaflet-container-static .leaflet-marker-icon {
+  pointer-events: none !important;
+}
+
+/* For edit mode, show controls normally */
+.map-preview .leaflet-container-interactive .leaflet-control-zoom,
+.map-preview .leaflet-container-interactive .leaflet-control-attribution {
+  display: block !important;
 }
 
 .map-help {

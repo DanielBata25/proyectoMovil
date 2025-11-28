@@ -44,7 +44,9 @@
 
         <ion-input label="Precio" labelPlacement="floating" type="number" formControlName="price" fill="outline"></ion-input>
 
-        <ion-input label="Unidad" labelPlacement="floating" formControlName="unit" fill="outline"></ion-input>
+        <ion-select label="Unidad" labelPlacement="floating" formControlName="unit" fill="outline">
+          <ion-select-option *ngFor="let u of unitOptions" [value]="u">{{ u }}</ion-select-option>
+        </ion-select>
 
         <ion-input label="Produccion" labelPlacement="floating" formControlName="production" fill="outline"></ion-input>
 

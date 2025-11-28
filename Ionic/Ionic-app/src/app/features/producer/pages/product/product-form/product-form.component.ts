@@ -71,6 +71,21 @@ export class ProductFormComponent implements OnInit {
 
   farms: any[] = [];
   categories: any[] = [];
+  readonly unitOptions = [
+    'Arroba',
+    'Bolsa',
+    'Bulto',
+    'Caja',
+    'Docena',
+    'Gramo (g)',
+    'Kilogramo (kg)',
+    'Libra (lb)',
+    'Litro (L)',
+    'Mililitro (ml)',
+    'Paquete',
+    'Tonelada (t)',
+    'Unidad (u)',
+  ];
 
   generalGroup = this.fb.group({
     name: this.fb.nonNullable.control('', [

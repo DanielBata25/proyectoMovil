@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { FarmSelectModel } from 'src/app/shared/models/farm/farm.model';
 import { Router } from '@angular/router';
+import { addIcons } from 'ionicons';
+import { mapOutline, alertCircleOutline, pinOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-card-farm',
@@ -22,6 +24,10 @@ export class CardFarmComponent {
   @Output() view = new EventEmitter<FarmSelectModel>();
 
   private readonly placeholder = 'assets/img/cargaImagen.png';
+
+  constructor() {
+    addIcons({ mapOutline, alertCircleOutline, pinOutline });
+  }
 
   get imageUrl(): string {
     const url = this.farm?.images?.[0]?.imageUrl;
