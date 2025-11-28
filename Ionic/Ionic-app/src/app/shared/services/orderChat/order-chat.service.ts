@@ -74,9 +74,7 @@ export class OrderChatService {
       }
     } else {
       // Construcción del HUB URL (igual que antes)
-      const hubUrl = (environment as any).hubUrl
-        ? (environment as any).hubUrl + 'orders/chat'
-        : environment.apiUrl.replace('/api/v1/', '/hubs/orders/chat');
+      const hubUrl = this.resolveHubUrl();
 
       this.hubConnection = new signalR.HubConnectionBuilder()
         .withUrl(hubUrl, {
@@ -136,5 +134,17 @@ export class OrderChatService {
 
   private joinRoom(orderCode: string): Promise<void> {
     return this.hubConnection!.invoke('JoinOrderRoom', orderCode);
+  }
+
+  private resolveHubUrl(): string {
+    const envHub = (environment as any).hubUrl;
+    if (envHub) {
+      return envHub.endsWith('/') ? `${envHub}orders/chat` : `${envHub}/orders/chat`;
+    }
+
+    // Reemplaza /api/v1 o /api/v1/ por /hubs/orders/chat
+    const api = environment.apiUrl || '';
+    const withSlash = api.endsWith('/') ? api : `${api}/`;
+    return withSlash.replace(/\/api\/v1\/?$/, '/hubs/orders/chat');
   }
 }
