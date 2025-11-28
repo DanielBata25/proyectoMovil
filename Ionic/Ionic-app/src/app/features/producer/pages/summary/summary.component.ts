@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { IonicModule, ToastController, AlertController } from '@ionic/angular';
 import { Router, RouterLink } from '@angular/router';
 import { BaseChartDirective } from 'ng2-charts';
-import { ChartConfiguration, ChartOptions } from 'chart.js';
+import { Chart, ChartConfiguration, ChartOptions, CategoryScale, LinearScale, BarElement, BarController, Tooltip, Legend } from 'chart.js';
 
 import { AnalyticService } from 'src/app/shared/services/analytics/analytic.service';
 import { ProducerService } from 'src/app/shared/services/producer/producer.service';
@@ -14,6 +14,9 @@ import { ProductService } from 'src/app/shared/services/product/product.service'
 import { ProductSelectModel } from 'src/app/shared/models/product/product.model';
 
 import { forkJoin, catchError, finalize, of } from 'rxjs';
+
+// Registrar escalas y elementos requeridos para bar chart
+Chart.register(CategoryScale, LinearScale, BarElement, BarController, Tooltip, Legend);
 
 @Component({
   selector: 'app-summary',
@@ -75,12 +78,21 @@ export class SummaryPage implements OnInit {
 
   barChartOptions: ChartOptions<'bar'> = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: { display: false },
       tooltip: { enabled: true },
     },
     scales: {
-      y: { beginAtZero: true, ticks: { stepSize: 1 } },
+      y: {
+        beginAtZero: true,
+        ticks: { stepSize: 1, color: '#475569' },
+        grid: { color: 'rgba(148, 163, 184, 0.35)' },
+      },
+      x: {
+        ticks: { color: '#475569' },
+        grid: { display: false },
+      },
     },
   };
 
@@ -132,14 +144,22 @@ export class SummaryPage implements OnInit {
     this.chartLoading = true;
     const limit = this.range === 'day' ? 5 : this.range === 'week' ? 7 : 6;
     this.analyticService.getTopProducts(limit).subscribe({
-      next: ({ items }) => {
-        if (!items || items.length === 0) {
-          this.barChartData.labels = ['Sin datos'];
-          this.barChartData.datasets[0].data = [0];
-        } else {
-          this.barChartData.labels = items.map((i) => i.productName);
-          this.barChartData.datasets[0].data = items.map((i) => i.completedOrders);
-        }
+      next: (resp) => {
+        const rawItems =
+          (resp as any)?.items ??
+          (resp as any)?.data?.items ??
+          [];
+        const items = Array.isArray(rawItems) ? rawItems : [];
+        const labels = items.map((i) => i.productName ?? i.name ?? `#${i.productId ?? ''}`);
+        const data = items.map((i) => Number((i as any)?.completedOrders ?? (i as any)?.totalOrders ?? 0) || 0);
+
+        const hasData = labels.length && data.some((v) => Number.isFinite(v) && v > 0);
+        this.barChartData.labels = hasData ? labels : ['Sin datos'];
+        this.barChartData.datasets[0].data = hasData ? data : [0];
+        this.barChartData.datasets[0].backgroundColor = ['#42A5F5', '#66BB6A', '#FFA726', '#AB47BC', '#29B6F6', '#4DD0E1'];
+        this.barChartData.datasets[0].borderColor = '#2563eb';
+        this.barChartData.datasets[0].borderWidth = 1;
+
         this.chart?.update();
         this.chartLoading = false;
       },
