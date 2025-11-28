@@ -339,26 +339,15 @@ ion-chip {
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
 }
 
-.chat-modal {
-  // Ocupa solo el espacio entre la barra superior y la tab bar
-  --height: calc(100% - var(--app-shell-header-offset, 56px) - var(--app-shell-footer-offset, 64px));
-  --width: 100%;
-  --border-radius: 18px;
-  --margin-top: var(--app-shell-header-offset, 56px);
-  --margin-bottom: var(--app-shell-footer-offset, 64px);
+.chat-section {
+  margin-top: 16px;
 }
 
-.chat-modal-content {
-  --background: var(--ion-background-color, #f8f9fa);
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.chat-fab {
-  z-index: 999;
-  bottom: calc(env(safe-area-inset-bottom, 0px) + 92px); // encima de la barra
+.chat-inline-card {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  background: var(--ion-background-color, #fff);
 }
 
 @media (min-width: 680px) {

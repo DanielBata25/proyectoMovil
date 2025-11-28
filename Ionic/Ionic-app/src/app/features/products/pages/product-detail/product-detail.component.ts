@@ -23,6 +23,7 @@ import { finalize, switchMap } from 'rxjs/operators';
 import { ProductService } from '../../../../shared/services/product/product.service';
 import { ReviewService } from '../../../../shared/services/review/review.service';
 import { ProductSelectModel, ReviewSelectModel, ReviewRegisterModel } from '../../../../shared/models/product/product.model';
+import { ProducerService } from 'src/app/shared/services/producer/producer.service';
 
 import { AlertController, ToastController, ModalController } from '@ionic/angular';
 import { UserMeDto } from 'src/app/core/models/login.model';
@@ -62,6 +63,7 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
   private authState = inject(AuthState);
   private location = inject(Location);
   private favoriteFacade = inject(FavoriteFacadeService);
+  private producerService = inject(ProducerService);
 
   private alertCtrl = inject(AlertController);
   private toastCtrl = inject(ToastController);
@@ -73,6 +75,8 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
   product!: ProductSelectModel;
   loadingProduct = true;
   galleryImages: string[] = [];
+  myProducerCode?: string;
+  isOwnProduct = false;
 
   // Carrusel (atributos de Web Component)
   slidesOpts = { slidesPerView: 1, spaceBetween: 12, pagination: true };
@@ -106,6 +110,7 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
     this.productId = Number(this.route.snapshot.paramMap.get('id'));
     if (!this.productId) return;
 
+    this.fetchProducerCode();
     this.loadProduct();
     this.loadReviews();
   }
@@ -121,6 +126,7 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
       next: (data) => {
         this.product = data;
         this.galleryImages = this.buildGalleryImages(data);
+        this.updateIsOwnProduct();
         this.loadingProduct = false;
         this.initSwiperAutoplay();
       },
@@ -178,6 +184,24 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
 
   onImageError(event: Event): void {
     (event.target as HTMLImageElement).src = this.fallbackImage;
+  }
+
+  private fetchProducerCode(): void {
+    this.producerService.getMine().subscribe({
+      next: (producer) => {
+        this.myProducerCode = producer?.code?.trim();
+        this.updateIsOwnProduct();
+      },
+      error: () => {
+        this.myProducerCode = undefined;
+        this.isOwnProduct = false;
+      },
+    });
+  }
+
+  private updateIsOwnProduct(): void {
+    const productCode = this.product?.producerCode?.trim();
+    this.isOwnProduct = !!productCode && !!this.myProducerCode && productCode === this.myProducerCode;
   }
 
   private loadReviews(): void {
@@ -257,6 +281,10 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
   onMouseLeave() { this.hoverRating = 0; }
 
   submitReview(): void {
+    if (this.isOwnProduct) {
+      this.showToast('No puedes reseñar tu propio producto', 'warning', 'bottom');
+      return;
+    }
     if (this.sendingReview) return;
     if (this.selectedRating < 1 || this.selectedRating > 5) return;
     const comment = this.newReview.trim();

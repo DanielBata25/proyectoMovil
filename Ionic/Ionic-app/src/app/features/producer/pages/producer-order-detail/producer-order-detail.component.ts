@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, HostListener, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, AlertController, ToastController } from '@ionic/angular';
@@ -11,7 +11,6 @@ import {
 import { OrderService } from '../../../products/services/order/order.service';
 import { ButtonComponent } from 'src/app/shared/components/button/button.component';
 import { ConsumerRatingCreateModel } from '../../../products/models/consumerRating/consumerRating.model';
-import { OrderChatComponent } from 'src/app/shared/components/order-chat/order-chat.component';
 
 @Component({
   selector: 'app-producer-order-detail',
@@ -20,8 +19,7 @@ import { OrderChatComponent } from 'src/app/shared/components/order-chat/order-c
     CommonModule,
     IonicModule,
     FormsModule,
-    ButtonComponent,
-    OrderChatComponent
+    ButtonComponent
   ],
   templateUrl: './producer-order-detail.component.html',
   styleUrls: ['./producer-order-detail.component.scss'],
@@ -43,8 +41,6 @@ export class ProducerOrderDetailComponent implements OnInit {
   rating = 0;
   comment = '';
   savingRating = false;
-  // UI: chat flotante
-  showChat = false;
 
   ngOnInit(): void {
     this.code = String(this.route.snapshot.paramMap.get('code'));
@@ -168,6 +164,10 @@ export class ProducerOrderDetailComponent implements OnInit {
         );
       },
     });
+  }
+
+  goToChat(): void {
+    this.router.navigate(['/account/producer/orders', this.code, 'chat']);
   }
 
   /* ======= Chip de estado (texto + clase) ======= */
@@ -475,15 +475,5 @@ export class ProducerOrderDetailComponent implements OnInit {
       color: color
     });
     await toast.present();
-  }
-
-  // ======= Chat flotante =======
-  toggleChat(): void {
-    this.showChat = !this.showChat;
-  }
-
-  @HostListener('document:closeChat')
-  handleCloseChat(): void {
-    this.showChat = false;
   }
 }

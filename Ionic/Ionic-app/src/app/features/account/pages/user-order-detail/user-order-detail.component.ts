@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, HostListener, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IonicModule, AlertController, ToastController } from '@ionic/angular';
 import { firstValueFrom } from 'rxjs';
@@ -11,7 +11,6 @@ import {
 } from '../../../products/models/order/order.model';
 import { OrderService } from '../../../products/services/order/order.service';
 import { ButtonComponent } from 'src/app/shared/components/button/button.component';
-import { OrderChatComponent } from 'src/app/shared/components/order-chat/order-chat.component';
 
 @Component({
   selector: 'app-user-order-detail',
@@ -19,8 +18,7 @@ import { OrderChatComponent } from 'src/app/shared/components/order-chat/order-c
   imports: [
     CommonModule, 
     IonicModule,
-    ButtonComponent,
-    OrderChatComponent
+    ButtonComponent
   ],
   templateUrl: './user-order-detail.component.html',
   styleUrls: ['./user-order-detail.component.scss'],
@@ -46,8 +44,6 @@ export class UserOrderDetailComponent implements OnInit {
 
   // estrellas para mostrar la calificación del productor al cliente
   stars = [1, 2, 3, 4, 5];
-  // UI: chat flotante
-  showChat = false;
 
   ngOnInit(): void {
     this.code = String(this.route.snapshot.paramMap.get('code'));
@@ -284,6 +280,10 @@ export class UserOrderDetailComponent implements OnInit {
     el.click();
   }
 
+  goToChat(): void {
+    this.router.navigate(['/account/orders', this.code, 'chat']);
+  }
+
   async onPickPaymentFile(ev: Event) {
     const input = ev.target as HTMLInputElement;
     const file = input.files?.[0];
@@ -346,15 +346,5 @@ export class UserOrderDetailComponent implements OnInit {
       color: color
     });
     await toast.present();
-  }
-
-  // ======= Chat flotante =======
-  toggleChat(): void {
-    this.showChat = !this.showChat;
-  }
-
-  @HostListener('document:closeChat')
-  handleCloseChat(): void {
-    this.showChat = false;
   }
 }

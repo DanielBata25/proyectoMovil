@@ -4,6 +4,9 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 
+// Capacitor imports for StatusBar
+import { StatusBar, Style } from '@capacitor/status-bar';
+
 import { AuthService } from '../../../../core/services/auth/auth.service';
 import { AuthState } from '../../../../core/services/auth/auth.state';
 import { NotificationService } from '../../../services/notification/notificacion.service';
@@ -43,14 +46,46 @@ export class NavbarBuenoComponent implements OnInit, OnDestroy {
   notificationsLoading = false;
 
   // Lifecycle methods
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
+    await this.setupStatusBar();
     this.initializeNotifications();
   }
 
-  ngOnDestroy(): void {
+  async ngOnDestroy(): Promise<void> {
     this.destroy$.next();
     this.destroy$.complete();
     this.notificationHubService.disconnect(); // Cierra SignalR cuando se destruye el nav
+    await this.restoreStatusBar();
+  }
+
+  // StatusBar methods
+  private async setupStatusBar(): Promise<void> {
+    try {
+      // ⚠️ IMPORTANTE: No usar overlay - solo configurar color y estilo
+      // await StatusBar.setOverlaysWebView({ overlay: true });
+      
+      // Set style to light (white text) for dark background
+      await StatusBar.setStyle({ style: Style.Light });
+      
+      // Set background color to match our navbar
+      await StatusBar.setBackgroundColor({ color: '#2e7d32' });
+      
+      // Show the status bar
+      await StatusBar.show();
+    } catch (error) {
+      console.warn('Could not configure StatusBar:', error);
+    }
+  }
+
+  private async restoreStatusBar(): Promise<void> {
+    try {
+      // Reset StatusBar to default behavior
+      // await StatusBar.setOverlaysWebView({ overlay: false });
+      await StatusBar.setStyle({ style: Style.Default });
+      await StatusBar.setBackgroundColor({ color: '#000000' });
+    } catch (error) {
+      console.warn('Could not restore StatusBar:', error);
+    }
   }
 
   // Navigation methods

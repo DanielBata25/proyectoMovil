@@ -83,7 +83,7 @@
         </div>
       </div>
 
-      <div class="block cta">
+      <div class="block cta" *ngIf="!isOwnProduct">
         <app-button
           [text]="'Añadir al pedido'"
           icon="cart"
@@ -131,7 +131,7 @@
         </div>
       </div>
 
-      <div class="block">
+      <div class="block" *ngIf="!isOwnProduct; else ownReviewBlocked">
         <h3 class="h-title">Escribir una resena</h3>
 
         <ng-container *ngIf="me$ | async as me">
@@ -166,6 +166,12 @@
           <div class="muted">Inicia sesion para dejar una reseña.</div>
         </ng-template>
       </div>
+      <ng-template #ownReviewBlocked>
+        <div class="block">
+          <h3 class="h-title">Escribir una resena</h3>
+          <p class="muted small">No puedes reseñar tu propio producto.</p>
+        </div>
+      </ng-template>
 
       <div class="block">
         <h3 class="h-title">Comentarios</h3>

@@ -25,6 +25,8 @@ import { OrderChatService } from '../../services/orderChat/order-chat.service';
 export class OrderChatComponent implements OnInit, OnDestroy {
   @Input({ required: true }) orderCode!: string;
   @ViewChild('scrollContainer') scrollContainer?: ElementRef<HTMLDivElement>;
+  /** Oculta el botón de cierre cuando el chat está embebido en la página */
+  @Input() showClose = false;
 
   loading = false;
   sending = false;
@@ -200,7 +202,7 @@ export class OrderChatComponent implements OnInit, OnDestroy {
   }
 
   closeChat(): void {
-    // Emitir evento para cerrar el chat desde el componente padre
+    // Mantiene compat con padres que escuchaban este evento (p.ej. modal anterior)
     const event = new CustomEvent('closeChat');
     document.dispatchEvent(event);
   }

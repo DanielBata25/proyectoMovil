@@ -59,6 +59,14 @@ export const ACCOUNT_ROUTES: Routes = [
               ),
           },
           {
+            path: ':code/chat',
+            title: 'Chat del pedido',
+            loadComponent: () =>
+              import('./pages/user-order-chat/user-order-chat.component').then(
+                (m) => m.UserOrderChatComponent
+              ),
+          },
+          {
             path: ':code',
             title: 'Detalle del pedido',
             loadComponent: () =>
