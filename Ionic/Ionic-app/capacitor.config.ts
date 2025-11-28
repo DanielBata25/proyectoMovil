@@ -7,6 +7,10 @@ const config: CapacitorConfig = {
   plugins: {
     CapacitorHttp: { enabled: true },
     CapacitorCookies: { enabled: true },
+    Keyboard: {
+      resize: 'none' as const,
+      resizeOnFullScreen: false,
+    },
   },
   server: {
     cleartext: true
