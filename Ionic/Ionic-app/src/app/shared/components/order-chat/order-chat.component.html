@@ -1,5 +1,14 @@
 <div class="chat-container">
   <div class="chat-header">
+    <button
+      *ngIf="showBack"
+      type="button"
+      class="chat-back-btn"
+      aria-label="Volver"
+      (click)="goBack()">
+      <ion-icon name="arrow-back"></ion-icon>
+    </button>
+
     <ion-button
       *ngIf="showClose"
       fill="clear"

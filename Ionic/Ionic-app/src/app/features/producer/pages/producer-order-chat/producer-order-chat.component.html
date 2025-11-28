@@ -17,23 +17,5 @@
 </ion-header>
 
 <ion-content [fullscreen]="true" class="page-bg chat-page">
-  <div class="page-shell chat-shell">
-    <div class="chat-header">
-      <div class="chat-title">
-        <ion-icon name="chatbox-ellipses-outline"></ion-icon>
-        <div>
-          <p class="muted">Pedido</p>
-          <h2>#{{ code }}</h2>
-        </div>
-      </div>
-      <ion-chip color="tertiary" mode="ios">
-        <ion-icon name="shield-checkmark-outline"></ion-icon>
-        <ion-label>Canal directo con el cliente</ion-label>
-      </ion-chip>
-    </div>
-
-    <div class="chat-card">
-      <app-order-chat [orderCode]="code" [showClose]="false"></app-order-chat>
-    </div>
-  </div>
+  <app-order-chat [orderCode]="code" [showClose]="false"></app-order-chat>
 </ion-content>

@@ -1,11 +1,13 @@
 import {
   Component,
   ElementRef,
+  inject,
   Input,
   OnDestroy,
   OnInit,
   ViewChild,
 } from '@angular/core';
+import { Location } from '@angular/common';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
@@ -27,6 +29,8 @@ export class OrderChatComponent implements OnInit, OnDestroy {
   @ViewChild('scrollContainer') scrollContainer?: ElementRef<HTMLDivElement>;
   /** Oculta el botón de cierre cuando el chat está embebido en la página */
   @Input() showClose = false;
+  /** Muestra flecha de retroceso en la cabecera */
+  @Input() showBack = true;
 
   loading = false;
   sending = false;
@@ -48,6 +52,8 @@ export class OrderChatComponent implements OnInit, OnDestroy {
   chatClosedReason?: string | null;
   chatEnabledAt?: string | null;
   chatClosedAt?: string | null;
+
+  private location = inject(Location);
 
   constructor(private chatSrv: OrderChatService) {}
 
@@ -205,5 +211,9 @@ export class OrderChatComponent implements OnInit, OnDestroy {
     // Mantiene compat con padres que escuchaban este evento (p.ej. modal anterior)
     const event = new CustomEvent('closeChat');
     document.dispatchEvent(event);
+  }
+
+  goBack(): void {
+    this.location.back();
   }
 }
