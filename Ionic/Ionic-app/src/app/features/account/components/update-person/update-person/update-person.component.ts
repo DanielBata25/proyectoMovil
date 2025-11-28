@@ -199,7 +199,7 @@ export class UpdatePersonComponent implements OnInit {
     this.auth.UpdatePerson(dto).subscribe({
       next: async () => {
         const toast = await this.toastCtrl.create({
-          message: 'Datos actualizados correctamente ✅',
+          message: 'Datos actualizados correctamente',
           duration: 2000,
           color: 'success'
         });

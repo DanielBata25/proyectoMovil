@@ -83,7 +83,7 @@ export class FormChangePasswordComponent {
     this.auth.ChangePassword(objeto).subscribe({
       next: async () => {
         const toast = await this.toastCtrl.create({
-          message: 'Contraseña actualizada correctamente ✅',
+          message: 'Contraseña actualizada correctamente',
           duration: 2000,
           color: 'success'
         });

@@ -124,7 +124,7 @@ export class InfoComponent implements OnInit {
       next: async () => {
         await this.authState.clear();
         const toast = await this.toastCtrl.create({
-          message: 'Sesión cerrada correctamente ✅',
+          message: 'Sesión cerrada correctamente',
           duration: 2000,
           color: 'success',
           position: 'bottom'
