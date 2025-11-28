@@ -2,7 +2,7 @@
   <h2 class="section-title" *ngIf="showHeader">{{ title }}</h2>
 
   <div class="product-container">
-    <ng-container *ngIf="!loading; else skeletonTpl">
+    <ng-container *ngIf="!loading && products.length > 0; else skeletonTpl">
       <app-card
         *ngFor="let p of products; trackBy: trackById"
         [product]="p"

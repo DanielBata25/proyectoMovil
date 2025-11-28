@@ -18,7 +18,7 @@ export class ContainerCardComponent {
   @Input() title = 'Últimos Agregados';
   @Input() showHeader = true;
   @Input() showFavorite = true;
-  @Input({ required: true }) products: ProductSelectModel[] = [];
+  @Input() products: ProductSelectModel[] = [];
   @Input() loading = false;
   @Input() skeletonCount = 4;
 

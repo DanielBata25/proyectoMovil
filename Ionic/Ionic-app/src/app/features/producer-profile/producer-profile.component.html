@@ -74,8 +74,8 @@
       </ion-card>
 
       <!-- Fincas -->
-      <section class="product-section profile-section" *ngIf="famrs.length > 0">
-        <h3 class="section-title">Fincas</h3>
+      <section class="product-section" *ngIf="famrs.length > 0">
+        <h2 class="section-title">Fincas</h2>
         <div class="product-container">
           <app-card-farm
             *ngFor="let farm of famrs; trackBy: trackByFarm"
@@ -86,17 +86,13 @@
       </section>
 
       <!-- Productos -->
-      <section class="product-section profile-section" *ngIf="products.length > 0">
-        <h3 class="section-title">Productos</h3>
-        <div class="product-container" [class.no-scroll]="products.length <= 3">
-          <app-card
-            *ngFor="let product of products; trackBy: trackByProduct"
-            [product]="product"
-            [showFavorite]="false"
-            [showActions]="false">
-          </app-card>
-        </div>
-      </section>
+      <app-container-card
+        *ngIf="products.length > 0"
+        [title]="'Productos'"
+        [showHeader]="true"
+        [products]="products"
+        [loading]="loading">
+      </app-container-card>
     </ng-container>
 
     <ng-template #emptyState>

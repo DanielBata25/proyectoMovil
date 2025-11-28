@@ -27,11 +27,12 @@ import { ProductSelectModel } from 'src/app/shared/models/product/product.model'
 import { FarmSelectModel } from 'src/app/shared/models/farm/farm.model';
 import { CardComponent } from 'src/app/shared/components/cards/card/card.component';
 import { CardFarmComponent } from 'src/app/shared/components/cards/card-farm/card-farm.component';
+import { ContainerCardComponent } from 'src/app/shared/components/cards/container-card/container-card.component';
 
 @Component({
   selector: 'app-profile-dialog',
   standalone: true,
-  imports: [CommonModule, IonicModule, CardComponent, CardFarmComponent],
+  imports: [CommonModule, IonicModule, CardComponent, CardFarmComponent, ContainerCardComponent],
   templateUrl: './producer-profile.component.html',
   styleUrls: ['./producer-profile.component.scss'],
 })
