@@ -64,6 +64,7 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
   private location = inject(Location);
   private favoriteFacade = inject(FavoriteFacadeService);
   private producerService = inject(ProducerService);
+  private ownershipChecked = false;
 
   private alertCtrl = inject(AlertController);
   private toastCtrl = inject(ToastController);
@@ -200,8 +201,21 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
   }
 
   private updateIsOwnProduct(): void {
-    const productCode = this.product?.producerCode?.trim();
-    this.isOwnProduct = !!productCode && !!this.myProducerCode && productCode === this.myProducerCode;
+    const productCode = (this.product?.producerCode || '').trim().toLowerCase();
+    const myCode = (this.myProducerCode || '').trim().toLowerCase();
+    this.isOwnProduct = Boolean(productCode && myCode && productCode === myCode);
+
+    // Fallback: si no se pudo obtener el código o no coincide, revisa la lista del productor
+    if (!this.isOwnProduct && !this.ownershipChecked && this.productId) {
+      this.ownershipChecked = true;
+      this.productService.getByProducerId().subscribe({
+        next: (list) => {
+          const owns = Array.isArray(list) && list.some((p) => p?.id === this.productId);
+          if (owns) this.isOwnProduct = true;
+        },
+        error: () => {},
+      });
+    }
   }
 
   private loadReviews(): void {
@@ -221,6 +235,10 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
 
   // === Pedido (relacion con Order) ===
   async openCreateOrder(): Promise<void> {
+    if (this.isOwnProduct) {
+      await this.showToast('No puedes comprar tu propio producto', 'warning', 'bottom');
+      return;
+    }
     const me = await firstValueFrom(this.me$);
     if (!me) {
       const alert = await this.alertCtrl.create({
