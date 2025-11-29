@@ -3,15 +3,22 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 10px 16px;
+  padding: 12px 20px;
   border: none;
-  border-radius: 6px;
-  font-size: 0.95rem;
+  border-radius: 12px;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s ease-in-out, opacity 0.2s ease-in-out;
+  transition: background-color 0.2s ease-in-out, opacity 0.2s ease-in-out, transform 0.1s ease-in-out;
   color: #ffffff;
   user-select: none;
+  width: min(340px, 100%);
+  margin: var(--app-button-margin, 0.6rem auto 0) !important; /* permite override por CSS var */
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12);
+}
+
+.custom-btn:active {
+  transform: translateY(1px);
 }
 
 .custom-btn:disabled {
@@ -45,6 +52,41 @@
   background-color: #c82333;
 }
 
+/* Success (verde oscuro) */
+.custom-btn.btn-success {
+  background-color: #198754;
+}
+.custom-btn.btn-success:hover:not(:disabled) {
+  background-color: #146c43;
+}
+
+/* Warning (amarillo) */
+.custom-btn.btn-warning {
+  background-color: #ffc107;
+  color: #1f2f25;
+}
+.custom-btn.btn-warning:hover:not(:disabled) {
+  background-color: #e0a800;
+}
+
+/* Tertiary (morado) */
+.custom-btn.btn-tertiary {
+  background-color: #6f42c1;
+}
+.custom-btn.btn-tertiary:hover:not(:disabled) {
+  background-color: #6133b2;
+}
+
+/* Light (fondo claro) */
+.custom-btn.btn-light {
+  background-color: #f8f9fa;
+  color: #1f2f25;
+  box-shadow: 0 8px 14px rgba(15, 23, 42, 0.08);
+}
+.custom-btn.btn-light:hover:not(:disabled) {
+  background-color: #e9ecef;
+}
+
 .icon-btn {
   display: inline-flex;
   align-items: center;
@@ -52,6 +94,45 @@
   font-size: 18px;
 }
 
+.btn-spinner {
+  width: 20px;
+  height: 20px;
+}
+
 .label {
   line-height: 1;
+}
+/* === Flat (plano, sin color de fondo) === */
+.custom-btn.btn-flat {
+  background: transparent !important;
+  color: #1f2f25 !important;   /* texto oscuro */
+  box-shadow: none !important;
+  border-radius: 0;
+  padding: 8px 0;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.custom-btn.btn-flat .icon-btn {
+  color: #999 !important;  /* chevron gris tenue */
+}
+:host {
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+
+:host(:first-of-type) .custom-btn {
+  margin-top: 0;
+}
+:host(.btn-inline) {
+  display: inline-flex;
+  width: auto;
+}
+
+:host(.btn-inline) .custom-btn {
+  margin: 0;
+  width: auto;
+  padding: 8px 14px;
+  box-shadow: none;
 }

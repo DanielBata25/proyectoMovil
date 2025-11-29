@@ -1,30 +1,40 @@
-import { HttpClient } from '@angular/common/http';
+// src/app/shared/services/favorite/favorite.service.ts
 import { Injectable } from '@angular/core';
-import { environment } from '../../../../environments/environment.prod';
-import { map, Observable } from 'rxjs';
-import { FavoriteCreateRequest } from '../../models/product/product.model';
+import { from, Observable, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
+import { ApiNative } from 'src/app/core/services/http/api.native';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class FavoriteService {
-  private readonly urlBase = `${environment.apiUrl}Product`;
+  private readonly base = '/Product';
 
-  constructor(private http: HttpClient) {}
-  /** --------------------------------------------------  Favorite ----------------------------------------------------- */
+  /** POST /Product/register/favorite  { productId }  -> boolean */
   addFavorite(productId: number): Observable<boolean> {
-    return this.http.post(`${this.urlBase}/register/favorite`, { productId }, { observe: 'response' })
-      .pipe(map(r => r.status === 201 || r.status === 204));
+    return from(ApiNative.post<void>(`${this.base}/register/favorite`, { productId }))
+      .pipe(
+        map(() => true),
+        catchError(() => of(false))
+      );
   }
 
+  /** DELETE /Product/favorite/{productId} -> boolean */
   remove(productId: number): Observable<boolean> {
-    return this.http.delete(`${this.urlBase}/favorite/${productId}`, { observe: 'response' })
-      .pipe(map(r => r.status === 204));
+    return from(ApiNative.delete<void>(`${this.base}/favorite/${productId}`))
+      .pipe(
+        map(() => true),
+        catchError(() => of(false))
+      );
   }
 
-  /** Toggle: devuelve el nuevo estado (true = ahora es favorito) */
+  /**
+   * Toggle: devuelve el nuevo estado (true = ahora es favorito).
+   * Si la llamada falla, conserva el estado anterior.
+   */
   toggle(productId: number, currentlyFavorite: boolean): Observable<boolean> {
     return (currentlyFavorite ? this.remove(productId) : this.addFavorite(productId))
-      .pipe(map(ok => ok ? !currentlyFavorite : currentlyFavorite));
+      .pipe(
+        map(ok => ok ? !currentlyFavorite : currentlyFavorite),
+        catchError(() => of(currentlyFavorite))
+      );
   }
 }

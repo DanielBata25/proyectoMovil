@@ -1,0 +1,59 @@
+.category-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.category-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  color: #111827;
+
+  app-button {
+    --app-button-margin: 0;
+    margin: 0;
+    width: auto;
+  }
+}
+
+.category-item {
+  --background: #f3f4f6;
+  border-radius: 12px;
+  padding-inline: 12px;
+}
+
+.category-item::part(native) {
+  padding-inline-start: 0;
+  padding-inline-end: 0;
+}
+
+.category-select {
+  width: 100%;
+  --placeholder-opacity: 0.6;
+}
+
+.breadcrumb-track {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.breadcrumb-track ion-chip {
+  margin: 0;
+  --background: #e8edff;
+  --color: #1d4ed8;
+  font-weight: 600;
+}
+
+.breadcrumb-track ion-chip[color="light"] {
+  --background: #e2e8f0;
+  --color: #475569;
+}
+
+@media (max-width: 768px) {
+  .product-card {
+    min-height: 240px;
+  }
+}

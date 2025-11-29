@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
-import { OrderCreateDialogComponent } from './order-create-dialog.component';
+import { OrderCreateModalComponent } from './order-create-dialog.component';
 
-describe('OrderCreateDialogComponent', () => {
-  let component: OrderCreateDialogComponent;
-  let fixture: ComponentFixture<OrderCreateDialogComponent>;
+describe('OrderCreateModalComponent', () => {
+  let component: OrderCreateModalComponent;
+  let fixture: ComponentFixture<OrderCreateModalComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ OrderCreateDialogComponent ],
+      declarations: [ OrderCreateModalComponent ],
       imports: [IonicModule.forRoot()]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(OrderCreateDialogComponent);
+    fixture = TestBed.createComponent(OrderCreateModalComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));

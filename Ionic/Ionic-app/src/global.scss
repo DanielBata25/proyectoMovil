@@ -24,6 +24,7 @@
 @import "@ionic/angular/css/text-alignment.css";
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
+@import "leaflet/dist/leaflet.css";
 
 /**
  * Ionic Dark Mode
@@ -35,3 +36,308 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 // @import '@ionic/angular/css/palettes/dark.system.css';
+
+ion-content {
+//   --offset-top: 0 !important;
+//   --offset-bottom: 0 !important;
+  --padding-top: 0 !important;
+  --padding-bottom: 0 !important;
+}
+
+:root {
+  --app-content-max-width: 920px;
+  --app-content-padding-x: 16px;
+  --app-content-padding-top: 88px;
+  --app-content-padding-bottom: 70px;
+}
+
+.page-bg {
+  --background: var(--ion-color-light, #f5f5f5);
+}
+
+.page-shell {
+  width: 100%;
+  max-width: var(--app-content-max-width);
+  margin: 0 auto;
+  padding: var(--app-content-padding-top) var(--app-content-padding-x) calc(var(--app-content-padding-bottom) + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.page-shell.page-shell--center {
+  justify-content: center;
+  align-items: center;
+  min-height: 100%;
+}
+
+.page-shell > .page-shell__section {
+  margin-block: 0;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.page-topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.topbar-pill {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 6px 14px;
+  border-radius: 999px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.18);
+  position: relative;
+}
+
+.pill-back-btn {
+  position: absolute;
+  left: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.95);
+  display: grid;
+  place-items: center;
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.15);
+}
+
+.pill-back-btn ion-icon {
+  font-size: 18px;
+  color: #0f172a;
+}
+
+.brand-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #0f172a;
+  letter-spacing: -0.2px;
+  padding-left: 32px;
+}
+
+/* ===== Listas horizontales reutilizables (Home/Productor) ===== */
+.product-section {
+  background-color: #f9f6f1;
+  border-radius: 8px;
+  padding: 16px;
+  max-width: 1400px;
+  margin: 0 auto 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #6d4c41;
+  margin: 0 0 8px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 4px;
+}
+
+.product-container {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  min-height: 1px;
+  gap: 10px;
+  padding: 6px 0;
+  scroll-behavior: smooth;
+}
+
+.product-container::-webkit-scrollbar {
+  height: 8px;
+}
+.product-container::-webkit-scrollbar-thumb {
+  background-color: #4caf50;
+  border-radius: 4px;
+}
+
+@media (max-width: 480px) {
+  .product-section {
+    padding: 12px;
+  }
+  .product-container {
+    gap: 6px;
+    padding: 4px 0;
+  }
+}
+
+/* ===== Gestión Productor (Productos y Fincas) ===== */
+.product-content {
+  --background: #f5f7fa;
+}
+
+.page-shell.product-shell {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: var(--app-content-padding-top) var(--app-content-padding-x) calc(var(--app-content-padding-bottom) + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.product-shell .filters-card,
+.product-shell .results-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 0.8rem;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+  margin-top: 0;
+}
+
+.product-shell .filters-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.product-shell .search-input {
+  --background: #f4f5f8;
+  --border-radius: 12px;
+  --box-shadow: none;
+  --placeholder-color: #9aa0ae;
+  margin-bottom: 0.2rem;
+}
+
+.product-shell .results-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.product-shell .section-title {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.product-shell .pagination,
+.product-shell .pager {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 999px;
+  background: rgba(226, 232, 240, 0.85);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}
+
+.product-shell .pagination span,
+.product-shell .pager__label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.product-shell .empty,
+.product-shell .empty-state {
+  min-height: 40vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  text-align: center;
+  color: #6b7280;
+
+  ion-icon {
+    font-size: 44px;
+    color: #9ca3af;
+  }
+
+  app-button {
+    margin-top: 0.25rem;
+    width: auto;
+  }
+}
+
+.product-shell .pager__hint-icon {
+  font-size: 1.2rem;
+  color: #4b5563;
+}
+
+.product-shell app-button.btn-inline {
+  --app-button-margin: 0;
+  margin: 0;
+  width: auto;
+}
+
+.product-shell ion-chip {
+  margin: 0;
+}
+
+.product-shell .page-topbar {
+  margin-top: 1rem;
+}
+
+.product-shell .pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.product-shell .empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+@media (max-width: 768px) {
+  .page-shell.product-shell {
+    padding: var(--app-content-padding-top) 1rem calc(var(--app-content-padding-bottom) + env(safe-area-inset-bottom));
+  }
+
+  .product-shell .filters-card,
+  .product-shell .results-card {
+    border-radius: 16px;
+    padding: 1rem;
+  }
+}
+
+.app-fab-add {
+  position: fixed;
+  right: 1rem;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 82px);
+  width: 56px;
+  height: 56px;
+  border: none;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #2d6a4f, #1b5e20);
+  color: #ffffff;
+  box-shadow: 0 10px 24px rgba(33, 94, 57, 0.35);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  z-index: 20;
+
+  ion-icon {
+    font-size: 24px;
+  }
+}

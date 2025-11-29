@@ -1,0 +1,317 @@
+.page-bg {
+  --background: #f4f6f5;
+}
+
+.detail-shell {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding-bottom: 24px;
+}
+
+.page-topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 16px 8px;
+}
+
+.back-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid #dbe2e6;
+  background: #ffffff;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+}
+
+.back-btn ion-icon {
+  font-size: 20px;
+  color: #1f3b22;
+}
+
+.topbar-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1f3b22;
+  margin: 0;
+}
+.detail-card {
+  background: transparent;
+  padding: 24px 0 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.page-title {
+  font-weight: 800;
+  font-size: 22px;
+  margin: 0;
+  color: #234b2b;
+}
+
+.hero-swiper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 26px;
+  padding: clamp(6px, 2vw, 10px);
+  background: radial-gradient(circle at top, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0));
+  box-shadow: none;
+  margin-bottom: 14px;
+}
+
+.hero-swiper swiper-container,
+.hero-swiper swiper-slide {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.hero-frame {
+  width: 100%;
+  height: 100%;
+  border-radius: 24px;
+  background: linear-gradient(145deg, #fdfefe, #f4f6fb);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(15, 23, 42, 0.06);
+}
+
+.hero-frame--static {
+  aspect-ratio: 4 / 3;
+}
+
+.hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  padding: 4px;
+  border-radius: 22px;
+  transition: transform 0.3s ease;
+}
+
+@media (hover: hover) {
+  .hero-frame:hover .hero-img {
+    transform: scale(1.02);
+  }
+}
+
+.no-img {
+  aspect-ratio: 4 / 3;
+  display: grid;
+  place-items: center;
+  color: #8b9aa0;
+  border: 2px dashed #d8e0e3;
+  border-radius: 20px;
+  margin-bottom: 12px;
+  background: #fff;
+}
+
+.block {
+  padding: 14px 0;
+}
+
+.block + .block {
+  border-top: 1px solid #eef1f2;
+}
+
+.block-header {
+  padding-bottom: 8px;
+}
+
+.title {
+  font-weight: 800;
+  font-size: 20px;
+  margin: 0 0 4px;
+  color: #1f3b22;
+}
+
+.location {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #6b7280;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.facts {
+  display: grid;
+  gap: 12px;
+  padding-top: 6px;
+}
+
+.pair {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.lbl {
+  font-size: 14px;
+  font-weight: 700;
+  color: #46525c;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.val {
+  font-size: 14px;
+  color: #111827;
+  font-weight: 600;
+}
+
+.actions ion-button {
+  --border-radius: 14px;
+}
+
+.actions app-button {
+  margin-top: 0;
+}
+
+.h-title {
+  font-weight: 700;
+  font-size: 18px;
+  margin: 0 0 8px;
+  color: #1f3b22;
+}
+
+.map-preview-card {
+  margin-top: 8px;
+  padding: 16px;
+  border-radius: 16px;
+  background: #ffffff;
+  border: 1px solid #e0e7eb;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.map-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  app-button {
+    margin: 0;
+    width: auto;
+  }
+}
+
+.section-subtitle {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1f3b22;
+}
+
+.map-preview {
+  height: 240px;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid #e4e9ed;
+  position: relative;
+  /* CRITICAL FIX: Higher z-index and forced visibility */
+  z-index: 9999 !important;
+}
+
+/* Ensure Leaflet map container fills the preview area */
+.map-preview .leaflet-container {
+  height: 100% !important;
+  width: 100% !important;
+  border-radius: 14px;
+  /* CRITICAL FIX: Highest z-index to appear above everything */
+  z-index: 9998 !important;
+  position: relative !important;
+  /* FORCE visibility */
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Force map tiles to be visible at all times */
+.map-preview .leaflet-tile-pane {
+  z-index: 9997 !important;
+}
+
+.map-preview .leaflet-tile {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Static map (view mode) - disable all interactions */
+.map-preview .leaflet-container-static {
+  pointer-events: none !important;
+  touch-action: none !important;
+}
+
+.map-preview .leaflet-container-static .leaflet-control-zoom,
+.map-preview .leaflet-container-static .leaflet-control-attribution {
+  display: none !important;
+}
+
+.map-preview .leaflet-container-static .leaflet-marker-icon {
+  pointer-events: none !important;
+}
+
+/* For edit mode, show controls normally */
+.map-preview .leaflet-container-interactive .leaflet-control-zoom,
+.map-preview .leaflet-container-interactive .leaflet-control-attribution {
+  display: block !important;
+}
+
+.map-help {
+  margin: 0;
+  font-size: 13px;
+  color: #6b7c70;
+}
+
+.center {
+  display: grid;
+  place-items: center;
+  padding: 48px 0;
+}
+
+.error-state {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 16px;
+  color: #5d6b63;
+}
+
+.error-state ion-icon {
+  font-size: 32px;
+  color: #dc2626;
+}
+
+.error-state app-button {
+  margin-top: 12px;
+  width: auto;
+}
+
+@media (max-width: 600px) {
+  .hero-swiper {
+    height: 220px;
+  }
+
+  .hero-img--static {
+    height: 220px;
+  }
+
+  .map-preview {
+    height: 220px;
+  }
+}

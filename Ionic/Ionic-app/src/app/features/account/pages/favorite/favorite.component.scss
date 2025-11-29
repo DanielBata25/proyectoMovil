@@ -1,0 +1,62 @@
+@use '../../../../shared/components/cards/card-base' as card;
+
+@include card.product-card-shell();
+
+/* Título de la página dentro del contenido */
+.page-title {
+  color: #1f3b22;
+  font-size: 24px;
+  font-weight: 800;
+  text-align: center;
+  margin: 16px 0 6px 0;
+  padding: 0;
+}
+
+.favorites-grid {
+  margin-top: 12px;
+
+  ion-col {
+    display: flex;
+  }
+
+  .product-card {
+    flex: 1;
+  }
+}
+
+.image-wrap {
+  background: linear-gradient(140deg, #f8fafc, #eef2ff);
+}
+
+.title {
+  -webkit-line-clamp: 2;
+}
+
+.accent-bar {
+  height: 4px;
+  width: 24px;
+  background: #00a650;
+  border-radius: 999px;
+  margin: 0 0 6px 8px;
+}
+
+.price {
+  font-weight: 700;
+}
+
+.empty {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #6b7280;
+  font-size: 14px;
+  padding: 24px;
+}
+
+.skeleton {
+  .content {
+    padding: 6px 0 0;
+  }
+}

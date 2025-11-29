@@ -1,0 +1,315 @@
+:host {
+  ion-content {
+    --background: var(--ion-color-light);
+  }
+}
+
+.profile-content {
+  .page-shell {
+    padding: calc(var(--app-shell-header-offset, 0px) + 20px) 12px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+}
+
+.center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 200px;
+  text-align: center;
+}
+
+// Header perfil - fondo neutro (sin verde)
+.profile-card {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e5e7eb;
+  margin-bottom: 16px;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.profile-description {
+  margin-top: 12px;
+  padding: 16px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: inset 0 0 0 1px rgba(46, 125, 50, 0.08);
+
+  .description-title {
+    margin: 0 0 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #2e7d32;
+  }
+
+  .description-text {
+    margin: 0;
+    color: #6b7280;
+    line-height: 1.5;
+    font-size: 0.95rem;
+  }
+}
+
+.profile-photo {
+  flex-shrink: 0;
+}
+
+.profile-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #f0f0f0;
+}
+
+.profile-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-name {
+  margin: 0 0 8px 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1f2937;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// Métricas - como en el código web
+.metrics {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.trust-chip, .rating-chip {
+  font-size: 0.8rem;
+  font-weight: 600;
+  height: auto;
+  padding: 4px 8px;
+  --background: #f8fafc;
+  --color: #475569;
+  --border: 1px solid #e2e8f0;
+}
+
+.trust-high {
+  --background: #e8f5e9;
+  --color: #1b5e20;
+  --border: 1px solid #c8e6c9;
+}
+
+.trust-mid {
+  --background: #e7f5ff;
+  --color: #0c5460;
+  --border: 1px solid #cfe8ff;
+}
+
+.trust-low {
+  --background: #fff3cd;
+  --color: #8a6d3b;
+  --border: 1px solid #ffe69c;
+}
+
+.rating-chip {
+  --background: #fff4e6;
+  --color: #d97706;
+  --border: 1px solid #fed7aa;
+}
+
+.qr-section {
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.qr-image {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+// Estilos para contenedores de fincas (igual que home)
+.product-section {
+  background: linear-gradient(180deg, rgba(231, 243, 234, 0.75) 0%, rgba(244, 250, 244, 0.92) 100%);
+  border-radius: 18px;
+  padding: 14px 12px 10px;
+  margin: 6px 0 4px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(46, 125, 50, 0.08);
+}
+
+.product-section .section-title {
+  margin: 0 0 8px;
+  font-size: 1.1rem;
+  color: #2e7d32;
+  font-weight: 700;
+  letter-spacing: 0.15px;
+}
+
+.product-container {
+  display: flex;
+  gap: 6px;
+  padding: 3px 4px 5px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(46, 125, 50, 0.3) transparent;
+}
+
+.product-container > app-card-farm {
+  scroll-snap-align: start;
+  flex: 0 0 35vw;
+  max-width: 160px;
+}
+
+@media (min-width: 640px) {
+  .product-container {
+    gap: 7px;
+  }
+  .product-container > app-card-farm {
+    flex-basis: 18vw;
+  }
+}
+
+@media (min-width: 992px) {
+  .product-container > app-card-farm {
+    flex-basis: 14vw;
+  }
+}
+
+// Info cards - estilo Ionic
+.info-card {
+  background: linear-gradient(180deg, rgba(231, 243, 234, 0.75) 0%, rgba(244, 250, 244, 0.92) 100%);
+  border-radius: 18px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(46, 125, 50, 0.08);
+  margin-bottom: 16px;
+
+  ion-card-header {
+    padding: 16px 16px 8px 16px;
+  }
+
+  ion-card-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2e7d32;
+  }
+
+  ion-card-content {
+    padding-top: 8px;
+  }
+}
+
+// Redes sociales - como en el código web
+.networks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.network-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(76, 81, 191, 0.15);
+  color: inherit;
+  text-decoration: none;
+  transition: background 0.2s ease;
+  font-size: 0.85rem;
+
+  ion-icon {
+    font-size: 0.9rem;
+  }
+
+  &:hover {
+    background: rgba(76, 81, 191, 0.08);
+  }
+}
+
+
+
+
+
+
+.item-image-placeholder {
+  height: 100px;
+  background: linear-gradient(140deg, #f8fafc, #eef2ff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  ion-icon {
+    font-size: 2rem;
+    color: #9ca3af;
+  }
+}
+
+.farm-placeholder {
+  background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+}
+
+.product-placeholder {
+  background: linear-gradient(135deg, #fdf2f8, #fce7f3);
+}
+
+.item-name {
+  margin: 8px 0 4px 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1f2937;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.item-location, .item-price {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  ion-icon {
+    font-size: 0.9rem;
+  }
+}
+
+.item-price {
+  color: #059669;
+  font-weight: 600;
+}
+
+.muted {
+  color: #6b7280;
+}
+
+.error {
+  color: #b91c1c;
+  font-weight: 600;
+}
+
+.error-icon {
+  font-size: 3rem;
+  color: #b91c1c;
+  margin-bottom: 12px;
+}

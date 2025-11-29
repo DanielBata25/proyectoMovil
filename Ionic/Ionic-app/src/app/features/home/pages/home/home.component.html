@@ -1,10 +1,32 @@
-<!-- home.component.html -->
-<ion-content [fullscreen]="true" class="home-content">
-  <app-carrusel></app-carrusel>
+<ion-content [fullscreen]="true" class="page-bg home-content" forceOverscroll="false">
+  <div class="page-shell home-shell">
+    <div class="home-scroll">
+      <!-- Carrusel -->
+      <app-carrusel></app-carrusel>
 
-  <app-container-card
-    [title]="'Últimos Agregados'"
-    [showHeader]="true"
-    [products]="products">
-  </app-container-card>
+      <!-- Últimos agregados -->
+      <app-container-card
+        [title]="'Últimos Agregados'"
+        [showHeader]="true"
+        [products]="products"
+        [loading]="loadingProducts">
+      </app-container-card>
+
+      <!-- Productos destacados -->
+      <app-container-card
+        [title]="'Productos Destacados'"
+        [showHeader]="true"
+        [products]="productFeatured"
+        [loading]="loadingFeatured">
+      </app-container-card>
+
+      <!-- Botón explorar -->
+      <app-button
+        class="explore-btn"
+        [text]="'Explorar Productos'"
+        [type]="'button'"
+        [redirectTo]="'/home/product'">
+      </app-button>
+    </div>
+  </div>
 </ion-content>

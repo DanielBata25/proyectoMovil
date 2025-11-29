@@ -18,12 +18,12 @@ export class CarruselComponent implements OnInit, AfterViewInit {
   @ViewChild('swiperRef', { static: false }) swiperEl!: ElementRef<HTMLElement>;
 
   slides = [
-    { image: 'assets/backgrounds/descarga.jpg', title: 'Conectando los Productores de nuestra tierra' },
-    { image: 'assets/backgrounds/vacas.jpg', title: 'Del campo a tu mesa, productos frescos y de calidad' },
-    { image: 'assets/backgrounds/plains.jpg', title: 'Apoyando a los agricultores locales' }
+    { image: 'assets/backgrounds/1.png', title: 'Conectando los Productores de nuestra tierra', link: '/home/product' },
+    { image: 'assets/backgrounds/2.png', title: 'Del campo a tu mesa, productos frescos y de calidad', link: '/home/product' },
+    { image: 'assets/backgrounds/sandia.png', title: 'Apoyando a los agricultores locales', link: '/home/product' }
   ];
 
-  ngOnInit() {}
+  ngOnInit() {} 
 
   ngAfterViewInit(): void {
     // inicializa cuando el DOM ya tiene los slides

@@ -1,3 +1,106 @@
-<p>
-  producer-profile works!
-</p>
+
+<ion-content [fullscreen]="true" class="profile-content">
+  <div class="page-shell">
+    <div class="center" *ngIf="loading">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p class="muted">Cargando información...</p>
+    </div>
+
+    <ng-container *ngIf="!loading && producer; else emptyState">
+      <!-- HEADER PERFIL -->
+      <section class="profile-card">
+        <div class="profile-header">
+          <div class="profile-photo">
+            <img
+              [src]="'https://cdn-icons-png.freepik.com/256/5447/5447108.png?semt=ais_white_label'"
+              class="profile-image"
+              alt="Foto productor"
+            />
+          </div>
+          
+          <div class="profile-info">
+            <h2 class="profile-name">{{ producer.fullName }}</h2>
+            
+            <!-- Indicadores de confianza -->
+            <div class="metrics">
+              <ion-chip
+                [ngClass]="trustLevelClass(saleNumber)"
+                class="trust-chip">
+                <ion-icon name="checkmark-circle"></ion-icon>
+                <span>Pedidos completados: {{ compact(saleNumber) }}</span>
+              </ion-chip>
+              
+              <ion-chip class="rating-chip">
+                <ion-icon name="star"></ion-icon>
+                <span>{{ formatAvg() }} / 5</span>
+              </ion-chip>
+            </div>
+          </div>
+
+          <!-- QR Code -->
+          <div class="qr-section">
+            <img
+              [src]="producer.qrUrl || 'https://cdn-icons-png.flaticon.com/512/2089/2089670.png'"
+              class="qr-image"
+              alt="QR"
+            />
+          </div>
+        </div>
+
+        <div class="profile-description" *ngIf="producer.description">
+          <h3 class="description-title">Descripción</h3>
+          <p class="description-text">{{ producer.description }}</p>
+        </div>
+      </section>
+
+      <!-- Redes sociales -->
+      <ion-card class="info-card" *ngIf="producer.networks?.length">
+        <ion-card-header>
+          <ion-card-title>Redes sociales</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="networks">
+            <a
+              *ngFor="let network of producer.networks"
+              class="network-chip"
+              [href]="normalizeUrl(network.url)"
+              target="_blank"
+              rel="noopener noreferrer">
+              <ion-icon [name]="networkIcon(network.network)"></ion-icon>
+              <span>{{ networkLabel(network.network) }}</span>
+            </a>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Fincas -->
+      <section class="product-section" *ngIf="famrs.length > 0">
+        <h2 class="section-title">Fincas</h2>
+        <div class="product-container">
+          <app-card-farm
+            *ngFor="let farm of famrs; trackBy: trackByFarm"
+            [farm]="farm"
+            [showActions]="false">
+          </app-card-farm>
+        </div>
+      </section>
+
+      <!-- Productos -->
+      <app-container-card
+        *ngIf="products.length > 0"
+        [title]="'Productos'"
+        [showHeader]="true"
+        [products]="products"
+        [loading]="loading">
+      </app-container-card>
+    </ng-container>
+
+    <ng-template #emptyState>
+      <div class="center" *ngIf="errorMessage">
+        <ion-icon name="alert-circle-outline" class="error-icon"></ion-icon>
+        <p class="error">{{ errorMessage }}</p>
+        <ion-button fill="clear" (click)="retry()">Reintentar</ion-button>
+      </div>
+    </ng-template>
+  </div>
+</ion-content>

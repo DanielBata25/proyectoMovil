@@ -7,11 +7,16 @@
   [ngClass]="{
     'btn-primary': color === 'primary',
     'btn-secondary': color === 'secondary',
-    'btn-danger': color === 'danger'
+    'btn-danger': color === 'danger',
+    'btn-success': color === 'success',
+    'btn-warning': color === 'warning',
+    'btn-tertiary': color === 'tertiary',
+    'btn-light': color === 'light'
   }"
   [attr.aria-label]="text"
 >
-  <ion-icon *ngIf="icon" class="icon-btn" aria-hidden="true" [name]="icon"></ion-icon>
+  <ion-spinner *ngIf="loading" class="btn-spinner" name="crescent"></ion-spinner>
+  <ion-icon *ngIf="icon && !loading" class="icon-btn" aria-hidden="true" [name]="icon"></ion-icon>
   <span class="label">{{ text }}</span>
 </button>
 
@@ -23,13 +28,18 @@
     (click)="onClick()"
     class="custom-btn"
     [ngClass]="{
-      'btn-primary': color === 'primary',
-      'btn-secondary': color === 'secondary',
-      'btn-danger': color === 'danger'
+    'btn-primary': color === 'primary',
+    'btn-secondary': color === 'secondary',
+    'btn-danger': color === 'danger',
+    'btn-success': color === 'success',
+    'btn-warning': color === 'warning',
+    'btn-tertiary': color === 'tertiary',
+    'btn-light': color === 'light'
     }"
     [attr.aria-label]="text"
   >
-    <ion-icon *ngIf="icon" class="icon-btn" aria-hidden="true" [name]="icon"></ion-icon>
+    <ion-spinner *ngIf="loading" class="btn-spinner" name="crescent"></ion-spinner>
+    <ion-icon *ngIf="icon && !loading" class="icon-btn" aria-hidden="true" [name]="icon"></ion-icon>
     <span class="label">{{ text }}</span>
   </button>
 </ng-template>
@@ -40,15 +50,20 @@
     [type]="type"
     [disabled]="disabled"
     (click)="onClick()"
-    class="custom-btn"
-    [ngClass]="{
-      'btn-primary': color === 'primary',
-      'btn-secondary': color === 'secondary',
-      'btn-danger': color === 'danger'
+  class="custom-btn"
+  [ngClass]="{
+    'btn-primary': color === 'primary',
+    'btn-secondary': color === 'secondary',
+    'btn-danger': color === 'danger',
+    'btn-success': color === 'success',
+    'btn-warning': color === 'warning',
+    'btn-tertiary': color === 'tertiary',
+    'btn-light': color === 'light'
     }"
     [attr.aria-label]="text"
   >
-    <ion-icon *ngIf="icon" class="icon-btn" aria-hidden="true" [name]="icon"></ion-icon>
+    <ion-spinner *ngIf="loading" class="btn-spinner" name="crescent"></ion-spinner>
+    <ion-icon *ngIf="icon && !loading" class="icon-btn" aria-hidden="true" [name]="icon"></ion-icon>
     <span class="label">{{ text }}</span>
   </button>
 </ng-template>

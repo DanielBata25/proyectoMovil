@@ -1,3 +1,19 @@
-<p>
-  forbidden works!
-</p>
+<ion-content class="ion-padding page-bg">
+  <div class="forbidden-wrapper">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>403 - Acceso denegado</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p>No tienes permisos para esta sección.</p>
+
+        <div class="form-actions">
+          <ion-button expand="block" color="primary" (click)="goBack()">
+            <ion-icon slot="start" name="arrow-back"></ion-icon>
+            Volver
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

@@ -1,0 +1,163 @@
+<!-- <ion-header class="notif-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <ion-title>Notificaciones</ion-title>
+
+    <ion-buttons slot="end">
+      <ion-button (click)="refreshData()" [disabled]="loading">
+        <ion-icon name="refresh"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header> -->
+
+<ion-content [fullscreen]="true" class="page-bg">
+
+  <div class="page-shell product-shell">
+    
+    <div class="notifications-container notifications-ml">
+      <div class="notifications-card">
+        
+       
+
+        <!-- Tabs/ filtros superiores -->
+        <div class="filters-section tabs-row">
+          <div class="filter-tabs">
+            <button
+              type="button"
+              class="tab-btn"
+              [class.active]="currentFilter === 'all'"
+              (click)="changeFilter('all')"
+              aria-label="Ver todas las notificaciones">
+              Todas
+              <ion-badge *ngIf="currentItems.length" color="light">{{ currentItems.length }}</ion-badge>
+            </button>
+
+            <button
+              type="button"
+              class="tab-btn"
+              [class.active]="currentFilter === 'unread'"
+              (click)="changeFilter('unread')"
+              aria-label="Ver no leídas">
+              No leídas
+              <ion-badge *ngIf="unreadCount > 0" color="danger">{{ unreadCount }}</ion-badge>
+            </button>
+          </div>
+        </div>
+
+        <!-- Información del filtro actual -->
+        <div class="filter-info">
+          <span *ngIf="currentFilter === 'all'">
+            Mostrando {{ currentItems.length }} notificaciones
+          </span>
+          <span *ngIf="currentFilter === 'unread'">
+            {{ currentItems.length }} notificaciones no leídas
+          </span>
+        </div>
+
+        <!-- Contenido de notificaciones -->
+        <div class="notifications-content notif-surface">
+          
+          <div *ngIf="loading" class="loading-container">
+            <ion-spinner name="crescent"></ion-spinner>
+            <p>Cargando notificaciones...</p>
+          </div>
+
+          <ng-container *ngIf="!loading">
+
+            <ng-container *ngIf="currentItems.length > 0; else empty">
+
+              <div class="notif-list">
+
+                <div 
+                  class="notif-item" 
+                  *ngFor="let n of currentItems; trackBy: trackByNotificationId"
+                  [class.unread]="!n.isRead"
+                  (click)="onOpenItem(n)"
+                >
+
+                  <div class="left-accent" *ngIf="!n.isRead"></div>
+
+                  <ion-icon
+                    class="item-icon"
+                    [name]="getNotificationIcon(n)"
+                    [class.read]="n.isRead"
+                  ></ion-icon>
+
+                  <div class="item-content">
+                    <div class="item-header">
+                      <div class="item-title" [class.unread]="!n.isRead">
+                        {{ n.title }}
+                      </div>
+                    </div>
+
+                    <div class="item-msg" *ngIf="n.message">
+                      {{ n.message }}
+                    </div>
+
+                    <div class="item-meta">
+                      <span class="time">{{ timeAgo(n.createAt) }}</span>
+                      <span class="type" *ngIf="n.relatedType">
+                        {{ n.relatedType | titlecase }}
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- Acciones de la notificación -->
+                  <div class="item-actions">
+                    <!-- Botón para marcar como leída -->
+                    <ion-button
+                      fill="clear"
+                      class="read-btn"
+                      *ngIf="!n.isRead"
+                      (click)="onMarkRead(n); $event.stopPropagation()"
+                      size="small"
+                    >
+                      <ion-icon name="checkmark-done-outline"></ion-icon>
+                    </ion-button>
+
+                    <!-- Botón de acción si hay ruta relacionada -->
+                    <ion-button
+                      *ngIf="n.relatedRoute"
+                      fill="clear"
+                      class="action-btn"
+                      (click)="onOpenItem(n); $event.stopPropagation()"
+                      size="small"
+                      color="primary"
+                    >
+                      Ver más
+                    </ion-button>
+                  </div>
+
+                </div>
+
+              </div>
+            </ng-container>
+
+            <ng-template #empty>
+              <div class="empty-state">
+                <ion-icon name="notifications-outline" class="empty-icon"></ion-icon>
+                <h3>No hay notificaciones</h3>
+                <p *ngIf="currentFilter === 'all'">
+                  Aún no tienes notificaciones
+                </p>
+                <p *ngIf="currentFilter === 'unread'">
+                  ¡Excelente! No tienes notificaciones pendientes
+                </p>
+              </div>
+            </ng-template>
+
+          </ng-container>
+          
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</ion-content>

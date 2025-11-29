@@ -1,0 +1,9 @@
+.chat-page {
+  --background: var(--app-bg, #f4f7fb);
+}
+
+.chat-shell,
+.chat-header,
+.chat-card {
+  display: none;
+}

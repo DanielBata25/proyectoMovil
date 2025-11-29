@@ -1,3 +1,19 @@
-<p>
-  producer-layout works!
-</p>
+<ion-header>
+  <ion-toolbar color="light">
+    <ion-title>Productor</ion-title>
+  </ion-toolbar>
+
+  <ion-segment [value]="currentTab" (ionChange)="onTabChange($event)" class="producer-segment">
+    <ion-segment-button value="summary">
+      <ion-label>Resumen</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="management">
+      <ion-label>Gestión</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+</ion-header>
+
+<ion-content fullscreen class="producer-content">
+  <router-outlet></router-outlet>
+</ion-content>
+

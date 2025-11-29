@@ -1,8 +1,7 @@
 // src/app/shared/services/review/review.service.ts
-import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { environment } from '../../../../environments/environment';
+import { Injectable } from '@angular/core';
+import { from, Observable } from 'rxjs';
+import { ApiNative } from 'src/app/core/services/http/api.native';
 import {
   ReviewRegisterModel,
   ReviewSelectModel,
@@ -10,26 +9,33 @@ import {
 
 @Injectable({ providedIn: 'root' })
 export class ReviewService {
-  private http = inject(HttpClient);
+  /** Base relativa */
+  private readonly base = '/Review';
 
-  // si environment.apiUrl ya termina en '/api/v1/', esto queda: .../api/v1/Review
-  // (asegúrate de que NO tenga doble slash al final)
-  private baseUrl = `${environment.apiUrl}Review`;
-
-  /** GET /api/v1/Review/by-product/:id */
+  /** GET /Review/by-product/:id */
   getReviewByProduct(productId: number): Observable<ReviewSelectModel[]> {
-    return this.http.get<ReviewSelectModel[]>(
-      `${this.baseUrl}/by-product/${productId}`
+    return from(
+      ApiNative.get<ReviewSelectModel[]>(`${this.base}/by-product/${productId}`)
     );
   }
 
-  /** POST /api/v1/Review  (SIN /create) */
+  /** POST /Review/create (JSON) */
   createReview(data: ReviewRegisterModel): Observable<ReviewSelectModel> {
-    return this.http.post<ReviewSelectModel>(this.baseUrl, data);
+    const comment = (data.comment ?? '').trim();
+    const rating = Math.max(1, Math.min(5, Math.round(Number(data.rating ?? 0))));
+    const payload = {
+      ProductId: data.productId,
+      Rating: rating,
+      Comment: comment,
+    } as const;
+
+    console.log('[ReviewService][createReview] Payload enviado:', payload);
+
+    return from(ApiNative.post<ReviewSelectModel>(`${this.base}/create`, payload));
   }
 
-  /** DELETE /api/v1/Review/:id */
+  /** DELETE /Review/:id */
   deleteReview(reviewId: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/${reviewId}`);
+    return from(ApiNative.delete<void>(`${this.base}/${reviewId}`));
   }
 }

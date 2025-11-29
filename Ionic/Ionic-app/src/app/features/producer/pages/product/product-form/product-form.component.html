@@ -1,0 +1,89 @@
+<ion-content [fullscreen]="true" class="page-bg form-content">
+  <div class="page-shell product-shell form-shell">
+  <div class="form-wrapper">
+
+    <form class="section-card">
+      <h2 class="section-title">Datos del Producto</h2>
+
+      <!-- === IMAGENES === -->
+      <div class="section-card inner-card">
+        <h2 class="section-title">Imagenes del Producto</h2>
+
+        <div class="upload-box" (click)="fileInput.click()">
+          <input type="file" #fileInput accept="image/*" multiple hidden (change)="onFileChange($event)" />
+          <div class="upload-inner">
+            <ion-icon name="cloud-upload-outline" class="upload-icon"></ion-icon>
+            <h3>Subir imagen</h3>
+            <p>Presiona para poder subir una imagen</p>
+            <ion-button color="medium" fill="solid" size="small">Subir</ion-button>
+          </div>
+        </div>
+
+        <div class="images-preview" *ngIf="imagesPreview.length || existingImages.length">
+          <div class="img-container" *ngFor="let img of imagesPreview; let i = index">
+            <img [src]="img" />
+            <ion-button fill="clear" color="danger" (click)="removeImage(i)">
+              <ion-icon name="trash-outline"></ion-icon>
+            </ion-button>
+          </div>
+
+          <div class="img-container" *ngFor="let img of existingImages; let i = index">
+            <img [src]="img.imageUrl" />
+            <ion-button fill="clear" color="danger" (click)="removeImage(i, true)">
+              <ion-icon name="trash-outline"></ion-icon>
+            </ion-button>
+          </div>
+        </div>
+      </div>
+
+      <!-- === DATOS GENERALES === -->
+      <h2 class="section-title">Detalles del Producto</h2>
+
+      <div class="form-section" [formGroup]="generalGroup">
+        <ion-input label="Nombre" labelPlacement="floating" formControlName="name" fill="outline"></ion-input>
+
+        <ion-input label="Precio" labelPlacement="floating" type="number" formControlName="price" fill="outline"></ion-input>
+
+        <ion-select label="Unidad" labelPlacement="floating" formControlName="unit" fill="outline">
+          <ion-select-option *ngFor="let u of unitOptions" [value]="u">{{ u }}</ion-select-option>
+        </ion-select>
+
+        <ion-input label="Produccion" labelPlacement="floating" formControlName="production" fill="outline"></ion-input>
+
+        <ion-textarea label="Descripcion" labelPlacement="floating" rows="3" formControlName="description" fill="outline"></ion-textarea>
+      </div>
+
+      <div class="form-section" [formGroup]="detallesGroup">
+        <ion-input label="Stock Disponible" labelPlacement="floating" type="number" formControlName="stock" fill="outline"></ion-input>
+
+        <ion-select label="Estado" labelPlacement="floating" formControlName="status" fill="outline">
+          <ion-select-option [value]="true">Activo</ion-select-option>
+          <ion-select-option [value]="false">Inactivo</ion-select-option>
+        </ion-select>
+
+        <ion-select label="Envio incluido" labelPlacement="floating" formControlName="shippingIncluded" fill="outline">
+          <ion-select-option [value]="true">Si</ion-select-option>
+          <ion-select-option [value]="false">No</ion-select-option>
+        </ion-select>
+
+        <ion-select label="Categoria" labelPlacement="floating" formControlName="categoryId" fill="outline">
+          <ion-select-option *ngFor="let c of categories" [value]="c.id">{{ c.name }}</ion-select-option>
+        </ion-select>
+
+        <ion-select label="Fincas" labelPlacement="floating" multiple formControlName="farmIds" fill="outline" [compareWith]="compareWithIds">
+          <ion-select-option *ngFor="let f of farms" [value]="f.id">{{ f.name }}</ion-select-option>
+        </ion-select>
+      </div>
+
+      <!-- === BOTONES === -->
+      <div class="inline-actions">
+        <ion-button type="button" color="medium" expand="block" fill="outline" (click)="goBack()">Cancelar</ion-button>
+        <ion-button type="button" color="success" expand="block" (click)="submit()">
+          {{ isEdit ? 'Actualizar' : 'Crear' }}
+        </ion-button>
+      </div>
+
+    </form>
+  </div>
+  </div>
+</ion-content>

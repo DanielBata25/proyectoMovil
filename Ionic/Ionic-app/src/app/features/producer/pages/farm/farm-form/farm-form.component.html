@@ -1,0 +1,161 @@
+<ion-content [fullscreen]="true" class="page-bg form-content">
+  <ion-progress-bar *ngIf="isLoadingFarm" type="indeterminate"></ion-progress-bar>
+
+  <div class="page-shell product-shell form-shell">
+  <div class="form-wrapper">
+    <form class="section-card" [formGroup]="form" (ngSubmit)="onSubmit()">
+      <!-- <h2 class="section-title">Datos de la Finca</h2> -->
+
+      <div class="section-card inner-card upload-card">
+        <h2 class="section-title">Imagenes de la finca</h2>
+
+        <div class="upload-box" (click)="fileInput.click()">
+          <input
+            #fileInput
+            type="file"
+            multiple
+            accept="image/*"
+            hidden
+            (change)="onFilesSelected($event)" />
+          <div class="upload-inner">
+            <ion-icon name="cloud-upload-outline" class="upload-icon"></ion-icon>
+            <h3>Subir imagen</h3>
+            <p>Presiona para poder subir una imagen</p>
+            <ion-button color="medium" fill="solid" size="small">Subir</ion-button>
+          </div>
+        </div>
+
+        <div class="images-preview" *ngIf="selectedPreviews.length || existingImages.length">
+          <div class="img-container" *ngFor="let img of selectedPreviews; let i = index">
+            <img [src]="img" alt="Nueva imagen seleccionada" />
+            <ion-button fill="clear" color="danger" (click)="removeSelectedFile(i)">
+              <ion-icon name="trash-outline"></ion-icon>
+            </ion-button>
+          </div>
+
+          <div class="img-container" *ngFor="let img of existingImages; let i = index">
+            <img [src]="img.url" alt="Imagen existente" />
+            <ion-button fill="clear" color="danger" (click)="removeExistingImage(i)">
+              <ion-icon name="trash-outline"></ion-icon>
+            </ion-button>
+          </div>
+        </div>
+      </div>
+
+      <h2 class="section-title">Detalles</h2>
+      <div class="form-section">
+        <ion-input
+          label="Nombre"
+          labelPlacement="floating"
+          fill="outline"
+          formControlName="name"></ion-input>
+
+        <ion-input
+          label="Hectareas"
+          labelPlacement="floating"
+          type="number"
+          min="0"
+          step="0.01"
+          fill="outline"
+          formControlName="hectares"></ion-input>
+
+        <ion-input
+          label="Altitud (msnm)"
+          labelPlacement="floating"
+          type="number"
+          inputmode="numeric"
+          placeholder="Ejemplo: 1450"
+          helperText="Ingresa un valor entre -200 y 4 000 msnm."
+          errorText="La altitud debe estar entre -200 y 4 000 msnm."
+          fill="outline"
+          formControlName="altitude"></ion-input>
+
+        <ion-input
+          label="Latitud"
+          labelPlacement="floating"
+          type="number"
+          inputmode="decimal"
+          step="0.0001"
+          min="-90"
+          max="90"
+          fill="outline"
+          placeholder="Ejemplo: 2.9275"
+          helperText="Valores válidos entre -90 y 90. Usa 4 decimales."
+          errorText="Ingresa una latitud entre -90 y 90"
+          formControlName="latitude"></ion-input>
+
+        <ion-input
+          label="Longitud"
+          labelPlacement="floating"
+          type="number"
+          inputmode="decimal"
+          step="0.0001"
+          min="-180"
+          max="180"
+          fill="outline"
+          placeholder="Ejemplo: -75.2875"
+          helperText="Valores válidos entre -180 y 180. Oeste usa signo negativo."
+          errorText="Ingresa una longitud entre -180 y 180"
+          formControlName="longitude"></ion-input>
+      </div>
+
+      <div class="map-preview-card" *ngIf="hasMapSupport">
+        <div class="map-header">
+          <h3 class="section-subtitle">Vista previa en mapa</h3>
+          <app-button
+            class="btn-inline"
+            color="secondary"
+            icon="locate-outline"
+            [text]="'Centrar en coordenadas'"
+            type="button"
+            [disabled]="!mapReady"
+            (clicked)="centerMapOnInputs()">
+          </app-button>
+        </div>
+        <div class="map-preview" #mapContainer></div>
+        <p class="map-help">
+          Ajusta los campos de latitud y longitud para visualizar la ubicación aproximada de la finca.
+        </p>
+      </div>
+
+      <h2 class="section-title">Ubicacion</h2>
+      <div class="form-section">
+        <ion-select
+          label="Departamento"
+          labelPlacement="floating"
+          fill="outline"
+          formControlName="departmentId">
+          <ion-select-option *ngFor="let dept of departments; trackBy: trackById" [value]="dept.id">
+            {{ dept.name }}
+          </ion-select-option>
+        </ion-select>
+
+        <ion-select
+          label="Ciudad"
+          labelPlacement="floating"
+          fill="outline"
+          formControlName="cityId">
+          <ion-select-option *ngFor="let city of cities; trackBy: trackById" [value]="city.id">
+            {{ city.name }}
+          </ion-select-option>
+        </ion-select>
+      </div>
+
+      <div class="inline-actions">
+        <app-button
+          color="secondary"
+          [text]="'Cancelar'"
+          type="button"
+          (clicked)="onCancel()">
+        </app-button>
+        <app-button
+          color="primary"
+          [text]="isEdit ? 'Actualizar' : 'Crear'"
+          type="submit"
+          [disabled]="form.invalid || isSaving">
+        </app-button>
+      </div>
+    </form>
+  </div>
+  </div>
+</ion-content>

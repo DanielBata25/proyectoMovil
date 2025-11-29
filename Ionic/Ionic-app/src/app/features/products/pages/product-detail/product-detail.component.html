@@ -1,183 +1,215 @@
-<!-- Header nativo: evita overlays raros y respeta el área segura -->
-<!-- <ion-header translucent="true">
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/products"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Detalle</ion-title>
-  </ion-toolbar>
-</ion-header> -->
+<ion-content [fullscreen]="true" class="page-bg" forceOverscroll="false">
+  <div class="page-shell detail-shell">
 
-<!-- El ion-content SIEMPRE debe renderizar; controla el interior con *ngIf -->
-<ion-content class="detail-content" [fullscreen]="true">
-  <ng-container *ngIf="product; else skeleton">
-    <!-- Carrusel de imágenes (Swiper Web Component) -->
-    <ng-container *ngIf="(product.images?.length || 0) > 0; else noImg">
-      <swiper-container
-        class="gallery-swiper"
-        init="true"
-        effect="slide"
-        slides-per-view="1"
-        [attr.loop]="(product.images?.length || 0) > 1 ? 'true' : null"
-        [attr.autoplay]="(product.images?.length || 0) > 1 ? 'true' : null"
-        [attr.autoplay-delay]="(product.images?.length || 0) > 1 ? '3500' : null"
-        [attr.pagination]="(product.images?.length || 0) > 1 ? 'true' : null">
-        <swiper-slide *ngFor="let img of product.images">
-          <img [src]="img.imageUrl" (error)="onImgError($event)" alt="Foto del producto" />
-        </swiper-slide>
-      </swiper-container>
-    </ng-container>
-
-    <ng-template #noImg>
-      <div class="noimg">
-        <img src="assets/icon/shapes.svg" alt="sin imagen" />
-      </div>
-    </ng-template>
-
-    <!-- Título y productor -->
-    <div class="section">
-      <h1 class="title">{{ product.name }}</h1>
-      <div class="producer">
-        <span class="muted">Productor:</span>
-        <span class="link">{{ product.personName }}</span>
-      </div>
+    <div class="center" *ngIf="loadingProduct">
+      <ion-spinner name="crescent"></ion-spinner>
     </div>
 
-    <!-- Precio -->
-    <div class="section">
-      <h2 class="sec-title">Precio</h2>
-      <div class="price">
-        {{ product.price | currency:'COP':'symbol' }}
-        <span class="unit">/ {{ product.unit || 'unidad' }}</span>
+    <section class="detail-card" *ngIf="!loadingProduct && product">
+
+
+      <div class="hero-swiper">
+        <button
+          type="button"
+          class="fav-floating"
+          *ngIf="me$ | async"
+          [disabled]="favoriteLoading"
+          [class.fav-floating--active]="product.isFavorite"
+          (click)="toggleFavorite($event)"
+          aria-label="Agregar a favoritos">
+          <ion-icon [name]="product.isFavorite ? 'heart' : 'heart-outline'"></ion-icon>
+        </button>
+
+        <ng-container *ngIf="galleryImages.length; else noImg">
+          <swiper-container #swiperRef init="false" *ngIf="galleryImages.length > 1; else singleImage"
+            [attr.slides-per-view]="slidesOpts.slidesPerView" [attr.space-between]="slidesOpts.spaceBetween"
+            [attr.pagination]="slidesOpts.pagination" [attr.autoplay]="'true'" [attr.autoplay-delay]="'4000'"
+            [attr.autoplay-disable-on-interaction]="'false'">
+            <swiper-slide *ngFor="let url of galleryImages">
+              <div class="hero-frame">
+                <img [src]="url" alt="Imagen del producto" class="hero-img" (error)="onImageError($event)" />
+              </div>
+            </swiper-slide>
+          </swiper-container>
+          <ng-template #singleImage>
+            <div class="hero-frame hero-frame--static">
+              <img [src]="galleryImages[0]" alt="Imagen del producto" class="hero-img" (error)="onImageError($event)" />
+            </div>
+          </ng-template>
+        </ng-container>
       </div>
-    </div>
-
-    <!-- Info suelta -->
-    <div class="section grid-pairs">
-      <div class="pair">
-        <div class="lbl">Información de producción</div>
-        <div class="val">{{ product.production || '—' }}</div>
-      </div>
-      <div class="pair">
-        <div class="lbl">Cantidad disponible</div>
-        <div class="val">{{ product.stock }} {{ product.unit }}</div>
-      </div>
-      <div class="pair">
-        <div class="lbl">Ubicación</div>
-        <div class="val">{{ product.cityName }}, {{ product.departmentName }}</div>
-      </div>
-    </div>
-
-    <!-- CTA -->
-    <div class="section">
-      <app-button
-        [text]="'Añadir al pedido'"
-        [type]="'button'"
-        [color]="'primary'"
-        [icon]="'cart'">
-      </app-button>
-    </div>
-
-    <!-- Descripción -->
-    <div class="section">
-      <h2 class="sec-title">Descripción</h2>
-      <p class="text">{{ product.description || 'Sin descripción.' }}</p>
-    </div>
-
-    <!-- Calificación -->
-    <div class="section">
-      <h2 class="sec-title">Calificación</h2>
-
-      <div class="rating-head">
-        <div class="avg">{{ averageRating | number:'1.1-1' }}</div>
-        <div class="stars">
-          <ion-icon *ngFor="let s of [1,2,3,4,5]"
-                    [name]="s <= Math.round(averageRating) ? 'star' : 'star-outline'">
-          </ion-icon>
-        </div>
-        <div class="muted small">{{ totalReviews }} reseñas</div>
-      </div>
-
-      <div class="dist" *ngFor="let item of distribution">
-        <span class="dlabel">{{ item.star }}</span>
-        <div class="bar"><div class="fill" [style.width.%]="item.percentage"></div></div>
-        <span class="dpct">{{ item.percentage | number:'1.0-0' }}%</span>
-      </div>
-    </div>
-
-    <!-- Reseñas -->
-    <div class="section">
-      <h2 class="sec-title">Reseñas</h2>
-
-      <ng-container *ngIf="(me$ | async) as me; else mustLogin">
-        <div class="new-review">
-          <div class="pick-stars">
-            <ion-icon
-              *ngFor="let _ of stars; let i = index"
-              [name]="i < selectedRating ? 'star' : 'star-outline'"
-              (click)="setRating(i+1)">
-            </ion-icon>
-          </div>
-
-          <ion-textarea
-            [(ngModel)]="newReview"
-            placeholder="Escribe tu reseña"
-            auto-grow="true"
-            class="textarea">
-          </ion-textarea>
-
-          <app-button
-            [text]="'Enviar reseña'"
-            [type]="'button'"
-            [color]="'primary'"
-            (click)="submitReview()"
-            [disabled]="selectedRating === 0 || !newReview.trim()">
-          </app-button>
-        </div>
-      </ng-container>
-      <ng-template #mustLogin>
-        <p class="muted">Inicia sesión para dejar una reseña.</p>
+      <ng-template #noImg>
+        <div class="no-img">Sin imagenes</div>
       </ng-template>
 
-      <ng-container *ngIf="!loadingReviews; else loadingTpl">
-        <div *ngIf="reviews?.length; else emptyTpl" class="reviews">
-          <div class="item" *ngFor="let r of reviews; trackBy: trackByReview">
-            <div class="head">
-              <div>
-                <div class="name">{{ r.userName }}</div>
-                <div class="muted small">{{ r.createAt | date:'mediumDate':'':'es-CO' }}</div>
-              </div>
-              <div class="stars small">
-                <ion-icon *ngFor="let s of [1,2,3,4,5]"
-                          [name]="s <= r.rating ? 'star' : 'star-outline'">
-                </ion-icon>
-              </div>
-            </div>
-            <p class="text">{{ r.comment }}</p>
+      <div class="block">
+        <h2 class="title">{{ product.name }}</h2>
+        <div class="producer">
+          <ion-icon name="person-circle" class="pr-icon"></ion-icon>
+          <button class="link" (click)="onDetail(product)">{{ product.personName }}</button>
+        </div>
+      </div>
 
-            <div class="row-end" *ngIf="(me$ | async)?.id === r.userId">
+      <div class="block facts">
+        <div class="pair">
+          <div class="lbl">Finca</div>
+          <div class="val">{{ product.farmName }}</div>
+        </div>
+        <div class="pair">
+          <div class="lbl">Categoria</div>
+          <div class="val">{{ product.categoryName }}</div>
+        </div>
+        <div class="pair">
+          <div class="lbl">Tipo de unidad</div>
+          <div class="val">{{ product.unit }}</div>
+        </div>
+        <div class="pair" *ngIf="product.stock !== null && product.stock !== undefined">
+          <div class="lbl">Disponible</div>
+          <div class="val">{{ product.stock }} {{ product.unit || '' }}</div>
+        </div>
+
+        <div class="pair price-line">
+          <div>
+            <div class="lbl">Precio</div>
+            <div class="val strong">{{ product.price | currency:'COP':'symbol' }}</div>
+          </div>
+          <ion-badge *ngIf="product.shippingIncluded" color="success" class="chip">Envio gratis</ion-badge>
+          <ion-badge *ngIf="!product.shippingIncluded" color="medium" class="chip">No incluye envio</ion-badge>
+        </div>
+        <div class="pair with-icon">
+          <ion-icon name="location" class="ic"></ion-icon>
+          <div class="lbl">Ubicacion</div>
+          <div class="val">{{ product.cityName }}, {{ product.departmentName }}</div>
+        </div>
+      </div>
+
+      <div class="block cta" *ngIf="!isOwnProduct">
+        <app-button
+          [text]="'Añadir al pedido'"
+          icon="cart"
+          color="primary"
+          type="button"
+          [disabled]="loadingProduct || product.stock <= 0"
+          (clicked)="openCreateOrder()">
+        </app-button>
+      </div>
+
+      <div class="block">
+        <h3 class="h-title">Descripcion</h3>
+        <p class="body-text">{{ product.description }}</p>
+      </div>
+
+      <div class="block soft">
+        <h3 class="h-title">Mas informacion</h3>
+        <div class="pair">
+          <div class="lbl">Produccion</div>
+          <div class="val">{{ product.production }}</div>
+        </div>
+      </div>
+
+      <div class="block">
+        <h3 class="h-title">Resenas</h3>
+
+        <div class="rating-panel">
+          <div class="left">
+            <div class="score">{{ averageRating | number:'1.1-1' }}</div>
+            <div class="star-row">
+              <ion-icon *ngFor="let s of starScale"
+                [name]="s <= Math.round(averageRating) ? 'star' : 'star-outline'"></ion-icon>
+            </div>
+            <div class="muted small">{{ totalReviews }} resenas</div>
+          </div>
+          <div class="right">
+            <div class="dist-row" *ngFor="let item of distribution">
+              <span class="d-label">{{ item.star }}</span>
+              <div class="prog">
+                <div class="prog-in" [style.width.%]="item.percentage"></div>
+              </div>
+              <span class="d-val">{{ item.percentage | number:'1.0-0' }}%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="block" *ngIf="!isOwnProduct">
+        <h3 class="h-title">Escribir una resena</h3>
+
+        <ng-container *ngIf="me$ | async as me">
+          <div *ngIf="me; else mustLogin" class="review-editor">
+            <div class="star-picker">
+              <button type="button" class="star-btn" *ngFor="let star of starScale"
+                [class.active]="star <= (hoverRating || selectedRating)" (mouseenter)="onMouseEnter(star)"
+                (mouseleave)="onMouseLeave()" (click)="setRating(star)">
+                <ion-icon [name]="star <= (hoverRating || selectedRating) ? 'star' : 'star-outline'"></ion-icon>
+              </button>
+              <span class="star-hint" *ngIf="ratingLabel">{{ ratingLabel }}</span>
+            </div>
+
+            <ion-textarea [(ngModel)]="newReview" placeholder="Comparte tu experiencia" autoGrow="true"
+              class="review-textarea">
+            </ion-textarea>
+
+            <div class="row-end">
               <app-button
-                [text]="'Eliminar'"
-                [type]="'button'"
-                [color]="'danger'"
-                (click)="deleteReview(r.id)">
+                class="btn-send"
+                [text]="'Enviar reseña'"
+                color="primary"
+                type="button"
+                [loading]="sendingReview"
+                [disabled]="selectedRating === 0 || !newReview.trim() || (sendingReview)"
+                (clicked)="submitReview()">
               </app-button>
             </div>
           </div>
+        </ng-container>
+        <ng-template #mustLogin>
+          <div class="muted">Inicia sesion para dejar una reseña.</div>
+        </ng-template>
+      </div>
+
+      <div class="block">
+        <h3 class="h-title">Comentarios</h3>
+
+        <div *ngIf="!loadingReviews; else loadingTpl">
+          <div class="reviews" *ngIf="reviews.length; else emptyTpl">
+            <div class="r-item" *ngFor="let r of reviews; trackBy: trackByReview">
+              <div class="r-head">
+                <div class="who">
+                  <div class="avatar">{{ r.userName[0] || 'U' }}</div>
+                  <div>
+                    <div class="name">{{ r.userName }}</div>
+                    <div class="date muted small">{{ r.createAt | date:'mediumDate':'':'es-CO' }}</div>
+                    <div class="mini-stars">
+                      <ion-icon *ngFor="let s of starScale" [name]="s <= r.rating ? 'star' : 'star-outline'"></ion-icon>
+                    </div>
+                  </div>
+                </div>
+                <app-button
+                  *ngIf="(me$ | async)?.id === r.userId"
+                  class="btn-inline"
+                  [text]="'Eliminar'"
+                  color="danger"
+                  type="button"
+                  (clicked)="deleteReview(r.id)">
+                </app-button>
+              </div>
+              <p class="body-text">{{ r.comment }}</p>
+            </div>
+          </div>
         </div>
-      </ng-container>
-      <ng-template #loadingTpl><p class="muted">Cargando reseñas…</p></ng-template>
-      <ng-template #emptyTpl><p class="muted">Aún no hay reseñas para este producto.</p></ng-template>
-    </div>
 
-    <div class="bottom-space"></div>
-  </ng-container>
+        <ng-template #loadingTpl>
+          <div class="muted">Cargando reseñas...</div>
+        </ng-template>
+        <ng-template #emptyTpl>
+          <div class="muted">Aun no hay reseñas para este producto.</div>
+        </ng-template>
+      </div>
 
-  <!-- Skeleton mientras carga el producto -->
-  <ng-template #skeleton>
-    <div class="skeleton hero"></div>
-    <div class="skeleton line"></div>
-    <div class="skeleton line"></div>
-    <div class="skeleton block"></div>
-  </ng-template>
+      <div class="bottom-space"></div>
+    </section>
+  </div>
 </ion-content>
+
+
+

@@ -1,105 +1,94 @@
 import { Routes } from '@angular/router';
 import { InfoComponent } from './pages/info/info.component';
-
 import { FavoriteComponent } from './pages/favorite/favorite.component';
 import { SupportComponent } from './pages/support/support.component';
-
-import { roleMatchGuard } from 'src/app/core/guards/role-match/role-match.guard';
 import { FormChangePasswordComponent } from './components/form-change-password/form-change-password/form-change-password.component';
 import { UpdatePersonComponent } from './components/update-person/update-person/update-person.component';
 
+
 export const ACCOUNT_ROUTES: Routes = [
-    {
+  {
+    path: '',
+    children: [
+      {
         path: '',
+        redirectTo: 'info',
+        pathMatch: 'full',
+      },
+      {
+        path: 'info',
         children: [
-            {
-                path: '',
-                redirectTo: 'info',
-                //canMatch: [roleMatchGuard],
-                //data: { roles: ['Consumer'] },
-                pathMatch: 'full',
-            },
-            // Home info
-            {
-                path: 'info',
-                title: 'Informacion',
-                canMatch: [roleMatchGuard],
-                data: { roles: ['Consumer'] },
-                component: InfoComponent,
-            },
-            {
-                path: 'info/changePassword',
-                title: 'Cambiar Contraseña',
-                canMatch: [roleMatchGuard],
-                data: { roles: ['Consumer'] },
-                component: FormChangePasswordComponent,
-            },
-            {
-                path: 'info/updateDataBasic',
-                title: 'Actualizar Datos Basicos',
-                canMatch: [roleMatchGuard],
-                data: { roles: ['Consumer'] },
-                component: UpdatePersonComponent,
-            },
-            {
-                path: 'favorite',
-                title: 'Ver Favoritos',
-                canMatch: [roleMatchGuard],
-                data: { roles: ['Consumer'] },
-                component: FavoriteComponent,
-            },
-
-            {
-                path: 'support',
-                title: 'Soporte',
-                canMatch: [roleMatchGuard],
-                data: { roles: ['Consumer'] },
-                component: SupportComponent,
-            },
-
-            // --- PRODUCER ---
-
-            // Ruta pública de onboarding (NO canMatch)
-            {
-                path: 'become-producer',
-                title: 'Convertirme en productor',
-                loadComponent: () =>
-                    import('../producer/pages/onboarding/onboarding.component').then(
-                        (m) => m.OnboardingComponent
-                    ),
-            },
-            // {
-            //     path: 'register-producer',
-            //     title: 'Crear en productor',
-            //     loadComponent: () =>
-            //         import(
-            //             '../producer/pages/farm/farm-with-producer-form/farm-with-producer-form.component'
-            //         ).then((m) => m.FarmWithProducerFormComponent),
-            // },
-
-            // {
-            //     path: 'producer',
-            //     canMatch: [roleMatchGuard],
-            //     data: { roles: ['Producer'] },
-            //     loadChildren: () =>
-            //         import('../producer/producer.routes').then((m) => m.PRODUCER_ROUTES),
-            // },
-            //   {
-            //     path: 'security',
-            //     canMatch: [roleMatchGuard],
-            //     data: { roles: ['Admin'] },
-            //     loadChildren: () =>
-            //       import('../security/security.routes').then((m) => m.SECURITY_ROUTES),
-            //   },
-            //   {
-            //     path: 'parameters',
-            //     canMatch: [roleMatchGuard],
-            //     data: { roles: ['Admin'] },
-            //     loadChildren: () =>
-            //       import('../parameters/parameters.routes').then(
-            //         (m) => m.PARAMETERS_ROUTES
-            //       ),
-
+          {
+            path: '',
+            pathMatch: 'full',
+            title: 'Informacion',
+            component: InfoComponent,
+          },
+          {
+            path: 'form-change-password',
+            title: 'Cambiar Contraseña',
+            component: FormChangePasswordComponent,
+          },
+          {
+            path: 'update-person',
+            title: 'Actualizar Datos Basicos',
+            component: UpdatePersonComponent,
+          },
         ],
-    },
+      },
+      {
+        path: 'favorite',
+        title: 'Ver Favoritos',
+        component: FavoriteComponent,
+      },
+      {
+        path: 'support',
+        title: 'Soporte',
+        component: SupportComponent,
+      },
+      {
+        path: 'orders',
+        children: [
+          {
+            path: '',
+            pathMatch: 'full',
+            title: 'Mis pedidos',
+            loadComponent: () =>
+              import('./pages/user-orders-list/user-orders-list.component').then(
+                (m) => m.UserOrdersListComponent
+              ),
+          },
+          {
+            path: ':code/chat',
+            title: 'Chat del pedido',
+            loadComponent: () =>
+              import('./pages/user-order-chat/user-order-chat.component').then(
+                (m) => m.UserOrderChatComponent
+              ),
+          },
+          {
+            path: ':code',
+            title: 'Detalle del pedido',
+            loadComponent: () =>
+              import('./pages/user-order-detail/user-order-detail.component').then(
+                (m) => m.UserOrderDetailComponent
+              ),
+          },
+        ],
+      },
+      {
+        path: 'become-producer',
+        title: 'Convertirme en productor',
+        loadComponent: () =>
+          import('../producer/pages/onboarding/onboarding.component').then(
+            (m) => m.OnboardingComponent
+          ),
+      },
+      {
+        path: 'producer',
+        loadChildren: () =>
+          import('../producer/producer.routes').then((m) => m.PRODUCER_ROUTES),
+      },
+    ],
+  },
 ];

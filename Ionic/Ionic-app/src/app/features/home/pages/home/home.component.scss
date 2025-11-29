@@ -1,0 +1,24 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.home-content {
+  --background: var(--ion-color-light, #f5f5f5);
+}
+
+.home-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.home-scroll app-carrusel {
+  display: block;
+}
+
+.explore-btn {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+}

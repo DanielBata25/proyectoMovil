@@ -1,0 +1,478 @@
+/* ==========================================================================
+   Producer Summary - Mobile Optimized Styles
+   ========================================================================== */
+
+/* Global Styles */
+ion-header {
+  --background: #ffffff;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+}
+
+/* Main Content Container - Separated from header */
+.summary-content {
+  --background: #f8f9fb;
+}
+
+.summary-shell {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ==========================================================================
+   Profile Section
+   ========================================================================== */
+
+.profile-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.section-title {
+  margin: 0;
+  font-weight: 700;
+  font-size: 24px;
+  color: #1f2937;
+  line-height: 1.2;
+}
+
+.subtext {
+  margin: 0;
+  color: #6b7280;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.profile-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.profile-buttons app-button {
+  --app-button-margin: 0;
+}
+
+/* ==========================================================================
+   Orders Section
+   ========================================================================== */
+
+.orders-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ==========================================================================
+   Low stock alert
+   ========================================================================== */
+
+.stock-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.low-stock {
+  background: #fff6e8;
+  border: 1px solid #f8d8a8;
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.low-stock--error {
+  border-color: #fca5a5;
+  background: #fff1f2;
+}
+
+.low-stock__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.low-stock__title {
+  margin: 0;
+  font-weight: 700;
+  color: #92400e;
+}
+
+.low-stock__subtitle {
+  margin: 0;
+  color: #b45309;
+  font-size: 14px;
+}
+
+.low-stock__badge {
+  background: #f59e0b;
+  color: #fff;
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.low-stock__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.low-stock__list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  background: #fff;
+  border-radius: 10px;
+  border: 1px solid #fde68a;
+}
+
+.low-stock__name {
+  margin: 0;
+  font-weight: 600;
+  color: #92400e;
+}
+
+.low-stock__stock {
+  color: #b45309;
+  font-size: 13px;
+}
+
+.low-stock__link {
+  color: #92400e;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.low-stock__link:hover {
+  text-decoration: underline;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.subtitle {
+  margin: 0;
+  font-weight: 700;
+  font-size: 18px;
+  color: #1f2937;
+}
+
+.text {
+  margin: 0;
+  font-size: 14px;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+.order-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.order-actions app-button {
+  --app-button-margin: 0;
+  flex: 1;
+}
+
+/* ==========================================================================
+   Stat Cards
+   ========================================================================== */
+
+.cont-stat-card {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+/* ==========================================================================
+   Time Filters Section
+   ========================================================================== */
+
+.time-filters-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+ion-segment {
+  --background: #eef1ff;
+  border-radius: 16px;
+  padding: 4px;
+  width: 100%;
+}
+
+ion-segment-button {
+  --color-checked: #ffffff;
+  --indicator-height: 0px;
+  --background: transparent;
+  border-radius: 12px;
+  font-size: 13px;
+  color: #666;
+  flex: 1;
+  min-width: 80px;
+}
+
+ion-segment-button.ion-activated {
+  --background: #3b82f6;
+  color: #ffffff;
+}
+
+/* ==========================================================================
+   Products Section
+   ========================================================================== */
+
+.products-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.orders-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 8px;
+}
+
+.orders-caption {
+  margin: 0;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.orders-total {
+  margin: 2px 0;
+  font-size: 32px;
+  font-weight: 700;
+  color: #1f2937;
+  line-height: 1;
+}
+
+.orders-delta {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.orders-delta .positive {
+  color: #16a34a;
+  font-weight: 600;
+}
+
+.chart-card {
+  background: #f3f5ff;
+  border-radius: 12px;
+  padding: 12px;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  margin-top: -4px;
+}
+
+.chart-card canvas {
+  width: 100% !important;
+  max-width: 100%;
+  min-height: 180px;
+}
+
+.chart-card.chart-card--loading {
+  padding: 12px;
+}
+
+.chart-card--loading {
+  padding: 0;
+}
+
+.chart-card--loading ion-skeleton-text {
+  --background: linear-gradient(90deg, #e5e7eb 25%, #d1d5db 37%, #e5e7eb 63%);
+  width: 100%;
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+@media (min-width: 480px) {
+  .main-container {
+    padding: 24px;
+    gap: 24px;
+  }
+
+  .section-title {
+    font-size: 26px;
+  }
+
+  .profile-buttons {
+    flex-direction: row;
+  }
+
+  .profile-buttons ion-button {
+    flex: 1;
+  }
+
+  .order-actions {
+    gap: 12px;
+  }
+
+  .cont-stat-card {
+    flex-direction: row;
+    gap: 16px;
+  }
+
+  .orders-total {
+    font-size: 36px;
+  }
+
+  .chart-card {
+    padding: 16px;
+    min-height: 240px;
+  }
+}
+
+@media (min-width: 768px) {
+  .main-container {
+    gap: 28px;
+  }
+
+  .section-title {
+    font-size: 28px;
+  }
+
+  .cont-stat-card {
+    gap: 20px;
+  }
+
+  .orders-total {
+    font-size: 40px;
+  }
+
+  .chart-card {
+    min-height: 280px;
+    padding: 20px;
+  }
+}
+
+/* ==========================================================================
+   Dark Mode Support
+   ========================================================================== */
+
+@media (prefers-color-scheme: dark) {
+  .summary-content {
+    --background: #0f172a;
+  }
+
+  .main-container {
+    --background: #1e293b;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
+  }
+
+  .section-title,
+  .subtitle,
+  .orders-total {
+    color: #f1f5f9;
+  }
+
+  .subtext,
+  .text,
+  .orders-caption,
+  .orders-delta {
+    color: #94a3b8;
+  }
+
+  .chart-card {
+    background: #0f172a;
+  }
+
+  .order-actions ion-button {
+    color: #60a5fa;
+  }
+}
+
+/* ==========================================================================
+   Animation Keyframes
+   ========================================================================== */
+
+@keyframes shimmer {
+  0% {
+    background-position: -468px 0;
+  }
+  100% {
+    background-position: 468px 0;
+  }
+}
+
+.skeleton-text {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 37%, #f0f0f0 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.2s ease-in-out infinite;
+}
+
+/* ==========================================================================
+   Accessibility Improvements
+   ========================================================================== */
+
+.profile-buttons ion-button:focus,
+.order-actions ion-button:focus,
+ion-segment-button:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .main-container {
+    border: 2px solid #3b82f6;
+  }
+  
+  .chart-card {
+    border: 1px solid #3b82f6;
+  }
+
+  .profile-buttons ion-button,
+  .order-actions ion-button {
+    border: 1px solid #3b82f6;
+  }
+}
+
+/* ==========================================================================
+   Print Styles
+   ========================================================================== */
+
+@media print {
+  .summary-content {
+    --background: #ffffff;
+  }
+
+  .main-container {
+    box-shadow: none;
+    border: 1px solid #e5e7eb;
+  }
+
+  ion-segment,
+  .profile-buttons,
+  .order-actions {
+    display: none;
+  }
+}

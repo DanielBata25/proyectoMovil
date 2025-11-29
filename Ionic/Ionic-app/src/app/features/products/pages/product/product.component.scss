@@ -1,57 +1,200 @@
-.page {
-  --background: #f8f7f2;
+:host {
+  display: block;
+  height: 100%;
 }
 
-.results-card {
-  border-radius: 16px;
-  box-shadow: 0 6px 16px rgba(0,0,0,.06);
-  background: #fff;
-}
-
-.mb-3 { margin-bottom: 12px; }
-
-/* Toolbars */
-.filters-toolbar {
-  --min-height: 56px;
-}
-.filters-actions {
-  margin-left: auto;
-}
-.filters-panel {
-  --background: #f9fafb;
-}
-
-.breadcrumb-bar {
+.product-toolbar {
   --background: transparent;
-  padding-left: 8px;
-}
-.crumb-sep {
-  font-size: 16px;
-  margin: 0 4px;
-  color: var(--ion-color-medium);
+  --border-width: 0;
+  --color: var(--ion-color-dark, #1b1b1b);
+  text-align: center;
 }
 
-/* Select option layout */
-.opt {
+.product-shell {
+  gap: 24px;
+}
+
+.filters-card {
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 8px 30px rgba(15, 23, 42, 0.08);
+  padding: 20px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.search-input {
+  --background: #f4f5f8;
+  --border-radius: 14px;
+  --box-shadow: none;
+  --placeholder-color: #9aa0ae;
+}
+
+.category-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.category-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  color: #101828;
+}
+
+.category-header ion-button {
+  margin: 0;
+  --padding-start: 6px;
+  --padding-end: 6px;
+  --border-radius: 12px;
+}
+
+.category-item {
+  --background: #f4f5f8;
+  border-radius: 12px;
+  padding-inline: 12px;
+}
+
+.category-item::part(native) {
+  padding-inline-start: 0;
+  padding-inline-end: 0;
+}
+
+.category-select {
+  width: 100%;
+  --placeholder-opacity: 0.6;
+}
+
+.category-select::part(icon) {
+  color: #8c8f9f;
+}
+
+.option-text {
+  margin-right: 8px;
+}
+
+.breadcrumb-track {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.breadcrumb-track ion-chip {
+  margin: 0;
+  --background: #f0f4ff;
+  --color: #1e3a8a;
+  font-weight: 600;
+}
+
+.breadcrumb-track ion-chip[color="light"] {
+  --background: #e2e8f0;
+  --color: #475569;
+}
+
+.breadcrumb-track ion-chip[outline="true"] {
+  --background: transparent;
+  --color: #475569;
+  --border-color: #d0d7e3;
+}
+
+/* ?? Resultados sin fondo y en grilla */
+/* ?? Resultados sin fondo y en grilla */
+.results-card {
+  background: transparent;
+  border-radius: 20px;
+  box-shadow: none;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 320px;
+}
+
+.results-card app-container-card-flex {
+  width: 100%;
+}
+
+
+
+.results-card ion-progress-bar {
+  --background: #e5ecff;
+  --progress-background: #4c6ef5;
+}
+
+
+.empty-state {
+  margin: 60px auto 0;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  color: #667085;
+  font-size: 14px;
+}
+
+.empty-state ion-icon {
+  font-size: 54px;
+  color: #d7def0;
+}
+
+
+.pager {
+  margin: 12px auto 0;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 18px;
+  border-radius: 999px;
+  background: rgba(226, 232, 240, 0.85);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+  color: #1f2937;
+  font-weight: 600;
 }
 
-/* Empty state */
-.empty {
-  text-align: center;
-  color: var(--ion-color-medium);
-  padding: 16px 0;
-}
-.empty ion-icon {
-  font-size: 36px;
-  margin-bottom: 8px;
+.pager ion-button {
+  margin: 0;
+  --padding-start: 6px;
+  --padding-end: 6px;
+  --background: transparent;
+  --box-shadow: none;
+  --color: currentColor;
 }
 
-/* Chips wrap naturally */
-ion-toolbar .ion-buttons {
+.pager ion-button[disabled] {
+  opacity: 0.4;
+}
+
+.pager ion-icon {
+  font-size: 18px;
+}
+
+.pager__label {
+  min-width: 70px;
   display: flex;
-  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
   gap: 6px;
+  text-align: center;
+  letter-spacing: 0.4px;
+}
+
+.pager__hint-icon {
+  font-size: 18px;
+  color: #4b5563;
+}
+
+@media (max-width: 480px) {
+  .filters-card,
+  .results-card {
+    border-radius: 16px;
+    padding: 16px;
+  }
+
+  .search-input {
+    --border-radius: 12px;
+  }
 }

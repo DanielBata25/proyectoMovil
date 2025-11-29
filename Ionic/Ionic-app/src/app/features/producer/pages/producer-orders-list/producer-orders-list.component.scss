@@ -1,0 +1,581 @@
+/* ==========================================================================
+   Producer Orders List - Mobile Optimized Styles
+   ========================================================================== */
+
+/* Global Styles */
+:host {
+  display: block;
+  height: 100%;
+}
+
+/* Main Content Container */
+.producer-orders-content {
+  --background: #f8f9fb;
+}
+
+.producer-orders-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ==========================================================================
+   Page Header Section
+   ========================================================================== */
+
+.page-header {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 20px 16px;
+  margin-top: 0;
+  box-shadow: 0 6px 24px rgba(15, 23, 42, 0.05);
+  position: relative !important;
+  z-index: 12 !important;
+}
+
+.title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.page-title {
+  color: #1f3b22;
+  font-size: 24px;
+  font-weight: 800;
+  text-align: center;
+  margin: 16px 0 6px 0;
+  padding: 0;
+  line-height: 1.2;
+}
+
+/* ==========================================================================
+   Tabs Section
+   ========================================================================== */
+
+.tabs-section {
+  margin-bottom: 16px;
+}
+
+.filter-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0;
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid #e5e5e5;
+  box-shadow: 0 6px 24px rgba(15, 23, 42, 0.05);
+  margin: 0 auto;
+  max-width: 320px;
+}
+
+.tab-btn {
+  background: #fff;
+  border: none;
+  padding: 14px 12px;
+  text-align: center;
+  font-weight: 600;
+  color: #4a4a4a;
+  font-size: 13px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  min-height: 48px;
+}
+
+.tab-btn:first-child {
+  border-radius: 16px 0 0 16px;
+}
+
+.tab-btn:last-child {
+  border-radius: 0 16px 16px 0;
+}
+
+.tab-btn.active {
+  color: #1976d2;
+  background: #f9fbff;
+  font-weight: 700;
+}
+
+.tab-btn:hover:not(.active) {
+  background: #f8f9fb;
+  color: #333;
+}
+
+.tab-btn ion-icon {
+  font-size: 16px;
+  margin: 0;
+}
+
+.tab-btn ion-badge {
+  --padding-start: 6px;
+  --padding-end: 6px;
+  --padding-top: 3px;
+  --padding-bottom: 3px;
+  font-size: 11px;
+  font-weight: 600;
+  min-width: 18px;
+  height: 18px;
+}
+
+/* ==========================================================================
+   Helper Text (Removed)
+   ========================================================================== */
+
+/* El mensaje hint fue eliminado según solicitud del usuario */
+
+/* ==========================================================================
+   Skeleton Loading
+   ========================================================================== */
+
+.skeleton-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 16px 0;
+  position: relative !important;
+  z-index: 12 !important;
+}
+
+.skeleton-card {
+  --background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 6px 24px rgba(15, 23, 42, 0.05);
+  margin: 0;
+}
+
+.skeleton-card ion-card-header {
+  padding: 16px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.skeleton-card ion-card-content {
+  padding: 16px;
+}
+
+.skeleton-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.skeleton-row.total {
+  margin-bottom: 8px;
+  padding-top: 12px;
+  border-top: 1px solid #f1f5f9;
+}
+
+/* ==========================================================================
+   Orders List
+   ========================================================================== */
+
+.orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 16px 0 32px 0;
+  position: relative !important;
+  z-index: 12 !important;
+  width: 100% !important;
+}
+
+.order-card {
+  --background: #e7f6ec; /* verde muy claro como contenedor home */
+  border-radius: 18px;
+  box-shadow: 0 10px 26px rgba(18, 94, 43, 0.08);
+  border: 1px solid rgba(42, 105, 66, 0.35);
+  margin: 0;
+  overflow: hidden;
+  width: 100% !important;
+  display: block !important;
+  position: relative !important;
+  z-index: 13 !important;
+  box-sizing: border-box !important;
+}
+
+.order-card ion-card-content {
+  padding: 20px 16px 18px;
+}
+
+.order-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(42, 105, 66, 0.18);
+}
+
+.order-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.title-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.order-id {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.product-name {
+  font-size: 14px;
+  color: #6b7280;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Status Chip Styles */
+.status-chip {
+  --border-radius: 999px;
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --height: 24px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: 1px solid;
+  white-space: nowrap;
+}
+
+.status-chip.warning {
+  --background: #fff8e1;
+  --color: #b26a00;
+  --border-color: #fed7aa;
+}
+
+.status-chip.info {
+  --background: #e3f2fd;
+  --color: #0d47a1;
+  --border-color: #bbdefb;
+}
+
+.status-chip.success {
+  --background: #e8f5e9;
+  --color: #1b5e20;
+  --border-color: #c8e6c9;
+}
+
+.status-chip.danger {
+  --background: #ffebee;
+  --color: #b71c1c;
+  --border-color: #ffcdd2;
+}
+
+/* ==========================================================================
+   Order Details
+   ========================================================================== */
+
+.order-details {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-bottom: 8px;
+}
+
+.detail-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 0;
+  min-height: 24px;
+}
+
+.detail-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.detail-label ion-icon {
+  font-size: 16px;
+  opacity: 0.7;
+}
+
+.detail-label span {
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.detail-value {
+  font-size: 14px;
+  color: #1f2937;
+  font-weight: 500;
+  text-align: right;
+  word-break: break-word;
+  max-width: 60%;
+}
+
+.detail-row.total-row {
+  margin-top: 4px;
+  padding-top: 12px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.detail-row.total-row .detail-label span {
+  font-weight: 600;
+  color: #374151;
+}
+
+.detail-row.total-row .detail-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: #059669;
+}
+
+/* action button now handled by app-button component */
+
+/* ==========================================================================
+   Empty State
+   ========================================================================== */
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 48px 24px;
+  color: #64748b;
+  background: #ffffff;
+  border-radius: 18px;
+  margin: 24px 0;
+  box-shadow: 0 6px 24px rgba(15, 23, 42, 0.05);
+  position: relative !important;
+  z-index: 12 !important;
+}
+
+.empty-icon {
+  margin-bottom: 16px;
+}
+
+.empty-icon ion-icon {
+  font-size: 64px;
+  color: #94a3b8;
+}
+
+.empty-state h3 {
+  margin: 0 0 8px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.empty-state p {
+  margin: 0 0 24px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #6b7280;
+  max-width: 280px;
+}
+
+.empty-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 200px;
+}
+
+.empty-actions ion-button {
+  --border-radius: 12px;
+  --border-color: #3b82f6;
+  --color: #3b82f6;
+  --background-hover: #eff6ff;
+  font-weight: 600;
+}
+
+.empty-actions ion-button ion-icon {
+  font-size: 16px;
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+@media (min-width: 480px) {
+  .page-header {
+    padding: 24px 20px;
+  }
+
+  .page-title {
+    font-size: 26px;
+  }
+
+  .filter-tabs {
+    max-width: 380px;
+  }
+
+  .tab-btn {
+    padding: 16px 14px;
+    font-size: 14px;
+  }
+
+  .orders-list {
+    gap: 20px;
+  }
+
+  .order-card ion-card-header,
+  .order-card ion-card-content {
+    padding: 20px;
+  }
+
+  .detail-row {
+    min-height: 28px;
+  }
+
+  .detail-label span {
+    font-size: 15px;
+  }
+
+  .detail-value {
+    font-size: 15px;
+  }
+
+  .detail-row.total-row .detail-value {
+    font-size: 17px;
+  }
+
+  .empty-state {
+    padding: 56px 32px;
+  }
+
+  .empty-actions {
+    flex-direction: row;
+    justify-content: center;
+    max-width: none;
+    width: auto;
+  }
+}
+
+@media (min-width: 768px) {
+  .filter-tabs {
+    max-width: 420px;
+  }
+
+  .orders-list {
+    gap: 24px;
+  }
+}
+
+/* ==========================================================================
+   Dark Mode Support
+   ========================================================================== */
+
+@media (prefers-color-scheme: dark) {
+  .producer-orders-content {
+    --background: #0f172a;
+  }
+
+  .page-header,
+  .order-card,
+  .empty-state {
+    --background: #1e293b;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
+  }
+
+  .page-title,
+  .order-id,
+  .detail-value {
+    color: #f1f5f9;
+  }
+
+  .product-name,
+  .detail-label span {
+    color: #94a3b8;
+  }
+
+  .detail-row.total-row {
+    border-top-color: #374151;
+  }
+
+  .order-card ion-card-header {
+    background: #0f172a;
+    border-bottom-color: #374151;
+  }
+
+  .empty-state {
+    color: #94a3b8;
+  }
+
+  .empty-state h3 {
+    color: #f1f5f9;
+  }
+
+  .empty-icon ion-icon {
+    color: #64748b;
+  }
+}
+
+/* ==========================================================================
+   Animation Keyframes
+   ========================================================================== */
+
+@keyframes shimmer {
+  0% {
+    background-position: -468px 0;
+  }
+  100% {
+    background-position: 468px 0;
+  }
+}
+
+.skeleton-text {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 37%, #f0f0f0 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.2s ease-in-out infinite;
+}
+
+/* ==========================================================================
+   Accessibility Improvements
+   ========================================================================== */
+
+.filter-chip:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+.action-button:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .status-chip {
+    border-width: 2px;
+  }
+  
+  .filter-chip {
+    border-width: 2px;
+  }
+}

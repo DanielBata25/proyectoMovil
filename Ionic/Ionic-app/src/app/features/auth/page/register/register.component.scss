@@ -24,9 +24,33 @@
 /* Logo superior centrado */
 .top-logo-wrap{ display:flex; justify-content:center; }
 .brand-logo{
-  width: clamp(80px, 22vw, 110px); /* 🔥 más grande */
+  width: clamp(110px, 26vw, 150px);
   margin-bottom: 16px;
   filter: drop-shadow(0 2px 6px rgba(0,0,0,.25));
+}
+
+.floating-alert {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  top: calc(env(safe-area-inset-top, 0px) + 12px);
+  max-width: 520px;
+  width: 92%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #fdecec;
+  border: 1px solid #f3b3b0;
+  color: #b42318;
+  font-weight: 600;
+  text-align: center;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.14);
+  z-index: 99;
+  pointer-events: none;
+}
+
+.floating-alert.bottom {
+  top: auto;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 16px);
 }
 
 /* Card del formulario con verde suave */
@@ -48,12 +72,44 @@
   margin: 0;
 }
 
-/* Botón principal */
-.btn-custom {
-  --background: #1cc736;
-  --color: #fff;
-  height: 3rem;
-  border-radius: .5rem;
+/* Botones compartidos centrados */
+.auth-card app-button {
+  display: block;
+  width: 100%;
+  max-width: 340px;
+  margin: 0;
+}
+.auth-card app-button .custom-btn {
+  width: 100%;
+  height: 3.4rem;
+  border-radius: 14px;
+  font-weight: 700;
+  letter-spacing: .25px;
+  box-shadow: 0 14px 28px rgba(27, 122, 52, 0.28);
+}
+.auth-card app-button .custom-btn.btn-primary {
+  background: linear-gradient(180deg, #32c350 0%, #1b7a34 100%);
+}
+.auth-card app-button .custom-btn.btn-primary:hover:not(:disabled) {
+  background: linear-gradient(180deg, #2aa046 0%, #155d29 100%);
+}
+.auth-card app-button .custom-btn.btn-secondary {
+  background: transparent;
+  color: #1f7a3a;
+  border: 1px solid #1f7a3a;
+  box-shadow: none;
+}
+.auth-card app-button .custom-btn:disabled {
+  opacity: 0.6;
+  box-shadow: none;
+}
+
+.button-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.5rem;
 }
 
 /* Inputs con fondo y texto oscuro */
@@ -72,3 +128,20 @@
 
 /* Fondo: lo sigues poniendo desde el HTML; aquí solo evitamos que Ionic lo sobrescriba */
 .fondo-auth { --background: transparent; }
+
+/* Ajuste de columnas en el paso 3 */
+.dept-city-row {
+  display: flex;
+  gap: .5rem;
+  margin-top: 1rem;
+}
+
+.dept-col {
+  flex: 0.6; /* 60% ancho */
+  min-width: 0; /* evita que crezca más de la cuenta */
+}
+
+.city-col {
+  flex: 0.4; /* 40% ancho */
+  min-width: 0;
+}

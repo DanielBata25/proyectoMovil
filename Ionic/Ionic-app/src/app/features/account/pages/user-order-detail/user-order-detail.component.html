@@ -1,0 +1,325 @@
+<ion-content [fullscreen]="true" class="page-bg order-detail-content">
+  <div class="page-shell product-shell order-shell">
+    <!-- Título de la página -->
+    <h1 class="page-title">Detalle del Pedido</h1>
+    
+    <ng-container *ngIf="!loading && detail; else loadingTpl">
+    <div class="order-container">
+      <ion-card class="order-detail-card" mode="md">
+        <ion-card-header>
+          <div class="card-header">
+            <ion-card-title>Pedido #{{ detail!.id }}</ion-card-title>
+            <ion-chip [class]="statusChip.cls" mode="ios">
+              {{ statusChip.text }}
+            </ion-chip>
+          </div>
+        </ion-card-header>
+
+        <ion-card-content>
+          <section class="detail-section">
+            <div class="section-heading">
+              <ion-icon name="receipt-outline"></ion-icon>
+              <span>Resumen</span>
+            </div>
+
+            <div class="detail-grid">
+              <div class="detail-field">
+                <span class="field-label">Producto</span>
+                <span class="field-value">{{ detail!.productName }}</span>
+              </div>
+
+              <div class="detail-field">
+                <span class="field-label">Precio unitario</span>
+                <span class="field-value">{{ detail!.unitPrice | currency:'COP' }}</span>
+              </div>
+
+              <div class="detail-field">
+                <span class="field-label">Cantidad</span>
+                <span class="field-value">{{ detail!.quantityRequested }}</span>
+              </div>
+
+              <div class="detail-field">
+                <span class="field-label">Subtotal</span>
+                <span class="field-value">{{ detail!.subtotal | currency:'COP' }}</span>
+              </div>
+
+              <div class="detail-field total-field">
+                <span class="field-label">Total</span>
+                <span class="field-value highlighted">{{ detail!.total | currency:'COP' }}</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="detail-section">
+            <div class="section-heading">
+              <ion-icon name="location-outline"></ion-icon>
+              <span>Entrega</span>
+            </div>
+
+            <div class="detail-grid">
+              <div class="detail-field">
+                <span class="field-label">Destinatario</span>
+                <span class="field-value">{{ detail!.recipientName }}</span>
+              </div>
+
+              <div class="detail-field">
+                <span class="field-label">Teléfono</span>
+                <span class="field-value">{{ detail!.contactPhone }}</span>
+              </div>
+
+              <div class="detail-field">
+                <span class="field-label">Dirección</span>
+                <span class="field-value">
+                  {{ detail!.addressLine1 }}
+                  <ng-container *ngIf="detail!.addressLine2">, {{ detail!.addressLine2 }}</ng-container>
+                </span>
+              </div>
+
+              <div class="detail-field">
+                <span class="field-label">Ciudad</span>
+                <span class="field-value">{{ detail!.cityName || ('#' + detail!.cityId) }}</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="detail-section">
+            <div class="section-heading">
+              <ion-icon name="time-outline"></ion-icon>
+              <span>Tiempos</span>
+            </div>
+
+            <div class="detail-grid">
+              <div class="detail-field">
+                <span class="field-label">Creado</span>
+                <span class="field-value">{{ detail!.createAt | date:'mediumDate':'':'es-CO' }}</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="detail-section">
+            <div class="section-heading">
+              <ion-icon name="card-outline"></ion-icon>
+              <span>Comprobante de Pago</span>
+            </div>
+
+            <input
+              #paymentInput 
+              type="file" 
+              accept="image/*" 
+              hidden 
+              (change)="onPickPaymentFile($event)" />
+
+            <ng-container *ngIf="detail!.paymentImageUrl; else noUserImg">
+              <div class="receipt-container">
+                <div class="receipt-preview" (click)="openImageModal()">
+                  <img 
+                    class="receipt-image" 
+                    [src]="detail!.paymentImageUrl!" 
+                    alt="Comprobante" />
+                  <div class="preview-overlay">
+                    <ion-icon name="expand-outline"></ion-icon>
+                    <span>Vista previa</span>
+                  </div>
+                </div>
+                <div class="upload-date">
+                  Subido: {{ detail!.paymentUploadedAt | date:'medium' }}
+                </div>
+              </div>
+            </ng-container>
+
+            <ng-template #noUserImg>
+              <div class="no-receipt">
+                <ion-icon name="image-outline" color="medium" size="large"></ion-icon>
+                <ion-text color="medium">
+                  Sin comprobante disponible.
+                </ion-text>
+              </div>
+            </ng-template>
+
+            <div class="upload-action" *ngIf="canUploadPayment">
+              <app-button
+                text="Subir comprobante"
+                color="primary"
+                icon="cloud-upload-outline"
+                (clicked)="triggerFile(paymentInput)"
+                style="--app-button-margin:0"></app-button>
+              <div class="file-hint">
+                Formatos: JPG/PNG/WEBP · Máx {{ MAX_FILE_MB }} MB
+              </div>
+            </div>
+          </section>
+
+          <section class="detail-section" *ngIf="detail!.producerDecisionAt">
+            <div class="section-heading">
+              <ion-icon name="business-outline"></ion-icon>
+              <span>Decisión del productor</span>
+            </div>
+
+            <div class="detail-grid">
+              <div class="detail-field">
+                <span class="field-label">Fecha decisión</span>
+                <span class="field-value">{{ detail!.producerDecisionAt | date:'medium' }}</span>
+              </div>
+
+              <div class="detail-field" *ngIf="detail!.producerDecisionReason">
+                <span class="field-label">Motivo</span>
+                <span class="field-value">{{ detail!.producerDecisionReason }}</span>
+              </div>
+
+              <div class="detail-field" *ngIf="detail!.producerNotes">
+                <span class="field-label">Notas del productor</span>
+                <span class="field-value">{{ detail!.producerNotes }}</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="detail-section customer-rating" *ngIf="detail">
+            <div class="section-heading">
+              <ion-icon name="star-half-outline"></ion-icon>
+              <span>Tu calificación como cliente</span>
+            </div>
+
+            <p *ngIf="detail.customerRatingsCount > 0" class="rating-stats">
+              Promedio histórico:
+              <strong>{{ detail.customerAverageRating | number:'1.1-2' }}/5</strong>
+              ({{ detail.customerRatingsCount }} calificaciones)
+            </p>
+
+            <ng-container *ngIf="hasRating; else noCustomerRating">
+              <div class="rating-stars">
+                <span
+                  *ngFor="let s of stars"
+                  class="star"
+                  [class.filled]="detail!.consumerRating!.rating >= s"
+                >
+                  ★
+                </span>
+                <span class="rating-label">
+                  ({{ detail!.consumerRating!.rating }}/5)
+                </span>
+              </div>
+
+              <p *ngIf="detail!.consumerRating!.comment" class="rating-comment">
+                “{{ detail!.consumerRating!.comment }}”
+              </p>
+            </ng-container>
+
+            <ng-template #noCustomerRating>
+              <p class="muted">
+                Este pedido aún no ha sido calificado por el productor.
+              </p>
+            </ng-template>
+          </section>
+
+          <section class="detail-section" *ngIf="canConfirm">
+            <div class="section-heading">
+              <ion-icon name="checkbox-outline"></ion-icon>
+              <span>Confirmación</span>
+            </div>
+
+            <div class="action-buttons">
+              <app-button
+                text="No, hubo problema"
+                color="danger"
+                icon="warning-outline"
+                [disabled]="confirming"
+                (clicked)="confirm('no')"
+                style="--app-button-margin:0"></app-button>
+
+              <app-button
+                text="Sí, recibido"
+                color="success"
+                icon="checkmark-circle-outline"
+                [disabled]="confirming"
+                (clicked)="confirm('yes')"
+                style="--app-button-margin:0"></app-button>
+            </div>
+          </section>
+
+          <section class="detail-section" *ngIf="canCancel">
+            <div class="section-heading">
+              <ion-icon name="close-circle-outline"></ion-icon>
+              <span>Cancelar pedido</span>
+            </div>
+
+            <app-button
+              text="Cancelar pedido"
+              color="danger"
+              icon="close-circle-outline"
+              (clicked)="cancel()"
+              style="--app-button-margin:0"></app-button>
+          </section>
+
+          <section class="detail-section info-section" *ngIf="!canConfirm">
+            <div class="info-message">
+              <ion-icon name="information-circle-outline"></ion-icon>
+              <p>La confirmación aparece cuando el productor marca tu pedido como entregado.</p>
+            </div>
+          </section>
+
+          <section class="detail-section chat-section" *ngIf="detail">
+            <div class="section-heading">
+              <ion-icon name="chatbubbles-outline"></ion-icon>
+              <span>Chat del pedido</span>
+            </div>
+            <div class="chat-inline-card">
+              <p class="muted">Abre el chat en una vista dedicada para conversar con el productor.</p>
+              <app-button
+                text="Ir al chat"
+                color="primary"
+                icon="chatbubbles-outline"
+                (clicked)="goToChat()"
+                style="--app-button-margin:0"></app-button>
+            </div>
+          </section>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </ng-container>
+
+  <!-- Loading Template -->
+  <ng-template #loadingTpl>
+    <div class="loading-container">
+      <ion-card class="skeleton-card" mode="md">
+        <ion-card-header>
+          <ion-skeleton-text animated style="width: 60%; height: 20px;"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width: 80px; height: 24px; border-radius: 12px;"></ion-skeleton-text>
+        </ion-card-header>
+        
+        <ion-card-content>
+          <ion-skeleton-text animated style="width: 100%; height: 16px; margin-bottom: 8px;"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width: 80%; height: 16px; margin-bottom: 8px;"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width: 70%; height: 16px; margin-bottom: 8px;"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width: 90%; height: 16px; margin-bottom: 16px;"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width: 100%; height: 40px; border-radius: 8px;"></ion-skeleton-text>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </ng-template>
+
+  <!-- Image Modal -->
+  <ion-modal [isOpen]="showImage" (ionModalDidDismiss)="showImage = false" class="image-modal">
+    <ng-template>
+      <ion-header class="ion-no-border">
+        <ion-toolbar>
+          <ion-title>Comprobante de Pago</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="showImage = false" color="light">
+              <ion-icon name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      
+      <ion-content class="modal-content">
+        <div class="image-container">
+          <img 
+            [src]="detail?.paymentImageUrl || ''" 
+            alt="Comprobante ampliado"
+            class="modal-image" />
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+</div>
+</ion-content>

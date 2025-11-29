@@ -1,3 +1,268 @@
-<p>
-  producer-order-detail works!
-</p>
+<ion-content [fullscreen]="true" class="page-bg producer-order-detail-content">
+  <div class="page-shell product-shell order-shell">
+    <!-- Título de la página -->
+    <h1 class="page-title">Detalle del Pedido</h1>
+    
+    <ng-container *ngIf="!loading && detail; else loadingTpl">
+    <div class="order-container">
+      <div class="ticket-shell">
+        <div class="ticket-clip top"></div>
+        <div class="ticket-card">
+          <div class="ticket-header">
+            <div class="header-left">
+              <ion-icon name="document-text-outline"></ion-icon>
+              <div>
+                <p class="muted">Pedido</p>
+                <h2>#{{ detail!.id }}</h2>
+              </div>
+            </div>
+            <ion-chip [class]="statusChip.cls" mode="ios">
+              {{ statusChip.text }}
+            </ion-chip>
+          </div>
+
+          <div class="divider dotted"></div>
+
+          <div class="ticket-section">
+            <p class="section-title">Resumen</p>
+            <div class="ticket-grid">
+              <div class="row">
+                <span class="label">Producto</span>
+                <span class="value">{{ detail!.productName }}</span>
+              </div>
+              <div class="row">
+                <span class="label">Precio unitario</span>
+                <span class="value">{{ detail!.unitPrice | currency:'COP' }}</span>
+              </div>
+              <div class="row">
+                <span class="label">Cantidad</span>
+                <span class="value">{{ detail!.quantityRequested }}</span>
+              </div>
+              <div class="row">
+                <span class="label">Subtotal</span>
+                <span class="value">{{ detail!.subtotal | currency:'COP' }}</span>
+              </div>
+              <div class="row total">
+                <span class="label">Total</span>
+                <span class="value total">{{ detail!.total | currency:'COP' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="divider dotted"></div>
+
+          <div class="ticket-section">
+            <p class="section-title">Entrega</p>
+            <div class="ticket-grid">
+              <div class="row">
+                <span class="label">Destinatario</span>
+                <span class="value">{{ detail!.recipientName }}</span>
+              </div>
+              <div class="row">
+                <span class="label">Teléfono</span>
+                <span class="value">{{ detail!.contactPhone }}</span>
+              </div>
+              <div class="row">
+                <span class="label">Dirección</span>
+                <span class="value">
+                  {{ detail!.addressLine1 }}
+                  <ng-container *ngIf="detail!.addressLine2">, {{ detail!.addressLine2 }}</ng-container>
+                </span>
+              </div>
+              <div class="row">
+                <span class="label">Ciudad</span>
+                <span class="value">{{ detail!.cityName || ('#' + detail!.cityId) }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="divider dotted"></div>
+
+          <div class="ticket-section">
+            <p class="section-title">Comprobante</p>
+            <ng-container *ngIf="detail!.paymentImageUrl; else noImg">
+              <div class="receipt-preview" (click)="openImage()">
+                <img class="receipt-image" [src]="detail!.paymentImageUrl!" alt="Comprobante" />
+                <div class="preview-overlay">
+                  <ion-icon name="expand-outline"></ion-icon>
+                  <span>Ver comprobante</span>
+                </div>
+              </div>
+              <p class="muted tiny">Toca para abrir en nueva pestaña.</p>
+            </ng-container>
+            <ng-template #noImg>
+              <div class="no-receipt">
+                <ion-icon name="image-outline" color="medium" size="large"></ion-icon>
+                <ion-text color="medium">
+                  Sin comprobante
+                  <ng-container *ngIf="detail!.status === 'AcceptedAwaitingPayment'">
+                    (el cliente aún no lo ha subido).
+                  </ng-container>
+                </ion-text>
+              </div>
+            </ng-template>
+          </div>
+
+          <div class="divider dotted"></div>
+
+          <div class="ticket-section">
+            <p class="section-title">Tiempos</p>
+            <div class="ticket-grid">
+              <div class="row">
+                <span class="label">Creado</span>
+                <span class="value">{{ detail!.createAt | date:'mediumDate':'':'es-CO' }}</span>
+              </div>
+              <div class="row" *ngIf="detail!.producerDecisionAt">
+                <span class="label">Decisión productor</span>
+                <span class="value">{{ detail!.producerDecisionAt | date:'mediumDate':'':'es-CO' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="divider dotted"></div>
+
+          <div class="ticket-section rating-section" *ngIf="detail">
+            <p class="section-title">Calificar al cliente</p>
+            <div class="rating-stars">
+              <button
+                type="button"
+                class="star"
+                *ngFor="let s of stars"
+                [class.filled]="rating >= s"
+                [disabled]="savingRating"
+                (click)="setRating(s)"
+                [attr.aria-label]="'Calificación ' + s"
+              >
+                ★
+              </button>
+              <span class="rating-label">
+                {{ rating ? (rating + '/5') : 'Toca para calificar' }}
+              </span>
+            </div>
+
+            <ion-textarea
+              label="Comentario (opcional)"
+              labelPlacement="stacked"
+              placeholder="Escribe un comentario para el cliente..."
+              [autoGrow]="true"
+              [(ngModel)]="comment"
+              [disabled]="savingRating"
+            ></ion-textarea>
+
+            <div class="rating-actions">
+              <app-button
+                text="Guardar calificación"
+                color="primary"
+                icon="star"
+                [disabled]="savingRating"
+                (clicked)="onRateCustomer()"
+                style="--app-button-margin:0"
+              ></app-button>
+              <ion-note *ngIf="isAlreadyRated" color="medium">
+                Ya habías calificado este pedido; puedes actualizar la nota.
+              </ion-note>
+            </div>
+          </div>
+
+          <div class="divider dotted"></div>
+
+          <section class="ticket-section" *ngIf="canAcceptReject">
+            <p class="section-title">Acciones disponibles</p>
+            <div class="action-buttons">
+              <app-button
+                text="Rechazar"
+                color="danger"
+                icon="close-circle-outline"
+                [disabled]="processing"
+                (clicked)="reject()"
+                style="--app-button-margin:0"></app-button>
+
+              <app-button
+                text="Aceptar"
+                color="primary"
+                icon="checkmark-circle-outline"
+                [disabled]="processing"
+                (clicked)="accept()"
+                style="--app-button-margin:0"></app-button>
+            </div>
+          </section>
+
+          <section class="ticket-section" *ngIf="canManageLogistics">
+            <p class="section-title">Actualizar estado</p>
+            <div class="action-buttons">
+              <app-button
+                *ngIf="canMarkPreparing"
+                text="Marcar preparando"
+                color="warning"
+                icon="construct-outline"
+                [disabled]="processing"
+                (clicked)="markPreparing()"
+                style="--app-button-margin:0"></app-button>
+
+              <app-button
+                *ngIf="canMarkDispatched"
+                text="Marcar despachado"
+                color="tertiary"
+                icon="rocket-outline"
+                [disabled]="processing"
+                (clicked)="markDispatched()"
+                style="--app-button-margin:0"></app-button>
+
+              <app-button
+                *ngIf="canMarkDelivered"
+                text="Marcar entregado"
+                color="success"
+                icon="checkmark-done-outline"
+                [disabled]="processing"
+                (clicked)="markDelivered()"
+                style="--app-button-margin:0"></app-button>
+            </div>
+          </section>
+
+          <section class="ticket-section info-section" *ngIf="!canAcceptReject && !canManageLogistics">
+            <div class="info-message">
+              <ion-icon name="information-circle-outline"></ion-icon>
+              <p>No hay acciones disponibles para el estado actual.</p>
+            </div>
+          </section>
+
+          <section class="ticket-section chat-section" *ngIf="detail">
+            <p class="section-title">Chat del pedido</p>
+            <div class="chat-inline-card">
+              <p class="muted">Abre el chat en una vista completa para hablar con el cliente.</p>
+              <app-button
+                text="Ir al chat"
+                color="tertiary"
+                icon="chatbubbles-outline"
+                (clicked)="goToChat()"
+                style="--app-button-margin:0"></app-button>
+            </div>
+          </section>
+        </div>
+        <div class="ticket-clip bottom"></div>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- Loading Template -->
+  <ng-template #loadingTpl>
+    <div class="loading-container">
+      <ion-card class="skeleton-card" mode="md">
+        <ion-card-header>
+          <ion-skeleton-text animated style="width: 60%; height: 20px;"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width: 80px; height: 24px; border-radius: 12px;"></ion-skeleton-text>
+        </ion-card-header>
+        
+        <ion-card-content>
+          <ion-skeleton-text animated style="width: 100%; height: 16px; margin-bottom: 8px;"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width: 80%; height: 16px; margin-bottom: 8px;"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width: 70%; height: 16px; margin-bottom: 8px;"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width: 90%; height: 16px; margin-bottom: 16px;"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width: 100%; height: 40px; border-radius: 8px;"></ion-skeleton-text>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </ng-template>
+
+</div>
+</ion-content>

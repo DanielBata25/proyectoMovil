@@ -1,0 +1,111 @@
+<ion-content [fullscreen]="true" class="page-bg" forceOverscroll="false">
+  <div class="page-shell detail-shell">
+    
+    <div class="center" *ngIf="loading">
+      <ion-spinner name="crescent"></ion-spinner>
+    </div>
+
+    <section class="detail-card" *ngIf="!loading && !error && farm as farmDetail; else errorState">
+
+
+      <div class="hero-swiper">
+        <ng-container *ngIf="galleryImages.length; else noImg">
+          <swiper-container
+            #swiperRef
+            init="false"
+            *ngIf="galleryImages.length > 1; else singleImage"
+            [attr.slides-per-view]="slidesOpts.slidesPerView"
+            [attr.space-between]="slidesOpts.spaceBetween"
+            [attr.pagination]="slidesOpts.pagination"
+            [attr.autoplay]="'true'"
+            [attr.autoplay-delay]="'4000'"
+            [attr.autoplay-disable-on-interaction]="'false'">
+            <swiper-slide *ngFor="let url of galleryImages">
+              <div class="hero-frame">
+                <img
+                  [src]="url"
+                  alt="Imagen de la finca"
+                  class="hero-img" />
+              </div>
+            </swiper-slide>
+          </swiper-container>
+
+          <ng-template #singleImage>
+            <div class="hero-frame hero-frame--static">
+              <img
+                [src]="galleryImages[0]"
+                alt="Imagen de la finca"
+                class="hero-img" />
+            </div>
+          </ng-template>
+        </ng-container>
+      </div>
+
+      <ng-template #noImg>
+        <div class="no-img">Sin fotografias registradas</div>
+      </ng-template>
+
+      <div class="block block-header">
+        <div>
+          <h2 class="title">{{ farmDetail.name }}</h2>
+          <p class="location">
+            <ion-icon name="location-outline"></ion-icon>
+            {{ farmDetail.cityName }}, {{ farmDetail.departmentName }}
+          </p>
+        </div>
+      </div>
+
+      <div class="block facts">
+        <div class="pair">
+          <div class="lbl">Productor</div>
+          <div class="val">{{ farmDetail.producerName }}</div>
+        </div>
+        <div class="pair">
+          <div class="lbl">Hectareas</div>
+          <div class="val">{{ farmDetail.hectares | number:'1.0-2' }}</div>
+        </div>
+        <div class="pair">
+          <div class="lbl">Altitud (msnm)</div>
+          <div class="val">{{ farmDetail.altitude | number:'1.0-0' }}</div>
+        </div>
+        <div class="pair">
+          <div class="lbl">Coordenadas</div>
+          <div class="val">
+            {{ farmDetail.latitude | number:'1.4-4' }},
+            {{ farmDetail.longitude | number:'1.4-4' }}
+          </div>
+        </div>
+      </div>
+
+     <div class="map-preview-card" *ngIf="hasValidCoordinates">
+       <div class="map-header">
+          <h3 class="section-subtitle">Vista previa en mapa</h3>
+          <app-button
+            class="btn-inline"
+            color="secondary"
+            icon="locate-outline"
+            [text]="'Centrar marcador'"
+            type="button"
+            [disabled]="!mapReady"
+            (clicked)="centerMapOnFarm()">
+          </app-button>
+        </div>
+        <div class="map-preview" #mapContainer></div>
+        <p class="map-help">Marcador centrado con las coordenadas registradas.</p>
+      </div>
+    </section>
+  </div>
+
+  <ng-template #errorState>
+    <div class="error-state">
+      <ion-icon name="alert-circle-outline"></ion-icon>
+      <p>No se pudo cargar la finca.</p>
+      <app-button
+        color="secondary"
+        [text]="'Volver'"
+        type="button"
+        (clicked)="navigateBack()">
+      </app-button>
+    </div>
+  </ng-template>
+</ion-content>

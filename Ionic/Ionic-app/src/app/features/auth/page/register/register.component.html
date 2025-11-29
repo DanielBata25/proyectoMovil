@@ -3,7 +3,7 @@
   [style.background-image]="'url(assets/backgrounds/fondologin.jpg)'"
   style="background-size:cover;background-position:center;--background:transparent"
 >
-  <div class="auth-viewport"><!-- 🔥 contenedor que centra -->
+  <div class="auth-viewport">
 
     <!-- Logo superior -->
     <div class="top-logo-wrap">
@@ -22,115 +22,262 @@
 
         <!-- Paso 1 -->
         <form [formGroup]="credentialsForm" *ngIf="currentStep === 1" class="mt-12">
+          <!-- Email -->
           <label for="email" class="label">Correo Electrónico</label>
           <ion-item lines="none" class="input-custom">
             <ion-input id="email" type="email" formControlName="email" placeholder="Correo Electrónico"></ion-input>
           </ion-item>
-          <ion-note color="danger" *ngIf="credentialsForm.get('email')?.invalid && credentialsForm.get('email')?.touched" class="note">
-            {{ getErrorMessage(credentialsForm, 'email') }}
+          <ion-note
+            color="danger"
+            class="note"
+            *ngIf="shouldShowError(credentialsForm, 'email', 'credentials')">
+            {{ getFieldMessage('credentials', 'email') }}
           </ion-note>
 
+          <!-- Password -->
           <label for="password" class="label mt-12">Contraseña</label>
           <ion-item lines="none" class="input-custom">
             <ion-input id="password" type="password" formControlName="password" placeholder="Contraseña"></ion-input>
           </ion-item>
-          <ion-note color="danger" *ngIf="credentialsForm.get('password')?.invalid && credentialsForm.get('password')?.touched" class="note">
-            {{ getErrorMessage(credentialsForm, 'password') }}
+          <ion-note
+            color="danger"
+            class="note"
+            *ngIf="shouldShowError(credentialsForm, 'password', 'credentials')">
+            {{ getFieldMessage('credentials', 'password') }}
           </ion-note>
 
+          <!-- Confirm Password -->
           <label for="confirmPassword" class="label mt-12">Confirmar Contraseña</label>
           <ion-item lines="none" class="input-custom">
             <ion-input id="confirmPassword" type="password" formControlName="confirmPassword" placeholder="Confirmar Contraseña"></ion-input>
           </ion-item>
-          <ion-note color="danger"
-                    *ngIf="(credentialsForm.get('confirmPassword')?.touched || credentialsForm.get('password')?.touched) && credentialsForm.hasError('passwordMismatch')"
-                    class="note">
-            {{ getErrorMessage(credentialsForm, 'confirmPassword') }}
+          <ion-note
+            color="danger"
+            class="note"
+            *ngIf="shouldShowError(credentialsForm, 'confirmPassword', 'credentials')">
+            {{ getFieldMessage('credentials', 'confirmPassword') }}
           </ion-note>
 
-          <ion-button type="button" expand="block" class="btn-custom mt-12" (click)="nextStep()" [disabled]="credentialsForm.invalid">
-            Siguiente
-          </ion-button>
+          <app-button
+            class="auth-btn mt-12"
+            type="button"
+            color="primary"
+            [disabled]="credentialsForm.invalid"
+            text="Siguiente"
+            (clicked)="nextStep()"
+            [style.--app-button-margin]="'0.9rem auto 0'">
+          </app-button>
         </form>
 
         <!-- Paso 2 -->
         <form [formGroup]="basicForm" *ngIf="currentStep === 2" class="mt-12">
+          <!-- Nombre -->
           <label for="firstName" class="label">Nombre</label>
           <ion-item lines="none" class="input-custom">
-            <ion-input id="firstName" type="text" formControlName="firstName" placeholder="Nombre"></ion-input>
+            <ion-input
+              id="firstName"
+              type="text"
+              formControlName="firstName"
+              placeholder="Nombre"
+              autocapitalize="words"
+              style="text-transform: capitalize;"
+            ></ion-input>
           </ion-item>
-          <ion-note color="danger" *ngIf="basicForm.get('firstName')?.invalid && basicForm.get('firstName')?.touched" class="note">
-            {{ getErrorMessage(basicForm, 'firstName') }}
+          <ion-note
+            color="danger"
+            class="note"
+            *ngIf="shouldShowError(basicForm, 'firstName', 'basic')">
+            {{ getFieldMessage('basic', 'firstName') }}
           </ion-note>
 
+          <!-- Apellido -->
           <label for="lastName" class="label mt-12">Apellido</label>
           <ion-item lines="none" class="input-custom">
-            <ion-input id="lastName" type="text" formControlName="lastName" placeholder="Apellido"></ion-input>
+            <ion-input
+              id="lastName"
+              type="text"
+              formControlName="lastName"
+              placeholder="Apellido"
+              autocapitalize="words"
+              style="text-transform: capitalize;"
+            ></ion-input>
           </ion-item>
-          <ion-note color="danger" *ngIf="basicForm.get('lastName')?.invalid && basicForm.get('lastName')?.touched" class="note">
-            {{ getErrorMessage(basicForm, 'lastName') }}
+          <ion-note
+            color="danger"
+            class="note"
+            *ngIf="shouldShowError(basicForm, 'lastName', 'basic')">
+            {{ getFieldMessage('basic', 'lastName') }}
           </ion-note>
 
+          <!-- Identificación -->
           <label for="identification" class="label mt-12">Número de Identidad</label>
           <ion-item lines="none" class="input-custom">
-            <ion-input id="identification" type="text" inputmode="numeric" formControlName="identification" placeholder="Número de Identidad"></ion-input>
+            <ion-input id="identification" type="text" formControlName="identification" placeholder="Número de Identidad"></ion-input>
           </ion-item>
-          <ion-note color="danger" *ngIf="basicForm.get('identification')?.invalid && basicForm.get('identification')?.touched" class="note">
-            {{ getErrorMessage(basicForm, 'identification') }}
+          <ion-note
+            color="danger"
+            class="note"
+            *ngIf="shouldShowError(basicForm, 'identification', 'basic')">
+            {{ getFieldMessage('basic', 'identification') }}
           </ion-note>
 
-          <div style="display:flex;gap:.5rem;margin-top:.75rem">
-            <ion-button fill="outline" (click)="prevStep()">Volver</ion-button>
-            <ion-button class="btn-custom" (click)="nextStep()" [disabled]="basicForm.invalid">Siguiente</ion-button>
+          <div class="button-stack">
+            <app-button
+              type="button"
+              color="secondary"
+              text="Volver"
+              (clicked)="prevStep()"
+              [style.--app-button-margin]="'0.9rem auto 0'">
+            </app-button>
+            <app-button
+              type="button"
+              color="primary"
+              [disabled]="basicForm.invalid"
+              text="Siguiente"
+              (clicked)="nextStep()"
+              [style.--app-button-margin]="'0.35rem auto 0'">
+            </app-button>
           </div>
         </form>
 
         <!-- Paso 3 -->
         <form [formGroup]="contactForm" *ngIf="currentStep === 3" class="mt-12">
+          <!-- Teléfono -->
           <label for="phoneNumber" class="label">Número de Teléfono</label>
           <ion-item lines="none" class="input-custom">
             <ion-input id="phoneNumber" type="tel" formControlName="phoneNumber" placeholder="Número de Teléfono"></ion-input>
           </ion-item>
-          <ion-note color="danger" *ngIf="contactForm.get('phoneNumber')?.invalid && contactForm.get('phoneNumber')?.touched" class="note">
-            {{ getErrorMessage(contactForm, 'phoneNumber') }}
+          <ion-note
+            color="danger"
+            class="note"
+            *ngIf="shouldShowError(contactForm, 'phoneNumber', 'contact')">
+            {{ getFieldMessage('contact', 'phoneNumber') }}
           </ion-note>
 
+          <!-- Dirección -->
           <label for="address" class="label mt-12">Dirección</label>
           <ion-item lines="none" class="input-custom">
             <ion-input id="address" type="text" formControlName="address" placeholder="Dirección"></ion-input>
           </ion-item>
-          <ion-note color="danger" *ngIf="contactForm.get('address')?.invalid && contactForm.get('address')?.touched" class="note">
-            {{ getErrorMessage(contactForm, 'address') }}
+          <ion-note
+            color="danger"
+            class="note"
+            *ngIf="shouldShowError(contactForm, 'address', 'contact')">
+            {{ getFieldMessage('contact', 'address') }}
           </ion-note>
 
-          <div style="display:flex;gap:.5rem;margin-top:1rem">
-            <div style="flex:1">
-              <label for="departmentId" class="label">Departamento</label>
-              <ion-item lines="none" class="input-custom">
-                <ion-select interface="popover" formControlName="departmentId" placeholder="Selecciona un departamento">
-                  <ion-select-option *ngFor="let dept of departments" [value]="dept.id">{{ dept.name }}</ion-select-option>
-                </ion-select>
-              </ion-item>
-            </div>
-            <div style="flex:1">
-              <label for="cityId" class="label">Ciudad</label>
-              <ion-item lines="none" class="input-custom">
-                <ion-select interface="popover" formControlName="cityId" placeholder="Selecciona una ciudad">
-                  <ion-select-option *ngFor="let city of cities" [value]="city.id">{{ city.name }}</ion-select-option>
-                </ion-select>
-              </ion-item>
-            </div>
+          <!-- Departamento / Ciudad -->
+        <div class="dept-city-row">
+  <div class="dept-col">
+    <label for="departmentId" class="label">Departamento</label>
+    <ion-item lines="none" class="input-custom">
+      <ion-select interface="popover" formControlName="departmentId" placeholder="Selecciona un departamento">
+        <ion-select-option *ngFor="let dept of departments" [value]="dept.id">{{ dept.name }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-note
+      color="danger"
+      class="note"
+      *ngIf="shouldShowError(contactForm, 'departmentId', 'contact')">
+      {{ getFieldMessage('contact', 'departmentId') }}
+    </ion-note>
+  </div>
+
+  <div class="city-col">
+    <label for="cityId" class="label">Ciudad</label>
+    <ion-item lines="none" class="input-custom">
+      <ion-select interface="popover" formControlName="cityId" placeholder="Selecciona una ciudad">
+        <ion-select-option *ngFor="let city of cities" [value]="city.id">{{ city.name }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-note
+      color="danger"
+      class="note"
+      *ngIf="shouldShowError(contactForm, 'cityId', 'contact')">
+      {{ getFieldMessage('contact', 'cityId') }}
+    </ion-note>
+  </div>
+</div>
+
+
+          <div class="button-stack">
+            <app-button
+              type="button"
+              color="secondary"
+              text="Volver"
+              (clicked)="prevStep()"
+              [style.--app-button-margin]="'0.9rem auto 0'">
+            </app-button>
+            <app-button
+              type="button"
+              color="primary"
+              [disabled]="contactForm.invalid || loading"
+              text="Registrarse"
+              (clicked)="register()"
+              [style.--app-button-margin]="'0.35rem auto 0'">
+            </app-button>
+          </div>
+        </form>
+
+        <!-- Paso 4: Verificación de correo -->
+        <form [formGroup]="verificationForm" *ngIf="currentStep === 4" class="mt-12">
+          <div class="ion-text-center" style="margin-bottom: 1rem;">
+            <p>Te enviamos un código de 6 dígitos al correo:</p>
+            <strong>{{ verificationEmail }}</strong>
+            <p style="margin-top: .5rem;">Ingresa el código para activar tu cuenta.</p>
           </div>
 
-          <div style="display:flex;gap:.5rem;margin-top:.75rem">
-            <ion-button fill="outline" (click)="prevStep()">Volver</ion-button>
-            <ion-button class="btn-custom" (click)="register()" [disabled]="contactForm.invalid || loading">
-              Registrarse
-            </ion-button>
+          <!-- Email (solo lectura) -->
+          <label for="verificationEmail" class="label">Correo electrónico</label>
+          <ion-item lines="none" class="input-custom">
+            <ion-input id="verificationEmail" type="email" formControlName="email" readonly></ion-input>
+          </ion-item>
+
+          <!-- Código -->
+          <label for="code" class="label mt-12">Código de verificación</label>
+          <ion-item lines="none" class="input-custom">
+            <ion-input
+              id="code"
+              type="tel"
+              inputmode="numeric"
+              maxlength="6"
+              formControlName="code"
+              placeholder="Ingresa el código">
+            </ion-input>
+          </ion-item>
+          <ion-note
+            color="danger"
+            class="note"
+            *ngIf="verificationForm.get('code')?.invalid && (verificationForm.get('code')?.touched || verificationForm.get('code')?.dirty)">
+            {{ getVerificationMessage('code') }}
+          </ion-note>
+
+          <div class="button-stack">
+            <app-button
+              type="button"
+              color="secondary"
+              [disabled]="resending"
+              [text]="resending ? 'Enviando...' : 'Reenviar código'"
+              (clicked)="resendCode()"
+              [style.--app-button-margin]="'0.9rem auto 0'">
+            </app-button>
+            <app-button
+              type="button"
+              color="primary"
+              [disabled]="verificationForm.invalid || verifying"
+              [text]="verifying ? 'Verificando...' : 'Verificar correo'"
+              (clicked)="confirmVerification()"
+              [style.--app-button-margin]="'0.35rem auto 0'">
+            </app-button>
           </div>
         </form>
 
       </ion-card-content>
     </ion-card>
+
+  </div>
+
+  <div *ngIf="inlineError" class="floating-alert bottom" role="alert">
+    {{ inlineError }}
   </div>
 </ion-content>

@@ -1,0 +1,123 @@
+<ion-content [fullscreen]="true" class="page-bg orders-page-content">
+  <div class="page-shell product-shell orders-shell">
+    <!-- Título de la página -->
+    <h1 class="page-title">Mis pedidos</h1>
+    
+    <!-- prueba cantidad de pedidos -->
+    <!-- <app-stat-card
+      icon="shopping_cart"
+      text="Pedidos"
+      [count]="numberOrders"
+      color="warning"
+      [loading]="loading">
+    </app-stat-card> -->
+    
+    <ng-container *ngIf="!loading; else loadingTpl">
+      <div *ngIf="items.length; else emptyTpl" class="orders-container">
+        <ion-card 
+          class="order-card" 
+          *ngFor="let o of items; trackBy: trackById"
+          mode="md">
+          
+          <ion-card-header>
+            <div class="card-header-content">
+              <ion-card-title class="product-name">{{ o.productName }}</ion-card-title>
+              <ion-chip 
+                class="status-chip"
+                [ngClass]="chipClass(o.status)"
+                mode="ios">
+                {{ o.status | statusTranslatePipes }}
+              </ion-chip>
+            </div>
+          </ion-card-header>
+
+          <ion-card-content>
+            <div class="order-info">
+              <div class="info-row">
+                <div class="info-item">
+                  <span class="label">Cant.:</span>
+                  <span class="value">{{ o.quantityRequested }}</span>
+                </div>
+                <div class="info-item">
+                  <span class="label">Total:</span>
+                  <span class="value">{{ o.total | currency:'COP' }}</span>
+                </div>
+              </div>
+              
+              <div class="info-row">
+                <div class="info-item full-width">
+                  <span class="label">Creado:</span>
+                  <span class="value">{{ o.createAt | date:'medium' }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="actions-container">
+              <ion-button 
+                fill="outline" 
+                color="medium"
+                size="small"
+                (click)="view(o.code)"
+                class="action-button">
+                Ver detalle
+              </ion-button>
+
+              <!-- Subir comprobante -->
+              <input 
+                type="file" 
+                accept="image/*" 
+                #uploader 
+                hidden 
+                (change)="onPickPaymentFile(o.code, $event)" />
+              <ion-button
+                *ngIf="canUploadPayment(o.status)"
+                fill="solid"
+                color="primary"
+                size="small"
+                (click)="triggerFile(uploader)"
+                class="action-button">
+                Subir comprobante
+              </ion-button>
+
+              <!-- Cancelar pedido -->
+              <ion-button
+                *ngIf="canCancel(o.status)"
+                fill="solid"
+                color="danger"
+                size="small"
+                (click)="cancel(o.code)"
+                class="action-button">
+                Cancelar
+              </ion-button>
+
+              <!-- Confirmar recepción -->
+              <ion-button
+                *ngIf="canConfirm(o.status)"
+                fill="solid"
+                color="success"
+                size="small"
+                (click)="confirm(o.code)"
+                class="action-button">
+                Confirmar recepción
+              </ion-button>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </div>
+    </ng-container>
+
+    <ng-template #loadingTpl>
+      <div class="loading-container">
+        <ion-spinner name="crescent"></ion-spinner>
+        <p class="muted">Cargando…</p>
+      </div>
+    </ng-template>
+    
+    <ng-template #emptyTpl>
+      <div class="empty-container">
+        <ion-icon name="file-text-outline" size="large" color="medium"></ion-icon>
+        <p class="muted">Aún no tienes pedidos.</p>
+      </div>
+    </ng-template>
+  </div>
+</ion-content>

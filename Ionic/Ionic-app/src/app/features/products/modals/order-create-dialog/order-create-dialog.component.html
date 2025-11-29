@@ -1,3 +1,259 @@
-<p>
-  order-create-dialog works!
-</p>
+<ion-header class="order-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="close()" class="close-btn">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="header-title">Crear Pedido</ion-title>
+    <ion-buttons slot="end">
+      <ion-button class="step-counter" fill="clear" disabled>
+        {{ currentStep }}/2
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="order-content">
+  <!-- Stepper Indicator -->
+  <div class="stepper">
+    <div class="step" 
+         [class.active]="currentStep === 1" 
+         [class.completed]="currentStep > 1"
+         (click)="goToStep(1)">
+      <div class="step-number">1</div>
+      <div class="step-label">Producto</div>
+    </div>
+    
+    <div class="step-line" [class.active]="currentStep >= 2"></div>
+    
+    <div class="step" 
+         [class.active]="currentStep === 2"
+         (click)="goToStep(2)">
+      <div class="step-number">2</div>
+      <div class="step-label">Entrega</div>
+    </div>
+  </div>
+
+  <!-- Step 1: Product Information -->
+  <div class="step-content" [class.active]="currentStep === 1" [formGroup]="productGroup">
+    <div class="info">
+      <h3>Resumen del producto</h3>
+      <span>Confirma los datos y la cantidad</span>
+    </div>
+
+    <div class="product-summary">
+      <div class="info-row">
+        <div class="label">Producto</div>
+        <div class="value strong">{{ data.productName }}</div>
+      </div>
+
+      <div class="info-row">
+        <div class="label">Precio unitario</div>
+        <div class="value">{{ formatCop(data.unitPrice) }}</div>
+      </div>
+
+      <div class="info-row">
+        <div class="label">Disponibilidad</div>
+        <div class="value">{{ data.stock }} en stock</div>
+      </div>
+
+      <div class="info-row">
+        <div class="label">Envío</div>
+        <div class="value">{{ data.shippingNote }}</div>
+      </div>
+    </div>
+
+    <!-- Siguiendo tu estructura original: row-2 -->
+    <div class="row-2">
+      <!-- Izquierda: Campo de cantidad -->
+      <div class="input-group">
+        <ion-label class="input-label">Cantidad</ion-label>
+        <ion-input
+          class="form-input"
+          type="number"
+          formControlName="quantityRequested"
+          inputmode="numeric"
+          min="1"
+          [max]="data.stock">
+        </ion-input>
+        <ion-note class="input-hint">Máximo {{ data.stock }}</ion-note>
+        <ion-note color="danger" *ngIf="productGroup.get('quantityRequested')?.hasError('positiveInt')">
+          Debe ser mayor a 0
+        </ion-note>
+        <ion-note color="danger" *ngIf="productGroup.get('quantityRequested')?.hasError('max')">
+          Excede stock
+        </ion-note>
+      </div>
+
+      <!-- Derecha: Totals box -->
+      <div class="totals-box">
+        <div class="label">Subtotal</div>
+        <div class="total">{{ formatCop(subtotal) }}</div>
+        <small class="muted">No se cobra envío en la plataforma</small>
+      </div>
+    </div>
+
+    <!-- Siguiendo tu estructura: actions -->
+    <div class="actions">
+      <app-button
+        text="Siguiente"
+        color="primary"
+        icon="chevron-forward"
+        [disabled]="productGroup.invalid"
+        stepperAction="next"
+        (clicked)="goNext()">
+      </app-button>
+    </div>
+  </div>
+
+  <!-- Step 2: Delivery Information -->
+  <div class="step-content" [class.active]="currentStep === 2" [formGroup]="deliveryGroup">
+    <div class="info">
+      <h3>Datos de entrega</h3>
+      <span>Contacto y dirección</span>
+    </div>
+
+    <!-- Siguiendo tu estructura: row-2 para contacto -->
+    <div class="row-2">
+      <div class="input-group">
+        <ion-label class="input-label">Nombre del destinatario</ion-label>
+        <ion-input
+          class="form-input"
+          type="text"
+          formControlName="recipientName">
+        </ion-input>
+        <ion-note color="danger" *ngIf="deliveryGroup.get('recipientName')?.hasError('required')">
+          Obligatorio
+        </ion-note>
+        <ion-note color="danger" *ngIf="deliveryGroup.get('recipientName')?.hasError('minLetters')">
+          {{ deliveryGroup.get('recipientName')?.getError('minLetters') }}
+        </ion-note>
+      </div>
+
+      <div class="input-group">
+        <ion-label class="input-label">Teléfono de contacto</ion-label>
+        <ion-input
+          class="form-input"
+          type="text"
+          formControlName="contactPhone">
+        </ion-input>
+        <ion-note>10 dígitos y empezar con 3</ion-note>
+        <ion-note color="danger" *ngIf="deliveryGroup.get('contactPhone')?.hasError('required')">
+          Obligatorio
+        </ion-note>
+        <ion-note color="danger" *ngIf="deliveryGroup.get('contactPhone')?.hasError('phoneCo')">
+          {{ deliveryGroup.get('contactPhone')?.getError('phoneCo') }}
+        </ion-note>
+      </div>
+    </div>
+
+    <!-- Siguiendo tu estructura: row-2 para ubicación -->
+    <div class="row-2 top">
+      <div class="input-group">
+        <ion-label class="input-label">Departamento</ion-label>
+        <ion-select
+          class="form-select"
+          interface="popover"
+          [interfaceOptions]="selectInterfaceOpts"
+          formControlName="departmentId"
+          (ionChange)="onDepartmentChange($event.detail.value)">
+          <ion-select-option *ngFor="let d of departments" [value]="d.id">
+            {{ d.name }}
+          </ion-select-option>
+        </ion-select>
+        <ion-note color="danger" *ngIf="deliveryGroup.get('departmentId')?.hasError('required')">
+          Obligatorio
+        </ion-note>
+      </div>
+
+      <div class="input-group">
+        <ion-label class="input-label">Ciudad</ion-label>
+        <ion-select
+          class="form-select"
+          interface="popover"
+          [interfaceOptions]="selectInterfaceOpts"
+          [disabled]="!cities.length"
+          placeholder="Selecciona una ciudad"
+          formControlName="cityId">
+          <ion-select-option *ngFor="let c of cities" [value]="c.id">
+            {{ c.name }}
+          </ion-select-option>
+        </ion-select>
+        <ion-note color="danger" *ngIf="deliveryGroup.get('cityId')?.invalid">
+          Seleccione ciudad
+        </ion-note>
+      </div>
+    </div>
+
+    <!-- Siguiendo tu estructura: row-2 para direcciones -->
+    <div class="row-2">
+      <div class="input-group">
+        <ion-label class="input-label">Dirección</ion-label>
+        <ion-input
+          class="form-input"
+          type="text"
+          formControlName="addressLine1">
+        </ion-input>
+        <ion-note color="danger" *ngIf="deliveryGroup.get('addressLine1')?.hasError('required')">
+          Obligatorio
+        </ion-note>
+        <ion-note color="danger" *ngIf="deliveryGroup.get('addressLine1')?.hasError('minAlnum')">
+          {{ deliveryGroup.get('addressLine1')?.getError('minAlnum') }}
+        </ion-note>
+      </div>
+
+      <div class="input-group">
+        <ion-label class="input-label">Complemento (opcional)</ion-label>
+        <ion-input
+          class="form-input"
+          type="text"
+          formControlName="addressLine2">
+        </ion-input>
+      </div>
+    </div>
+
+    <!-- Siguiendo tu estructura: campo full width -->
+    <div class="input-group full-width">
+      <ion-label class="input-label">Notas adicionales (opcional)</ion-label>
+      <ion-textarea
+        class="form-textarea"
+        rows="3"
+        formControlName="additionalNotes">
+      </ion-textarea>
+    </div>
+
+    <!-- Siguiendo tu estructura: actions space-between -->
+    <div class="actions triple">
+      <app-button
+        class="trio-btn"
+        text="Anterior"
+        color="primary"
+        icon="chevron-back"
+        stepperAction="previous"
+        style="--app-button-margin:0"
+        (clicked)="goPrev()">
+      </app-button>
+
+      <app-button
+        class="trio-btn"
+        text="Cancelar"
+        color="secondary"
+        icon="close-outline"
+        style="--app-button-margin:0"
+        (clicked)="close()">
+      </app-button>
+
+      <app-button
+        class="trio-btn"
+        text="Crear pedido"
+        color="primary"
+        icon="bag-check-outline"
+        [loading]="isSubmitting"
+        [disabled]="isSubmitting || currentStep !== 2 || productGroup.invalid || deliveryGroup.invalid"
+        style="--app-button-margin:0"
+        (clicked)="submit()">
+      </app-button>
+    </div>
+  </div>
+</ion-content>

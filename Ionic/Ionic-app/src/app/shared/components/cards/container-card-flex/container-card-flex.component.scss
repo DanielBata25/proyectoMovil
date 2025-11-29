@@ -1,0 +1,64 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.card-grid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  justify-items: center;
+}
+
+.card-grid--farm {
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 18px;
+}
+
+.card-grid__item {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.farm-skeleton-card {
+  width: 100%;
+  border-radius: 16px;
+  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.08);
+}
+
+.farm-skeleton-thumb {
+  width: 100%;
+  height: 120px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+}
+
+.farm-skeleton-line {
+  width: 80%;
+  height: 14px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.farm-skeleton-line.short {
+  width: 60%;
+}
+
+.farm-skeleton-line.tiny {
+  width: 40%;
+  margin-bottom: 0;
+}
+
+@media (min-width: 1200px) {
+  .card-grid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  }
+}
+
+@media (max-width: 599px) {
+  .card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+

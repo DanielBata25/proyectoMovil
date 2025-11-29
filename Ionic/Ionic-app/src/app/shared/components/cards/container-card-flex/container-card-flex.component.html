@@ -1,9 +1,6 @@
-<ion-grid class="container-xxl px-3 ccf-grid">
-  <ion-row class="g-4">
-    <ion-col
-      *ngFor="let it of items; trackBy: trackById"
-      size="12" sizeSm="6" sizeMd="4" sizeLg="3">
-
+<ng-container *ngIf="!loading; else skeletonTpl">
+  <div [ngClass]="gridClasses">
+    <div class="card-grid__item" *ngFor="let it of items; trackBy: trackById">
       <!-- PRODUCTS -->
       <app-card
         *ngIf="isProduct(it)"
@@ -11,6 +8,7 @@
         [showActions]="showActions"
         [showFavorite]="showFavorite"
         (edit)="editProduct.emit(it)"
+        (view)="viewProduct.emit(it)"
         (delete)="deleteProduct.emit(it)">
       </app-card>
 
@@ -20,9 +18,33 @@
         [farm]="it"
         [showActions]="showActions"
         (edit)="editFarm.emit(it)"
-        (delete)="deleteFarm.emit(it)">
+        (delete)="deleteFarm.emit(it)"
+        (view)="viewFarm.emit(it)">
       </app-card-farm>
+    </div>
+  </div>
+</ng-container>
 
-    </ion-col>
-  </ion-row>
-</ion-grid>
+<ng-template #skeletonTpl>
+  <div [ngClass]="gridClasses">
+    <div class="card-grid__item" *ngFor="let _ of skeletonItems; let i = index">
+      <ng-container [ngSwitch]="type">
+        <app-card
+          *ngSwitchCase="'product'"
+          [product]="placeholder"
+          [showActions]="false"
+          [showFavorite]="false"
+          [loading]="true">
+        </app-card>
+        <ion-card *ngSwitchCase="'farm'" class="farm-skeleton-card">
+          <ion-card-content>
+            <ion-skeleton-text animated class="farm-skeleton-thumb"></ion-skeleton-text>
+            <ion-skeleton-text animated class="farm-skeleton-line"></ion-skeleton-text>
+            <ion-skeleton-text animated class="farm-skeleton-line short"></ion-skeleton-text>
+            <ion-skeleton-text animated class="farm-skeleton-line tiny"></ion-skeleton-text>
+          </ion-card-content>
+        </ion-card>
+      </ng-container>
+    </div>
+  </div>
+</ng-template>

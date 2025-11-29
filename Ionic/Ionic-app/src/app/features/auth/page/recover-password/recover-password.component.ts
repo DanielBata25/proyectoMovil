@@ -1,19 +1,20 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize, take } from 'rxjs';
-import { IonicModule, LoadingController, ToastController, AlertController } from '@ionic/angular';
+import { IonicModule, ToastController, AlertController } from '@ionic/angular';
 
 import { RecoverPasswordModel, RecoverPasswordConfirmModel } from '../../../../core/models/changePassword.model';
 
 import { PasswordPolicyService } from '../../../../shared/services/passwordPolicy/password-policy.service';
 import { AuthService } from 'src/app/core/services/auth/auth.service';
+import { ButtonComponent } from 'src/app/shared/components/button/button.component';
 
 @Component({
   selector: 'app-recover-password',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, IonicModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, IonicModule, ButtonComponent],
   templateUrl: './recover-password.component.html',
   styleUrls: ['./recover-password.component.scss'],
 })
@@ -23,7 +24,6 @@ export class RecoverPasswordComponent implements OnInit {
   private auth = inject(AuthService);
   private pwdPolicy = inject(PasswordPolicyService);
 
-  private loadingCtrl = inject(LoadingController);
   private toastCtrl = inject(ToastController);
   private alertCtrl = inject(AlertController);
 
@@ -75,13 +75,8 @@ export class RecoverPasswordComponent implements OnInit {
   }
 
   // Helpers UI
-  private async presentLoading(message = 'Por favor espera…') {
-    const loading = await this.loadingCtrl.create({ message, spinner: 'dots' });
-    await loading.present();
-    return loading;
-  }
   private async toast(message: string, color: 'success' | 'danger' | 'medium' = 'success') {
-    const t = await this.toastCtrl.create({ message, duration: 1800, position: 'top', color });
+    const t = await this.toastCtrl.create({ message, duration: 1800, position: 'bottom', color });
     await t.present();
   }
   private async alert(header: string, message: string) {
@@ -99,17 +94,15 @@ export class RecoverPasswordComponent implements OnInit {
     const payload: RecoverPasswordModel = { email: this.s1.value.email };
 
     this.loading.set(true);
-    const loading = await this.presentLoading('Enviando código…');
 
     this.auth
       .RequestRecoverPassword(payload)
-      .pipe(take(1), finalize(async () => { this.loading.set(false); await loading.dismiss(); }))
+      .pipe(take(1), finalize(() => { this.loading.set(false); }))
       .subscribe({
         next: async () => {
-          await this.toast('Código enviado. Revisa tu correo.', 'success');
-          // Prellenar emailConfirm con el mismo correo del paso 1
           this.s2.get('emailConfirm')?.setValue(this.s1.value.email);
           this.step.set(2);
+          await this.toast('Código enviado. Revisa tu correo.', 'success');
         },
         error: async (err) => {
           const msg = err?.error?.message || 'No se pudo enviar el código.';
@@ -146,15 +139,18 @@ export class RecoverPasswordComponent implements OnInit {
     };
 
     this.loading.set(true);
-    const loading = await this.presentLoading('Confirmando…');
 
     this.auth
       .ConfirmRecoverPassword(payload)
-      .pipe(take(1), finalize(async () => { this.loading.set(false); await loading.dismiss(); }))
+      .pipe(take(1), finalize(() => { this.loading.set(false); }))
       .subscribe({
-        next: async () => {
+        next: async (resp: any) => {
+          if (resp?.isSuccess === false) {
+            await this.toast('No se pudo actualizar la contraseña.', 'danger');
+            return;
+          }
+          this.router.navigate(['/auth/login'], { replaceUrl: true });
           await this.toast('Contraseña actualizada. Inicia sesión con tu nueva contraseña.', 'success');
-          this.router.navigateByUrl('/auth/login');
         },
         error: async (err) => {
           const msg = err?.error?.message || 'No se pudo actualizar la contraseña.';

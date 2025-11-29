@@ -1,3 +1,111 @@
-<p>
-  update-person works!
-</p>
+<ion-content [fullscreen]="true" class="page-bg">
+  <div class="page-shell page-shell--center">
+    <div class="page-topbar">
+    </div>
+    <ion-card class="form-card">
+      <ion-card-header>
+        <ion-card-title>{{ title }}</ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <form [formGroup]="form" (ngSubmit)="save()">
+
+        <!-- Nombres -->
+        <ion-item>
+          <ion-label position="floating">Nombres</ion-label>
+          <ion-input formControlName="firstName" placeholder="Ingresa tus nombres"></ion-input>
+        </ion-item>
+        <div class="error" *ngIf="f.firstName.hasError('required') && f.firstName.touched">
+          Este campo es obligatorio
+        </div>
+        <div class="error" *ngIf="f.firstName.hasError('minlength') && f.firstName.touched">
+          Minimo 2 caracteres
+        </div>
+
+        <!-- Apellidos -->
+        <ion-item>
+          <ion-label position="floating">Apellidos</ion-label>
+          <ion-input formControlName="lastName" placeholder="Ingresa tus apellidos"></ion-input>
+        </ion-item>
+        <div class="error" *ngIf="f.lastName.hasError('required') && f.lastName.touched">
+          Este campo es obligatorio
+        </div>
+        <div class="error" *ngIf="f.lastName.hasError('minlength') && f.lastName.touched">
+          Minimo 2 caracteres
+        </div>
+
+        <!-- -->
+        <ion-item>
+          <ion-label position="floating">Telefono</ion-label>
+          <ion-input formControlName="phoneNumber" placeholder="Solo digitos" inputmode="numeric"></ion-input>
+        </ion-item>
+        <div class="error" *ngIf="f.phoneNumber.hasError('required') && f.phoneNumber.touched">
+          Este campo es obligatorio
+        </div>
+        <div class="error" *ngIf="f.phoneNumber.hasError('pattern') && f.phoneNumber.touched">
+          Debe tener entre 7 y 15 digitos
+        </div>
+
+        <!-- Departamento y Ciudad -->
+        <div class="row-2cols">
+          <ion-item>
+            <ion-label>Departamento</ion-label>
+            <ion-select formControlName="departmentId" [disabled]="isLoadingDepartments">
+              <ion-select-option *ngFor="let d of departments" [value]="d.id">
+                {{ d.name }}
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
+          <div class="error" *ngIf="f.departmentId.hasError('required') && f.departmentId.touched">
+            Selecciona un departamento
+          </div>
+
+          <ion-item>
+            <ion-label>Ciudad</ion-label>
+            <ion-select formControlName="cityId" [disabled]="isLoadingCities || f.cityId.disabled">
+              <ion-select-option *ngFor="let c of cities" [value]="c.id">
+                {{ c.name }}
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
+          <div class="error" *ngIf="f.cityId.hasError('required') && f.cityId.touched">
+            Selecciona una ciudad
+          </div>
+        </div>
+
+        <!-- Direccion -->
+        <ion-item>
+          <ion-label position="floating">Direccion</ion-label>
+          <ion-input formControlName="address" placeholder="Ingresa tu direccion"></ion-input>
+        </ion-item>
+        <div class="error" *ngIf="f.address.hasError('required') && f.address.touched">
+          Este campo es obligatorio
+        </div>
+        <div class="error" *ngIf="f.address.hasError('minlength') && f.address.touched">
+          Minimo 4 caracteres
+        </div>
+
+        <!-- Botones -->
+          <div class="form-actions">
+            <app-button
+              [text]="'Guardar'"
+              icon="save"
+              color="primary"
+              type="submit"
+              [loading]="isLoading"
+              [disabled]="form.invalid || isLoading">
+            </app-button>
+
+            <app-button
+              color="secondary"
+              icon="close"
+              [text]="'Cancelar'"
+              type="button"
+              (clicked)="cancel()">
+            </app-button>
+          </div>
+        </form>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

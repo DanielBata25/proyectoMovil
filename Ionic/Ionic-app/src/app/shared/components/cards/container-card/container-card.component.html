@@ -1,12 +1,23 @@
 <section class="product-section">
   <h2 class="section-title" *ngIf="showHeader">{{ title }}</h2>
 
-  <div class="product-container sm:grid sm:grid-cols-3 gap-4 p-2">
-    <app-card
-      *ngFor="let p of products; trackBy: trackById"
-      [product]="p"
-      [showFavorite]="showFavorite"
-      [showActions]="false">
-    </app-card>
+  <div class="product-container">
+    <ng-container *ngIf="!loading && products.length > 0; else skeletonTpl">
+      <app-card
+        *ngFor="let p of products; trackBy: trackById"
+        [product]="p"
+        [showFavorite]="showFavorite"
+        [showActions]="false">
+      </app-card>
+    </ng-container>
+    <ng-template #skeletonTpl>
+      <app-card
+        *ngFor="let _ of skeletonItems; let i = index"
+        [product]="placeholder"
+        [loading]="true"
+        [showFavorite]="false"
+        [showActions]="false">
+      </app-card>
+    </ng-template>
   </div>
 </section>

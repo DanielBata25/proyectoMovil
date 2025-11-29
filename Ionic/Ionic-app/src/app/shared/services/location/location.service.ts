@@ -1,23 +1,24 @@
-import { HttpClient } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
-import { environment } from '../../../../environments/environment';
-import { Observable } from 'rxjs';
+// src/app/shared/services/location/location.service.ts
+import { Injectable } from '@angular/core';
+import { from, Observable } from 'rxjs';
+import { ApiNative } from 'src/app/core/services/http/api.native';
 import { CityModel, DepartmentModel } from '../../models/location/location.model';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class LocationService {
-  private http = inject(HttpClient);
-  private urlBase = environment.apiUrl + 'location';
-  constructor() { }
+  /** Base relativa (ApiNative resuelve contra environment.apiUrl) */
+  private readonly base = '/location';
 
-  getDepartment():Observable<DepartmentModel[]>{
-    return this.http.get<DepartmentModel[]>(this.urlBase+'/Department');
+  /** -------------------------- Departamentos -------------------------- */
+  // GET /location/Department
+  getDepartment(): Observable<DepartmentModel[]> {
+    return from(ApiNative.get<DepartmentModel[]>(`${this.base}/Department`));
   }
 
-  getCity(id:number):Observable<CityModel[]>{
-    return this.http.get<CityModel[]>(`${this.urlBase}/Department/City/${id}`);
+  /** ----------------------------- Ciudades ----------------------------- */
+  // GET /location/Department/City/{id}
+  getCity(id: number): Observable<CityModel[]> {
+    if (!Number.isFinite(id) || id <= 0) throw new Error('ID de departamento inválido');
+    return from(ApiNative.get<CityModel[]>(`${this.base}/Department/City/${id}`));
   }
-
 }

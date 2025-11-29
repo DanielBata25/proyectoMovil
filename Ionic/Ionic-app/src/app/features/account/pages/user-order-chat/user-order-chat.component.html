@@ -1,0 +1,21 @@
+<ion-header translucent="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/account/orders"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Chat del pedido</ion-title>
+    <ion-buttons slot="end">
+      <app-button
+        text="Ver detalle"
+        size="sm"
+        color="light"
+        icon="list-outline"
+        (clicked)="goBack()"
+        style="--app-button-margin:0"></app-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="page-bg chat-page">
+  <app-order-chat [orderCode]="code" [showClose]="false"></app-order-chat>
+</ion-content>

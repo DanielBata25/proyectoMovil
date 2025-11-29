@@ -4,14 +4,13 @@ import { IonicModule, ToastController, AlertController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { FavoriteFacadeService } from 'src/app/shared/services/favorite/favorite-facade.service';
 import { ProductSelectModel } from 'src/app/shared/models/product/product.model';
-import { IfLoggedInDirective } from 'src/app/core/directives/if-logged-in.directive';
 
 
 
 @Component({
   selector: 'app-card',
   standalone: true,
-  imports: [CommonModule, IonicModule, IfLoggedInDirective],
+  imports: [CommonModule, IonicModule],
   templateUrl: './card.component.html',
   styleUrls: ['./card.component.scss'],
 })
@@ -24,9 +23,11 @@ export class CardComponent {
   @Input({ required: true }) product!: ProductSelectModel;
   @Input() showActions = false;
   @Input() showFavorite = false;
+  @Input() loading = false;
 
   @Output() edit = new EventEmitter<ProductSelectModel>();
   @Output() delete = new EventEmitter<ProductSelectModel>();
+  @Output() view = new EventEmitter<ProductSelectModel>();
 
   // Asegúrate de tener esta imagen en src/assets/img/cargaImagen.png
   private readonly placeholder = 'assets/img/cargaImagen.png';
@@ -53,6 +54,11 @@ export class CardComponent {
     this.edit.emit(this.product);
   }
 
+  onViewClick(ev: Event) {
+    ev.stopPropagation();
+    this.view.emit(this.product);
+  }
+
   onDeleteClick(ev: Event) {
     ev.stopPropagation();
     this.delete.emit(this.product);
@@ -66,7 +72,7 @@ export class CardComponent {
         const t = await this.toastCtrl.create({
           message: isFav ? 'Añadido a favoritos' : 'Quitado de favoritos',
           duration: 1400,
-          position: 'top',
+          position: 'bottom',
           color: 'success',
         });
         await t.present();
@@ -75,7 +81,7 @@ export class CardComponent {
         const t = await this.toastCtrl.create({
           message: 'No se pudo actualizar el favorito',
           duration: 1800,
-          position: 'top',
+          position: 'bottom',
           color: 'danger',
         });
         await t.present();

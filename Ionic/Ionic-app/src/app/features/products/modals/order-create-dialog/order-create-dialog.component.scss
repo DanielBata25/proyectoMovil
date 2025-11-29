@@ -1,0 +1,605 @@
+/* ==========================================================================
+   Order Create Dialog - Mobile First (Compact Design)
+   ========================================================================== */
+
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: #f8f9fb;
+}
+
+// Variables basadas en tu código original
+:root {
+  --primary: #28a745;
+  --text-strong: #2c3e50;
+  --text-muted: #607d8b;
+  --line: #dfe3e8;
+}
+
+// ==========================================================================
+// Header Styles
+// ==========================================================================
+
+.order-header {
+  --background: #ffffff;
+  --border-color: #e9ecef;
+  border-bottom: 1px solid #e9ecef;
+  
+  ion-toolbar {
+    --padding-top: calc(env(safe-area-inset-top) + 8px);
+    --padding-bottom: 8px;
+    --padding-start: 16px;
+    --padding-end: 16px;
+    --min-height: 48px;
+  }
+
+  .close-btn {
+    --border-radius: 8px;
+    --border-color: #e9ecef;
+    --border-width: 1px;
+    --color: #6c757d;
+    width: 36px;
+    height: 36px;
+    
+    ion-icon {
+      font-size: 18px;
+    }
+  }
+
+  .header-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #212529;
+    text-align: center;
+  }
+
+  .step-counter {
+    --color: #6c757d;
+    font-size: 12px;
+    font-weight: 500;
+  }
+}
+
+// ==========================================================================
+// Content Area
+// ==========================================================================
+
+.order-content {
+  --background: #f8f9fb;
+  --padding-top: 8px;
+  --padding-bottom: calc(env(safe-area-inset-bottom) + 28px);
+  --padding-start: 12px;
+  --padding-end: 12px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+// ==========================================================================
+// Stepper Indicator
+// ==========================================================================
+
+.stepper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 0;
+  margin-bottom: 8px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  margin: 12px 0;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  .step-number {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #e9ecef;
+    color: #6c757d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+
+  .step-label {
+    font-size: 10px;
+    color: #6c757d;
+    font-weight: 500;
+    text-align: center;
+  }
+
+  &.active {
+    .step-number {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
+    }
+
+    .step-label {
+      color: var(--primary);
+      font-weight: 600;
+    }
+  }
+
+  &.completed {
+    .step-number {
+      background: #20c997;
+      color: #ffffff;
+    }
+
+    .step-label {
+      color: #20c997;
+    }
+  }
+}
+
+.step-line {
+  height: 2px;
+  width: 32px;
+  background: #e9ecef;
+  margin: 0 6px;
+  transition: background 0.3s ease;
+
+  &.active {
+    background: var(--primary);
+  }
+}
+
+// ==========================================================================
+// Content Wrapper & Steps
+// ==========================================================================
+
+.content-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.step-content {
+  display: none;
+  max-width: 480px;
+  margin: 0 auto 16px;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 20px 16px;
+  box-shadow: 0 8px 20px rgba(15, 40, 77, 0.06);
+
+  &.active {
+    display: block;
+    animation: slideInRight 0.3s ease-out;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+// ==========================================================================
+// Form Sections
+// ==========================================================================
+
+.info {
+  text-align: center;
+  margin-bottom: 16px;
+
+  h3 {
+    margin: 0 0 4px;
+    color: var(--text-strong);
+    font-weight: 700;
+    font-size: 18px;
+  }
+  
+  span {
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+}
+
+.product-summary {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px;
+  margin: 12px 0 16px;
+  background: #fbfdfb;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid #e9ecef;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  .label {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  
+  .value {
+    font-size: 13px;
+    color: var(--text-strong);
+    text-align: right;
+  }
+  
+  .value.strong {
+    font-weight: 600;
+    color: var(--text-strong);
+  }
+}
+
+// Siguiendo tu estructura original: row-2 compacta
+.row-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+@media (max-width: 900px) {
+  .row-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.input-group {
+  margin-bottom: 12px;
+
+  .input-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-strong);
+    margin-bottom: 6px;
+    display: block;
+  }
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  --background: #ffffff;
+  --border-radius: 10px;
+  --border-color: #dee2e6;
+  --border-width: 1px;
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --padding-top: 10px;
+  --padding-bottom: 10px;
+  --placeholder-color: #adb5bd;
+  font-size: 14px;
+  min-height: 42px;
+  border: 1px solid #dee2e6;
+  border-radius: 10px;
+  background: #ffffff;
+  padding: 10px 12px;
+  width: 100%;
+
+  &.ion-focused,
+  &.ng-valid.ng-touched {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.1);
+  }
+
+  &.ion-invalid.ng-touched {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.1);
+  }
+}
+
+.input-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+ion-select.form-select {
+  display: block;
+  width: 100%;
+  border: 1px solid #dee2e6;
+  border-radius: 12px;
+  min-height: 48px;
+  --background: #ffffff;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  --padding-start: 12px;
+  --padding-end: 36px;
+  --placeholder-color: #adb5bd;
+  --color: var(--text-strong);
+  --min-height: 48px;
+}
+
+ion-select.form-select.ion-focused {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.1);
+}
+
+ion-select.form-select::part(icon) {
+  color: #6c757d;
+  opacity: 0.9;
+}
+
+ion-select.form-select::part(text) {
+  font-size: 15px;
+}
+
+// ==========================================================================
+// Totals Box (de tu código original)
+// ==========================================================================
+
+.totals-box {
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+  padding: 12px;
+  display: flex; 
+  flex-direction: column; 
+  gap: 6px;
+  background: #fefefe;
+}
+
+.totals-box .total { 
+  font-weight: 700; 
+  font-size: 18px; 
+  color: var(--text-strong); 
+}
+
+.muted { 
+  color: var(--text-muted); 
+  font-size: 11px;
+}
+
+// ==========================================================================
+// Actions - Nueva estructura compacta
+// ==========================================================================
+
+.actions { 
+  display: flex; 
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+  padding: 12px;
+  background: #f8f9fb;
+  border-radius: 10px;
+  border: 1px solid #e9ecef;
+}
+
+.actions.space-between {
+  justify-content: space-between;
+}
+
+.actions.triple {
+  align-items: stretch;
+  margin-top: 16px;
+  margin-bottom: 10px;
+  gap: 10px;
+  padding: 10px;
+}
+
+.actions.triple app-button {
+  flex: 1;
+}
+
+:host ::ng-deep .trio-btn .custom-btn {
+  margin: 0;
+  width: 100%;
+  padding: 8px 10px;
+  font-size: 0.85rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+}
+
+:host ::ng-deep .trio-btn .icon-btn {
+  font-size: 16px;
+}
+
+:host ::ng-deep .trio-btn .btn-spinner {
+  width: 18px;
+  height: 18px;
+}
+
+.actions.single {
+  margin-top: 8px;
+}
+
+.actions.single app-button {
+  width: 100%;
+}
+
+// ==========================================================================
+// Desktop Responsive
+// ==========================================================================
+
+@media (min-width: 768px) {
+  .order-content {
+    --padding-start: 20px;
+    --padding-end: 20px;
+    --padding-bottom: 16px;
+  }
+
+  .form-row {
+    display: grid; 
+    grid-template-columns: 1fr 1fr; 
+    gap: 12px;
+  }
+
+  .footer-buttons {
+    gap: 12px;
+  }
+  
+  .cancel-btn,
+  .create-btn {
+    height: 42px;
+    padding: 0 20px;
+  }
+}
+
+@media (min-width: 900px) {
+  .row-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+// Estilos para el popover compacto de selects
+:host ::ng-deep .select-popover .popover-content {
+  width: min(300px, calc(100vw - 40px));
+  max-height: 280px;
+  border-radius: 14px;
+  box-shadow: 0 16px 32px rgba(15, 23, 42, 0.15);
+}
+
+:host ::ng-deep .select-popover ion-list {
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+// ==========================================================================
+// Dark Mode Support
+// ==========================================================================
+
+@media (prefers-color-scheme: dark) {
+  :host {
+    background: #0f1419;
+  }
+
+  .order-header {
+    --background: #1a1d23;
+    --border-color: #2d3238;
+
+    .close-btn {
+      --color: #8b949e;
+      --border-color: #2d3238;
+    }
+
+    .header-title {
+      color: #f0f6fc;
+    }
+
+    .step-counter {
+      --color: #8b949e;
+    }
+  }
+
+  .order-content {
+    --background: #0f1419;
+  }
+
+  .stepper {
+    background: #1a1d23;
+  }
+
+  .step {
+    .step-number {
+      background: #2d3238;
+      color: #8b949e;
+    }
+
+    .step-label {
+      color: #8b949e;
+    }
+
+    &.active {
+      .step-number {
+        background: var(--primary);
+        color: #ffffff;
+      }
+
+      .step-label {
+        color: var(--primary);
+      }
+    }
+  }
+
+  .info h3 {
+    color: #f0f6fc;
+  }
+
+  .info span {
+    color: #8b949e;
+  }
+
+  .product-summary {
+    background: #21262d;
+    border-color: #30363d;
+  }
+
+  .info-row {
+    border-color: #30363d;
+
+    .label {
+      color: #8b949e;
+    }
+
+    .value {
+      color: #f0f6fc;
+    }
+  }
+
+  .form-input,
+  .form-select,
+  .form-textarea {
+    --background: #21262d;
+    --border-color: #30363d;
+    --placeholder-color: #6e7681;
+    color: #f0f6fc;
+    background: #21262d;
+    border-color: #30363d;
+  }
+
+  .totals-box {
+    background: #21262d;
+    border-color: #30363d;
+  }
+
+  .actions {
+    background: #1a1d23;
+    border-color: #2d3238;
+  }
+}
+
+// ==========================================================================
+// Accessibility Improvements
+// ==========================================================================
+
+@media (prefers-reduced-motion: reduce) {
+  .step,
+  .step-number,
+  .step-line {
+    transition: none;
+  }
+
+  .step-content.active {
+    animation: none;
+  }
+}
+
+@media (prefers-contrast: high) {
+  .product-summary,
+  .totals-box {
+    border-width: 2px;
+  }
+}

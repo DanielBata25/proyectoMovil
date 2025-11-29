@@ -1,41 +1,49 @@
+// src/app/shared/services/generic.service.ts
+import { from, Observable } from 'rxjs';
+import { ApiNative } from 'src/app/core/services/http/api.native';
 
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { environment } from 'src/environments/environment';
-
-// @Injectable({
-//   providedIn: 'root'
-// })
-export class GenericService<TList,TCreate> {
-
-  protected apiUrl = environment.apiUrl;
+export class GenericService<TList, TCreate> {
   protected endpoint: string;
 
-  constructor(protected http: HttpClient, endpointName: string) {
-    this.endpoint = `${this.apiUrl}${endpointName}`;
+  /**
+   * Usa endpoint relativo, ej: "/User", "/Order", "/Category"
+   * ApiNative resuelve contra environment.apiUrl
+   */
+  constructor(endpointName: string) {
+    this.endpoint = endpointName.startsWith('/')
+      ? endpointName
+      : `/${endpointName}`;
   }
 
+  /** ----------------------------- CRUD básicos ----------------------------- */
+
+  // GET /{endpoint}
   public getAll(): Observable<TList[]> {
-    return this.http.get<TList[]>(this.endpoint);
+    return from(ApiNative.get<TList[]>(`${this.endpoint}`));
   }
 
+  // GET /{endpoint}/{id}
   public getById(id: number): Observable<TList> {
-    return this.http.get<TList>(`${this.endpoint}/${id}`);
+    return from(ApiNative.get<TList>(`${this.endpoint}/${id}`));
   }
 
-  public create(item: TCreate) {
-    return this.http.post(this.endpoint, item);
+  // POST /{endpoint}
+  public create(item: TCreate): Observable<any> {
+    return from(ApiNative.post<any>(`${this.endpoint}`, item));
   }
 
-  public update(id: number, item: TCreate) {
-    return this.http.put(`${this.endpoint}/${id}`, item);
+  // PUT /{endpoint}/{id}
+  public update(id: number, item: TCreate): Observable<any> {
+    return from(ApiNative.put<any>(`${this.endpoint}/${id}`, item));
   }
 
+  // DELETE /{endpoint}/{id}
   public delete(id: number): Observable<any> {
-    return this.http.delete(`${this.endpoint}/${id}`);
+    return from(ApiNative.delete<any>(`${this.endpoint}/${id}`));
   }
 
+  // PATCH /{endpoint}/{id}
   public deleteLogic(id: number): Observable<any> {
-    return this.http.patch(`${this.endpoint}/${id}`,[]);
+    return from(ApiNative.patch<any>(`${this.endpoint}/${id}`, []));
   }
 }

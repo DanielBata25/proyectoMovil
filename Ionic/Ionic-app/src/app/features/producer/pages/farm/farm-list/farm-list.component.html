@@ -1,0 +1,60 @@
+<ion-content [fullscreen]="true" class="page-bg product-content">
+  <div class="page-shell product-shell">
+    <section class="results-card">
+      <h2 class="section-title">Mis fincas</h2>
+      <ion-progress-bar *ngIf="loadingFarms" type="indeterminate"></ion-progress-bar>
+
+      <app-container-card-flex
+        [type]="'farm'"
+        [items]="pagedFarms"
+        [showActions]="true"
+        [loading]="loadingFarms"
+        (editFarm)="onEdit($event)"
+        (deleteFarm)="onDelete($event)"
+        (viewFarm)="onView($event)">
+      </app-container-card-flex>
+
+      <div class="pager" *ngIf="!loadingFarms && totalPages > 1">
+        <app-button
+          class="btn-inline"
+          color="secondary"
+          icon="chevron-back-outline"
+          [text]="''"
+          type="button"
+          [disabled]="isFirstPage"
+          (clicked)="onPrevPage()">
+        </app-button>
+        <div class="pager__label">
+          <ion-icon name="swap-horizontal-outline" class="pager__hint-icon"></ion-icon>
+          <span>{{ pageIndex + 1 }} / {{ totalPages }}</span>
+        </div>
+        <app-button
+          class="btn-inline"
+          color="secondary"
+          icon="chevron-forward-outline"
+          [text]="''"
+          type="button"
+          [disabled]="isLastPage"
+          (clicked)="onNextPage()">
+        </app-button>
+      </div>
+    </section>
+    <div class="empty-state" *ngIf="!loadingFarms && pagedFarms.length === 0">
+      <ion-icon name="home-outline"></ion-icon>
+      <p>Aun no registras fincas.</p>
+      <app-button
+        class="btn-inline"
+        color="secondary"
+        [text]="'Crear finca'"
+        type="button"
+        (clicked)="onCreate()">
+      </app-button>
+    </div>
+  </div>
+
+  <button type="button" class="app-fab-add" (click)="onCreate()" aria-label="Crear finca">
+    <ion-icon name="add-outline"></ion-icon>
+  </button>
+</ion-content>
+
+

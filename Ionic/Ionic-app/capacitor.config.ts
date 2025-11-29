@@ -2,8 +2,19 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'io.ionic.starter',
-  appName: 'Ionic-app',
-  webDir: 'www'
+  appName: 'portal-agro',
+  webDir: 'www',
+  plugins: {
+    CapacitorHttp: { enabled: true },
+    CapacitorCookies: { enabled: true },
+    Keyboard: {
+      resize: 'none' as const,
+      resizeOnFullScreen: false,
+    },
+  },
+  server: {
+    cleartext: true
+  }
 };
 
-export default config;
+export default config;

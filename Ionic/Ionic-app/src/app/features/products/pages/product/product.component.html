@@ -1,106 +1,101 @@
-<ion-header translucent="true">
-  <ion-toolbar>
-    <ion-title>Productos Disponibles</ion-title>
-  </ion-toolbar>
+<ion-content [fullscreen]="true" class="page-bg">
+  <div class="page-shell product-shell">
+    <section class="filters-card">
+      <ion-searchbar
+        class="search-input"
+        placeholder="Buscar productos"
+        [value]="searchCtrl.value"
+        (ionInput)="onSearch($event)"
+        show-clear-button="always"
+        debounce="300">
+      </ion-searchbar>
 
-  <!-- Filtros / búsqueda -->
-  <ion-toolbar class="filters-toolbar">
-    <ion-searchbar
-      placeholder="Nombre del producto o productor"
-      (ionInput)="onSearch($event)"
-      [value]="searchCtrl.value"
-      show-clear-button="always"
-      debounce="300"
-    ></ion-searchbar>
+      <div class="category-block">
+        <div class="category-header">
+          <span class="category-label">Categor�a</span>
+          <ion-button fill="clear" size="small" (click)="clearFilter()" [disabled]="!breadcrumb.length && !searchCtrl.value" aria-label="Limpiar filtros">
+            <ion-icon slot="icon-only" name="refresh"></ion-icon>
+          </ion-button>
+        </div>
 
-    <ion-buttons slot="end" class="filters-actions">
-      <ion-button fill="clear" (click)="toggleFilters()">
-        <ion-icon name="filter-outline" slot="icon-only"></ion-icon>
-      </ion-button>
-      <ion-button fill="clear" [disabled]="!breadcrumb.length" (click)="clearFilter()" aria-label="Limpiar filtro">
-        <ion-icon name="refresh" slot="icon-only"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
+        <ion-item lines="none" class="category-item">
+          <ion-select
+            class="category-select"
+            interface="popover"
+            placeholder="Selecciona"
+            [disabled]="isLoadingCategories || atLeaf"
+            [formControl]="categoryCtrl"
+            (ionChange)="onSelectCategory($event.detail.value)">
+            <ion-select-option *ngFor="let c of categories; trackBy: trackById" [value]="c.id">
+              <span class="option-text">{{ c.name }}</span>
+              <ion-icon *ngIf="c.hasChildren" name="chevron-forward-outline"></ion-icon>
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+      </div>
 
-  <!-- Filtro de Categorías (desplegable) -->
-  <ion-toolbar *ngIf="showFilters" class="filters-panel">
-    <ion-item lines="none">
-      <ion-label>Selecciona una categoría</ion-label>
-      <ion-select
-        [disabled]="isLoadingCategories || atLeaf"
-        interface="popover"
-        placeholder="Categoría"
-        [value]="categoryCtrl.value"
-        (ionChange)="onSelectCategory($event.detail.value)"
-      >
-        <ion-select-option
-          *ngFor="let c of categories; trackBy: trackById"
-          [value]="c.id"
-        >
-          <div class="opt">
-            <span>{{ c.name }}</span>
-            <ion-icon *ngIf="c.hasChildren" name="chevron-forward-outline"></ion-icon>
-          </div>
-        </ion-select-option>
-      </ion-select>
-    </ion-item>
-  </ion-toolbar>
-
-  <!-- Breadcrumb -->
-  <ion-toolbar class="breadcrumb-bar">
-    <ion-buttons>
-      <ion-chip color="medium" outline (click)="clearFilter()">
-        <ion-label>Todas</ion-label>
-      </ion-chip>
-
-      <ng-container *ngFor="let crumb of breadcrumb; let i = index; trackBy: trackById">
-        <ion-icon name="chevron-forward-outline" class="crumb-sep"></ion-icon>
-
-        <ion-chip *ngIf="i < breadcrumb.length - 1; else last"
-                  color="medium" outline
-                  (click)="onBreadcrumbClick(i)">
-          <ion-label>{{ crumb.name }}</ion-label>
+      <div class="breadcrumb-track">
+        <ion-chip color="primary" outline [disabled]="!breadcrumb.length" (click)="clearFilter()">
+          <ion-label>Todas</ion-label>
         </ion-chip>
 
-        <ng-template #last>
-          <ion-chip color="primary">
+        <ng-container *ngFor="let crumb of breadcrumb; let i = index; trackBy: trackById">
+          <ion-chip
+            [color]="i === breadcrumb.length - 1 ? 'primary' : 'light'"
+            [outline]="i !== breadcrumb.length - 1"
+            (click)="i === breadcrumb.length - 1 ? undefined : onBreadcrumbClick(i)">
             <ion-label>{{ crumb.name }}</ion-label>
           </ion-chip>
-        </ng-template>
-      </ng-container>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
+        </ng-container>
+      </div>
+    </section>
 
-<ion-content [fullscreen]="true" class="ion-padding page">
-  <!-- Loading -->
-  <ion-progress-bar *ngIf="isLoadingProducts" type="indeterminate" class="mb-3"></ion-progress-bar>
+    <section class="results-card">
+      <ion-progress-bar *ngIf="isLoadingProducts" type="indeterminate"></ion-progress-bar>
 
-  <!-- Resultados -->
-  <ion-card class="results-card">
-    <ion-card-content>
       <app-container-card-flex
         [items]="pagedProducts"
         [type]="'product'"
-        [showFavorite]="true">
+        [showFavorite]="true"
+        [loading]="isLoadingProducts">
       </app-container-card-flex>
 
-      <div *ngIf="!isLoadingProducts && products?.length === 0" class="empty">
+      <div *ngIf="!isLoadingProducts && filteredProducts.length === 0" class="empty-state">
         <ion-icon name="cube-outline"></ion-icon>
-        <div>Sin productos para esta categoría.</div>
+        <p>Sin productos para esta categor�a.</p>
       </div>
 
-      <!-- Infinite Scroll (reemplaza al paginador de Material) -->
-      <ion-infinite-scroll
-        threshold="120px"
-        [disabled]="!canLoadMore"
-        (ionInfinite)="loadMore($event)">
-        <ion-infinite-scroll-content
-          loadingSpinner="crescent"
-          loadingText="Cargando más...">
-        </ion-infinite-scroll-content>
-      </ion-infinite-scroll>
-    </ion-card-content>
-  </ion-card>
+      <div class="pager" *ngIf="totalPages >= 1">
+        <ion-button
+          fill="clear"
+          size="small"
+          (click)="onPrevPage()"
+          [disabled]="isFirstPage || isLoadingProducts"
+          aria-label="P�gina anterior">
+          <ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
+        </ion-button>
+
+                <div class="pager__label">
+          <ion-icon name="swap-horizontal-outline" class="pager__hint-icon"></ion-icon>
+          <span>{{ pageIndex + 1 }} / {{ totalPages }}</span>
+        </div>
+
+        <ion-button
+          fill="clear"
+          size="small"
+          (click)="onNextPage()"
+          [disabled]="isLastPage || isLoadingProducts"
+          aria-label="P�gina siguiente">
+          <ion-icon slot="icon-only" name="chevron-forward-outline"></ion-icon>
+        </ion-button>
+      </div>
+    </section>
+  </div>
 </ion-content>
+
+
+
+
+
+
+

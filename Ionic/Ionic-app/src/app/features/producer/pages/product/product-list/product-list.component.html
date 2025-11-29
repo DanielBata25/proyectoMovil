@@ -1,0 +1,115 @@
+<ion-content [fullscreen]="true" class="page-bg product-content">
+  <div class="page-shell product-shell">
+    <section class="filters-card">
+      <ion-searchbar
+        class="search-input"
+        placeholder="Buscar productos"
+        [value]="searchCtrl.value"
+        (ionInput)="onSearch($event)"
+        show-clear-button="always"
+        debounce="300">
+      </ion-searchbar>
+
+      <div class="category-block">
+        <div class="category-header">
+          <span class="category-label">Categoría</span>
+          <app-button
+            class="btn-inline"
+            color="secondary"
+            icon="refresh"
+            [text]="'Limpiar'"
+            type="button"
+            [disabled]="!breadcrumb.length && !searchCtrl.value"
+            (clicked)="clearFilter()">
+          </app-button>
+        </div>
+
+        <ion-item lines="none" class="category-item">
+          <ion-select
+            class="category-select"
+            interface="popover"
+            placeholder="Selecciona"
+            [disabled]="isLoadingCategories || atLeaf"
+            [formControl]="categoryCtrl"
+            (ionChange)="onSelectCategory($event.detail.value)">
+            <ion-select-option
+              *ngFor="let c of categories; trackBy: trackByCategory"
+              [value]="c.id">
+              <span class="option-text">{{ c.name }}</span>
+              <ion-icon *ngIf="c.hasChildren" name="chevron-forward-outline"></ion-icon>
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+      </div>
+
+      <div class="breadcrumb-track">
+        <ion-chip color="primary" outline [disabled]="!breadcrumb.length" (click)="clearFilter()">
+          <ion-label>Todas</ion-label>
+        </ion-chip>
+
+        <ng-container *ngFor="let crumb of breadcrumb; let i = index; trackBy: trackByBreadcrumb">
+          <ion-chip
+            [color]="i === breadcrumb.length - 1 ? 'primary' : 'light'"
+            [outline]="i !== breadcrumb.length - 1"
+            (click)="i === breadcrumb.length - 1 ? undefined : onBreadcrumbClick(i)">
+            <ion-label>{{ crumb.name }}</ion-label>
+          </ion-chip>
+        </ng-container>
+      </div>
+    </section>
+
+    <section class="results-card">
+      <ion-progress-bar *ngIf="loading" type="indeterminate"></ion-progress-bar>
+
+      <app-container-card-flex
+        [type]="'product'"
+        [items]="paginatedProducts"
+        [showActions]="true"
+        [loading]="loading"
+        (viewProduct)="viewProduct($event)"
+        (editProduct)="onEdit($event)"
+        (deleteProduct)="onDelete($event)">
+      </app-container-card-flex>
+
+      <div class="pagination-container" *ngIf="!loading && totalPages > 1">
+        <div class="pagination">
+          <app-button
+            class="btn-inline"
+            color="secondary"
+            icon="chevron-back-outline"
+            [text]="''"
+            type="button"
+            [disabled]="page === 1"
+            (clicked)="prevPage()">
+          </app-button>
+          <span>{{ page }} / {{ totalPages }}</span>
+          <app-button
+            class="btn-inline"
+            color="secondary"
+            icon="chevron-forward-outline"
+            [text]="''"
+            type="button"
+            [disabled]="page === totalPages"
+            (clicked)="nextPage()">
+          </app-button>
+        </div>
+      </div>
+    </section>
+
+    <div class="empty" *ngIf="!loading && paginatedProducts.length === 0">
+    <ion-icon name="layers-outline"></ion-icon>
+    <p>No tienes productos todavia.</p>
+    <app-button
+      class="btn-inline"
+      color="secondary"
+      [text]="'Crear el primero'"
+      type="button"
+      (clicked)="createProduct()">
+    </app-button>
+    </div>
+  </div>
+
+  <button type="button" class="app-fab-add" (click)="createProduct()" aria-label="Agregar producto">
+    <ion-icon name="add-outline"></ion-icon>
+  </button>
+</ion-content>

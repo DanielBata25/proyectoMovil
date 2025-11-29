@@ -1,0 +1,100 @@
+.page-topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.back-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid #dbe2e6;
+  background: #ffffff;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+}
+
+.back-btn ion-icon {
+  font-size: 20px;
+  color: #1f3b22;
+}
+
+.topbar-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1f3b22;
+  margin: 0;
+}
+
+.form-card {
+  width: 100%;
+  max-width: 520px;
+  border-radius: 16px;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.07);
+}
+
+.form-card ion-card-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #2e7d32;
+  text-align: center;
+}
+
+ion-item {
+  --highlight-color-focused: #2e7d32;
+  --padding-start: 12px;
+  --inner-padding-end: 10px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  --background: #f3f7f2;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+ion-item::part(native) {
+  border-radius: 12px;
+}
+
+ion-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+ion-select {
+  font-size: 0.9rem;
+  color: #333;
+}
+
+/* Estilos para selects en layout de 2 columnas */
+.row-2cols ion-item {
+  margin-bottom: 8px;
+}
+
+.row-2cols ion-select {
+  --padding-start: 0;
+  --padding-end: 0;
+}
+
+ion-input {
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.error {
+  font-size: 0.8rem;
+  color: #d32f2f;
+  margin: -4px 0 8px 12px;
+}
+
+.form-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+
+  app-button {
+    --app-button-margin: 0;
+  }
+}

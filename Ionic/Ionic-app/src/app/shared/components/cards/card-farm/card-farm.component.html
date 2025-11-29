@@ -1,34 +1,50 @@
-<ion-card class="product-card">
+<ion-card
+  class="product-card"
+  role="button"
+  tabindex="0"
+  (click)="onDetail()"
+  (keyup.enter)="onDetail()"
+  (keyup.space)="onDetail(); $event.preventDefault()"
+  aria-label="Abrir detalle de la finca">
+
   <div class="image-wrap">
     <img
       class="card-image"
       [src]="imageUrl"
-      alt="Imagen del producto"
-      (error)="onImgError($event)"
-    />
+      alt="Imagen de la finca"
+      (error)="onImgError($event)" />
   </div>
 
   <ion-card-content class="content">
-    <h3 class="title line-2">{{ farm.name }}</h3>
+    <h3 class="title line-2" [title]="farm.name">{{ farm.name }}</h3>
 
-    <p class="info-row">
-      <ion-icon name="person" aria-hidden="true"></ion-icon>
-      {{ farm.producerName }}
-    </p>
+    <div class="row muted">
+      <ion-icon name="person-outline"></ion-icon>
+      <span>{{ farm.producerName }}</span>
+    </div>
 
-    <p class="info-row">
-      <ion-icon name="location" aria-hidden="true"></ion-icon>
-      {{ farm.cityName }}, {{ farm.departmentName }}
-    </p>
+    <div class="row muted">
+      <ion-icon name="location-outline"></ion-icon>
+      <span>{{ farm.cityName }}, {{ farm.departmentName }}</span>
+    </div>
 
-    <!-- Botones de acción si está habilitado -->
-    <div *ngIf="showActions" class="actions">
-      <ion-button fill="clear" (click)="edit.emit(farm)" aria-label="Editar finca">
-        <ion-icon class="icon-edit" name="create"></ion-icon>
+    <div class="row info">
+      <ion-icon name="map-outline"></ion-icon>
+      <span>{{ farm.hectares }} ha</span>
+    </div>
+
+    <div class="card-actions" *ngIf="showActions" (click)="$event.stopPropagation()">
+      <ion-button fill="clear" size="small" color="primary" aria-label="Ver finca" (click)="onViewClick($event)">
+        <ion-icon class="icon-view" name="eye-outline"></ion-icon>
       </ion-button>
-      <ion-button fill="clear" (click)="delete.emit(farm)" aria-label="Eliminar finca">
-        <ion-icon class="icon-delete" name="trash"></ion-icon>
+      <ion-button fill="clear" size="small" aria-label="Editar finca" (click)="onEditClick($event)">
+        <ion-icon class="icon-edit" name="create-outline"></ion-icon>
+      </ion-button>
+      <ion-button fill="clear" size="small" color="danger" aria-label="Eliminar finca" (click)="onDeleteClick($event)">
+        <ion-icon class="icon-delete" name="trash-outline"></ion-icon>
       </ion-button>
     </div>
   </ion-card-content>
+
+  <div class="accent-bar"></div>
 </ion-card>

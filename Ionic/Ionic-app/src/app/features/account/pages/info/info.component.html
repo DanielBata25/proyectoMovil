@@ -1,3 +1,129 @@
-<p>
-  info works!
-</p>
+<ion-content [fullscreen]="true" class="page-bg">
+  <div class="page-shell">
+    <!-- Loader -->
+    <div class="center" *ngIf="loading">
+      <ion-spinner name="crescent"></ion-spinner>
+    </div>
+
+    <!-- Contenedor �nico -->
+    <ion-card class="info-card" *ngIf="person">
+      <ion-card-content>
+
+      <!-- Header usuario dentro del contenedor -->
+      <div class="account-header">
+        <div class="name">{{ displayName }}</div>
+        <div class="email">{{ person.email }}</div>
+      </div>
+
+      <!-- Pedidos -->
+      <h2 class="group-title">Pedidos</h2>
+      <div class="row-btn">
+        <div class="pill-icon"><ion-icon name="bag-handle-outline"></ion-icon></div>
+        <button class="flat-btn" [routerLink]="[ordersRoute]">
+          <span>Mis Pedidos</span>
+          <ion-icon name="chevron-forward"></ion-icon>
+        </button>
+      </div>
+
+      <!-- Informaci�n B�sica -->
+      <h2 class="group-title">Informacion Basica</h2>
+      <div class="row">
+        <div class="pill-icon"><ion-icon name="call-outline"></ion-icon></div>
+        <div class="info-line">
+          <span class="primary">Numero de telefono</span>
+          <span class="secondary">{{ person.phoneNumber || '+57 300 0000000' }}</span>
+        </div>
+      </div>
+
+      <!-- Informaci�n Adicional -->
+      <h2 class="group-title">Informacion Adicional</h2>
+      <div class="row">
+        <div class="pill-icon"><ion-icon name="id-card-outline"></ion-icon></div>
+        <div class="info-line">
+          <span class="primary">Documento de identidad</span>
+          <span class="secondary">{{ person.identification || '1234567890' }}</span>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="pill-icon"><ion-icon name="location-outline"></ion-icon></div>
+        <div class="info-line">
+          <span class="primary">Direccion</span>
+          <span class="secondary">{{ person.address || '123 Main Street, Anytown, USA' }}</span>
+        </div>
+      </div>
+
+      <!-- Opciones de Cuenta -->
+      <h2 class="group-title">Opciones de Cuenta</h2>
+      <div class="row-btn">
+        <div class="pill-icon"><ion-icon name="create-outline"></ion-icon></div>
+        <button class="flat-btn" (click)="goto('/account/info/update-person')">
+          <span>Actualizar Informacion</span>
+          <ion-icon name="chevron-forward"></ion-icon>
+        </button>
+      </div>
+
+      <div class="row-btn">
+        <div class="pill-icon"><ion-icon name="lock-closed-outline"></ion-icon></div>
+        <button class="flat-btn" (click)="goto('/account/info/form-change-password')">
+          <span>Cambiar Contraseña</span>
+          <ion-icon name="chevron-forward"></ion-icon>
+        </button>
+      </div>
+
+      <div class="row-btn">
+        <div class="pill-icon"><ion-icon name="log-out-outline"></ion-icon></div>
+        <button class="flat-btn" (click)="logout()" [disabled]="loggingOut">
+          <span>Cerrar Sesion</span>
+          <ion-icon name="chevron-forward"></ion-icon>
+        </button>
+      </div>
+
+      <!-- Productor -->
+      <ng-container *ngIf="isProducer">
+        <h2 class="group-title">Productor</h2>
+        <div class="row-btn">
+          <div class="pill-icon"><ion-icon name="nutrition-outline"></ion-icon></div>
+          <button class="flat-btn" [routerLink]="['/account/producer/summary']">
+            <span>Resumen</span>
+            <ion-icon name="chevron-forward"></ion-icon>
+          </button>
+        </div>
+
+        <div class="row-btn">
+          <div class="pill-icon"><ion-icon name="reader-outline"></ion-icon></div>
+          <button class="flat-btn" (click)="goto('/account/producer/farm')">
+            <span>Gestion Fincas</span>
+            <ion-icon name="chevron-forward"></ion-icon>
+          </button>
+        </div>
+
+
+        <div class="row-btn">
+          <div class="pill-icon"><ion-icon name="reader-outline"></ion-icon></div>
+          <button class="flat-btn" (click)="goto('/account/producer/product')">
+            <span>Gestion Productos</span>
+            <ion-icon name="chevron-forward"></ion-icon>
+          </button>
+        </div>
+      </ng-container>
+
+      <!-- Soporte -->
+      <h2 class="group-title">Soporte</h2>
+      <div class="row-btn">
+        <div class="pill-icon"><ion-icon name="mail-outline"></ion-icon></div>
+        <button class="flat-btn" (click)="goto('account/support')">
+          <span>Contactanos</span>
+          <ion-icon name="chevron-forward"></ion-icon>
+        </button>
+      </div>
+
+      </ion-card-content>
+    </ion-card>
+
+  </div>
+</ion-content>
+
+
+
+

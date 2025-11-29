@@ -14,8 +14,9 @@ export class ButtonComponent {
   @Input() text: string = 'Botón';
   @Input() type: 'button' | 'submit' | 'reset' = 'button';
   @Input() disabled: boolean = false;
-  @Input() color: 'primary' | 'secondary' | 'danger' = 'primary';
+  @Input() color: 'primary' | 'secondary' | 'danger' | 'success' | 'warning' | 'tertiary' | 'light' = 'primary';
   @Input() icon: string = '';
+  @Input() loading = false;
   @Input() back: boolean = false;
   @Input() redirectTo: string | null = null;
 

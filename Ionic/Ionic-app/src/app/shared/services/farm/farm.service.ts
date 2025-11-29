@@ -1,41 +1,41 @@
-import { HttpClient } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
-import { environment } from '../../../../environments/environment';
+import { Injectable } from '@angular/core';
+import { from, Observable } from 'rxjs';
+import { ApiNative } from 'src/app/core/services/http/api.native';
 import {
   FarmRegisterModel,
   FarmSelectModel,
   FarmUpdateModel,
   FarmWithProducerRegisterModel,
 } from '../../models/farm/farm.model';
-import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FarmService {
-  private http = inject(HttpClient);
-  private urlBase = environment.apiUrl + 'Farm';
+  /** Mantiene rutas relativas; ApiNative resuelve contra environment.apiUrl */
+  private readonly base = '/Farm';
 
   /** Obtener todas las fincas */
   public getAll(): Observable<FarmSelectModel[]> {
-    return this.http.get<FarmSelectModel[]>(this.urlBase);
+    return from(ApiNative.get<FarmSelectModel[]>(`${this.base}`));
   }
 
-  /** Obtener fincas de prodcutor por code */
+  /** Obtener fincas de productor por codigo */
   public getFarmByCodeProducer(codeProducer: string): Observable<FarmSelectModel[]> {
-    return this.http.get<FarmSelectModel[]>(
-      `${this.urlBase}/by-producerCode/${codeProducer}`
+    const safe = encodeURIComponent(codeProducer ?? '');
+    return from(
+      ApiNative.get<FarmSelectModel[]>(`${this.base}/by-producerCode/${safe}`)
     );
   }
 
   /** Obtener una finca por ID */
   public getById(id: number): Observable<FarmSelectModel> {
-    return this.http.get<FarmSelectModel>(`${this.urlBase}/${id}`);
+    return from(ApiNative.get<FarmSelectModel>(`${this.base}/${id}`));
   }
 
   /** Obtener fincas por productor autenticado */
   public getByProducer(): Observable<FarmSelectModel[]> {
-    return this.http.get<FarmSelectModel[]>(`${this.urlBase}/by-producer`);
+    return from(ApiNative.get<FarmSelectModel[]>(`${this.base}/by-producer`));
   }
 
   /** Crear finca junto con productor */
@@ -43,13 +43,13 @@ export class FarmService {
     dto: FarmWithProducerRegisterModel
   ): Observable<any> {
     const fd = this.buildFormData(dto);
-    return this.http.post<any>(`${this.urlBase}/registrar/producer`, fd);
+    return from(ApiNative.post<any>(`${this.base}/registrar/producer`, fd));
   }
 
   /** Crear finca (productor ya existente) */
   public create(dto: FarmRegisterModel): Observable<any> {
     const fd = this.buildFormData(dto);
-    return this.http.post<any>(`${this.urlBase}/register/farm`, fd);
+    return from(ApiNative.post<any>(`${this.base}/register/farm`, fd));
   }
 
   /** Actualizar finca */
@@ -57,16 +57,16 @@ export class FarmService {
     if (!dto.id) throw new Error('ID de la finca es obligatorio');
 
     const fd = this.buildFormData(dto);
-    return this.http.put<FarmSelectModel>(`${this.urlBase}/${dto.id}`, fd);
+    return from(ApiNative.put<FarmSelectModel>(`${this.base}/${dto.id}`, fd));
   }
 
   /** Eliminar finca */
   public delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.urlBase}/${id}`);
+    return from(ApiNative.delete<void>(`${this.base}/${id}`));
   }
 
   /**
-   * Construcción de FormData compatible con ASP.NET Core
+   * Construccion de FormData compatible con ASP.NET Core
    */
   private buildFormData(
     dto: FarmRegisterModel | FarmWithProducerRegisterModel | FarmUpdateModel

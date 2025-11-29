@@ -22,19 +22,22 @@
           <ion-item lines="none" class="input-custom">
             <ion-input id="email" type="email" formControlName="email" placeholder="Correo Electrónico"></ion-input>
           </ion-item>
-          <ion-note color="danger" *ngIf="formLogin.get('email')?.invalid && formLogin.get('email')?.touched" class="note">
+          <ion-note color="danger" *ngIf="formLogin.get('email')?.invalid && formLogin.get('email')?.touched"
+            class="note">
             {{ getErrorMessage('email') }}
           </ion-note>
 
           <!-- Password -->
           <label for="password" class="label mt-12">Contraseña</label>
           <ion-item lines="none" class="input-custom">
-            <ion-input id="password" [type]="showPassword ? 'text' : 'password'" formControlName="password" placeholder="Contraseña"></ion-input>
+            <ion-input id="password" [type]="showPassword ? 'text' : 'password'" formControlName="password"
+              placeholder="Contraseña"></ion-input>
             <ion-button fill="clear" slot="end" type="button" (click)="showPassword = !showPassword">
               <ion-icon [name]="showPassword ? 'eye-off' : 'eye'"></ion-icon>
             </ion-button>
           </ion-item>
-          <ion-note color="danger" *ngIf="formLogin.get('password')?.invalid && formLogin.get('password')?.touched" class="note">
+          <ion-note color="danger" *ngIf="formLogin.get('password')?.invalid && formLogin.get('password')?.touched"
+            class="note">
             {{ getErrorMessage('password') }}
           </ion-note>
 
@@ -42,9 +45,11 @@
             <a [routerLink]="['/auth/recover-password']" class="link">¿Olvidaste tu contraseña?</a>
           </div>
 
-          <ion-button type="submit" expand="block" class="btn-custom mt-12" [disabled]="formLogin.invalid || loading">
-            Iniciar Sesión
-          </ion-button>
+          <button type="submit" class="auth-btn mt-12 inline-login-btn" [disabled]="formLogin.invalid || loading">
+            <ion-spinner *ngIf="showInlineSpinner" name="crescent" class="inline-spinner"></ion-spinner>
+            <span *ngIf="!showInlineSpinner">Iniciar sesión</span>
+          </button>
+
         </form>
       </ion-card-content>
     </ion-card>

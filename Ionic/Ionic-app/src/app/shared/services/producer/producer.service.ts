@@ -1,22 +1,22 @@
-import { HttpClient } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { environment } from '../../../../environments/environment.prod';
+import { Injectable } from '@angular/core';
+import { Observable, from } from 'rxjs';
 import { ProducerSelectModel } from '../../models/producer/producer.model';
+import { ApiNative } from 'src/app/core/services/http/api.native';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProducerService {
-  private http = inject(HttpClient);
-  private urlBase = environment.apiUrl + 'Producer';
+  private readonly base = '/Producer';
 
   /** Obtener productor por código (lanza error si 404) */
   getByCodeProducer(codeProducer: string): Observable<ProducerSelectModel> {
-    return this.http.get<ProducerSelectModel>(
-      `${this.urlBase}/by-code/${codeProducer}`
-    );
+    const safe = encodeURIComponent(codeProducer ?? '');
+    return from(ApiNative.get<ProducerSelectModel>(`${this.base}/by-code/${safe}`));
   }
 
-  
+  /** Obtener la información del productor autenticado */
+  getMine(): Observable<ProducerSelectModel> {
+    return from(ApiNative.get<ProducerSelectModel>(`${this.base}/me`));
+  }
 }
