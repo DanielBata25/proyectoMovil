@@ -1,0 +1,8 @@
+<ion-content [fullscreen]="true" class="page-bg">
+  <div class="page-shell">
+    <app-farm-form
+      [createWithProducer]="true"
+      (saved)="onSaved($event)">
+    </app-farm-form>
+  </div>
+</ion-content>

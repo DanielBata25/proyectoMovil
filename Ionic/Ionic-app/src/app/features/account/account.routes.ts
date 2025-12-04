@@ -80,8 +80,8 @@ export const ACCOUNT_ROUTES: Routes = [
         path: 'become-producer',
         title: 'Convertirme en productor',
         loadComponent: () =>
-          import('../producer/pages/onboarding/onboarding.component').then(
-            (m) => m.OnboardingComponent
+          import('../producer/pages/farm/farm-with-producer-form/farm-with-producer-form.component').then(
+            (m) => m.FarmWithProducerFormComponent
           ),
       },
       {

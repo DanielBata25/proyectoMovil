@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ElementRef, inject } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ElementRef, inject, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
@@ -21,6 +21,7 @@ import {
   FarmRegisterModel,
   FarmSelectModel,
   FarmUpdateModel,
+  FarmWithProducerRegisterModel,
 } from 'src/app/shared/models/farm/farm.model';
 import {
   DepartmentModel,
@@ -49,6 +50,9 @@ export class FarmFormComponent implements OnInit, AfterViewInit, OnDestroy, View
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly elevationSvc = inject(ElevationService);
+
+  @Input() createWithProducer = false;
+  @Output() saved = new EventEmitter<FarmSelectModel | null>();
 
   form: FormGroup;
   isEdit = false;
@@ -88,6 +92,7 @@ export class FarmFormComponent implements OnInit, AfterViewInit, OnDestroy, View
     addIcons({ locateOutline, mapOutline, alertCircleOutline, cloudUploadOutline });
     this.loadLeafletAssets();
     this.form = this.fb.group({
+      description: [''],
       name: ['', [Validators.required, Validators.maxLength(120)]],
       hectares: [null, [Validators.required, Validators.min(0)]],
       altitude: [
@@ -132,6 +137,10 @@ export class FarmFormComponent implements OnInit, AfterViewInit, OnDestroy, View
   }
 
   ngOnInit(): void {
+    if (this.createWithProducer) {
+      this.form.get('description')?.setValidators([Validators.required, Validators.maxLength(500)]);
+    }
+
     this.watchCoordinateChanges();
 
     const idParam = this.route.snapshot.paramMap.get('id');
@@ -244,21 +253,31 @@ export class FarmFormComponent implements OnInit, AfterViewInit, OnDestroy, View
       cityId,
     };
 
+    const baseImages = this.selectedFiles;
+
     const createPayload: FarmRegisterModel = {
       ...core,
-      images: this.selectedFiles,
+      images: baseImages,
+    };
+
+    const createWithProducerPayload: FarmWithProducerRegisterModel = {
+      ...core,
+      description: (this.form.get('description')?.value ?? '').trim(),
+      images: baseImages,
     };
 
     const updatePayload: FarmUpdateModel = {
       ...core,
       id: this.farmId!,
-      images: this.selectedFiles.length ? this.selectedFiles : undefined,
+      images: baseImages.length ? baseImages : undefined,
       imagesToDelete: this.imagesToDelete.length ? this.imagesToDelete : undefined,
     };
 
     const request$ = this.isEdit
       ? this.farmService.update(updatePayload)
-      : this.farmService.create(createPayload);
+      : this.createWithProducer
+        ? this.farmService.createWithProducer(createWithProducerPayload)
+        : this.farmService.create(createPayload);
 
     request$
       .pipe(
@@ -267,12 +286,17 @@ export class FarmFormComponent implements OnInit, AfterViewInit, OnDestroy, View
         }),
       )
       .subscribe({
-        next: async () => {
-          await this.presentToast(
-            this.isEdit ? 'Finca actualizada' : 'Finca creada',
-            'success',
-          );
-          this.router.navigate(['/account/producer/farm']);
+        next: async (resp) => {
+          const msg = this.isEdit
+            ? 'Finca actualizada'
+            : this.createWithProducer
+              ? 'Productor y finca registrados'
+              : 'Finca creada';
+          await this.presentToast(msg, 'success');
+          this.saved.emit((resp as FarmSelectModel) ?? null);
+          if (!this.createWithProducer) {
+            this.router.navigate(['/account/producer/farm']);
+          }
         },
         error: async (err) => {
           const msg =
@@ -285,7 +309,8 @@ export class FarmFormComponent implements OnInit, AfterViewInit, OnDestroy, View
   }
 
   onCancel(): void {
-    this.router.navigate(['/account/producer/farm']);
+    const fallback = this.createWithProducer ? '/account/info' : '/account/producer/farm';
+    this.router.navigate([fallback]);
   }
 
   trackById = (_: number, item: { id: number }) => item.id;

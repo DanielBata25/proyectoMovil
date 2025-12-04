@@ -52,6 +52,10 @@ export class InfoComponent implements OnInit {
     return this.isProducer ? '/account/producer/orders' : '/account/orders';
   }
 
+  get isConsumer(): boolean {
+    return !this.isProducer;
+  }
+
   constructor() {
     addIcons({
       mail, call, idCard, location,
