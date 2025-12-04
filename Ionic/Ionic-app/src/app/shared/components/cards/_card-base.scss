@@ -77,6 +77,7 @@
     flex-direction: column;
     gap: 4px;
     padding: 0;
+    min-width: 0;
   }
   .title {
     margin: 0;
@@ -101,10 +102,25 @@
     margin: 0;
     font-size: 12px;
     color: #9ca3af;
+    min-width: 0;
+    width: 100%;
+    overflow: hidden;
+    flex-wrap: nowrap;
 
     ion-icon {
       font-size: 11px;
       color: inherit;
+      flex-shrink: 0;
+    }
+
+    span {
+      display: block;
+      flex: 1 1 0;
+      min-width: 0;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
   .price {
@@ -113,6 +129,9 @@
     font-size: 16px;
     color: #111827;
     letter-spacing: -0.35px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .shipping-pill {
     font-size: 12px;
@@ -122,6 +141,9 @@
   .muted {
     font-size: 12px;
     color: #9ca3af;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .actions,
