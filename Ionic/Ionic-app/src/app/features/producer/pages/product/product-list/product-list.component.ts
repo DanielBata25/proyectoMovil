@@ -29,6 +29,7 @@ export class ProductListComponent implements OnInit {
   private toastCtrl = inject(ToastController);
 
   // 🔹 Variables de datos
+  allProducts: ProductSelectModel[] = [];
   products: ProductSelectModel[] = [];
   paginatedProducts: ProductSelectModel[] = [];
   categories: CategoryNodeModel[] = [];
@@ -65,7 +66,11 @@ export class ProductListComponent implements OnInit {
 
   // 🔍 Aplicar filtros
   applyFilters(): void {
-    let filtered = this.products;
+    let filtered = this.allProducts;
+
+    if (this.selectedCategoryId) {
+      filtered = filtered.filter(p => p.categoryId === this.selectedCategoryId);
+    }
 
     const query = this.normalize(this.searchCtrl.value);
     if (query) {
@@ -75,9 +80,10 @@ export class ProductListComponent implements OnInit {
       );
     }
 
-    this.totalPages = Math.max(1, Math.ceil(filtered.length / this.pageSize));
+    this.products = filtered;
+    this.totalPages = Math.max(1, Math.ceil(this.products.length / this.pageSize));
     const start = (this.page - 1) * this.pageSize;
-    this.paginatedProducts = filtered.slice(start, start + this.pageSize);
+    this.paginatedProducts = this.products.slice(start, start + this.pageSize);
   }
 
   onSearch(ev: CustomEvent) {
@@ -88,9 +94,10 @@ export class ProductListComponent implements OnInit {
   // 📦 Cargar productos
   loadProducts(): void {
     this.loading = true;
-    this.productService.getAllHome().subscribe({
+    this.productService.getByProducerId().subscribe({
       next: (data) => {
-        this.products = data || [];
+        this.allProducts = data || [];
+        this.page = 1;
         this.applyFilters();
         this.loading = false;
       },
@@ -156,7 +163,7 @@ export class ProductListComponent implements OnInit {
     this.updateCategoryControlState();
     this.searchCtrl.setValue('', { emitEvent: true });
     this.loadRootCategories();
-    this.loadProducts();
+    this.applyFilters();
   }
 
   pushToBreadcrumb(id: number, name: string): void {
@@ -235,18 +242,10 @@ trackByBreadcrumb = (_: number, b: { id: number; name: string }) => b.id;
     }
 
     this.loading = true;
-    this.productService.getByCategory(categoryId).subscribe({
-      next: (items) => {
-        this.products = items;
-        this.page = 1;
-        this.applyFilters();
-        this.loadChildren(categoryId);
-        this.loading = false;
-      },
-      error: () => {
-        this.loading = false;
-      }
-    });
+    this.page = 1;
+    this.applyFilters();
+    this.loadChildren(categoryId);
+    this.loading = false;
   }
 
   private applyCategoryNodes(nodes: CategoryNodeModel[] | null | undefined, resetSelection = false): void {
