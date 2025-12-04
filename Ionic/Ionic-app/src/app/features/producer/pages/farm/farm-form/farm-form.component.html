@@ -6,8 +6,30 @@
     <form class="section-card" [formGroup]="form" (ngSubmit)="onSubmit()">
       <!-- <h2 class="section-title">Datos de la Finca</h2> -->
 
-      <div class="section-card inner-card upload-card">
+      <div class="section-block producer-block" *ngIf="createWithProducer">
+        <h2 class="section-title">Información de productor</h2>
+        <p class="section-helper">
+          Esta información se usará para crear tu perfil de productor.
+        </p>
+        <ion-textarea
+          class="producer-textarea"
+          label="Descripción del productor"
+          labelPlacement="floating"
+          fill="outline"
+          autoGrow="true"
+          maxlength="500"
+          counter="true"
+          helperText="Obligatorio"
+          errorText="La descripción es obligatoria y debe tener máximo 500 caracteres."
+          formControlName="description">
+        </ion-textarea>
+      </div>
+
+      <div class="section-block upload-block">
         <h2 class="section-title">Imagenes de la finca</h2>
+        <p class="section-helper muted">
+          Esta información que vas a llenar es para crear tu finca asociada a tu perfil.
+        </p>
 
         <div class="upload-box" (click)="fileInput.click()">
           <input

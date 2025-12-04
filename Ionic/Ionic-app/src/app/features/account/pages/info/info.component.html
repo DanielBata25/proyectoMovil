@@ -79,6 +79,18 @@
         </button>
       </div>
 
+      <!-- Productor (solo consumidores) -->
+      <ng-container *ngIf="isConsumer">
+        <h2 class="group-title">Productor</h2>
+        <div class="row-btn">
+          <div class="pill-icon"><ion-icon name="nutrition-outline"></ion-icon></div>
+          <button class="flat-btn" (click)="goto('/account/become-producer')">
+            <span>Convertirme en productor</span>
+            <ion-icon name="chevron-forward"></ion-icon>
+          </button>
+        </div>
+      </ng-container>
+
       <!-- Productor -->
       <ng-container *ngIf="isProducer">
         <h2 class="group-title">Productor</h2>
