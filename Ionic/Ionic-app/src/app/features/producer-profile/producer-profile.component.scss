@@ -4,13 +4,10 @@
   }
 }
 
-.profile-content {
-  .page-shell {
-    padding: calc(var(--app-shell-header-offset, 0px) + 20px) 12px 32px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
+.profile-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .center {
